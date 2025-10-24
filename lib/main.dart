@@ -115,149 +115,177 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.qr_code_scanner,
-                size: 100,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 32),
-              const Text(
-                'QR Kod Taramak İçin',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Aşağıdaki butona tıklayarak QR kod taramaya başlayabilirsiniz.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  LogService().info('QR tarama başlatıldı');
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.qr_code_scanner,
+                  size: 100,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'QR Kod Taramak İçin',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Aşağıdaki butona tıklayarak QR kod taramaya başlayabilirsiniz.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    LogService().info('QR tarama başlatıldı');
 
-                  final currentContext = context;
-                  final isMounted = mounted;
+                    final currentContext = context;
+                    final isMounted = mounted;
 
-                  try {
-                    final result = await Navigator.push<String>(
-                      currentContext,
-                      MaterialPageRoute(
-                        builder: (context) => const QrScannerScreen(),
-                      ),
-                    );
-
-                    if (result != null && isMounted) {
-                      LogService().info(
-                        'QR kod başarıyla tarandı',
-                        extra: {'data': result, 'type': _getDataType(result)},
+                    try {
+                      final result = await Navigator.push<String>(
+                        currentContext,
+                        MaterialPageRoute(
+                          builder: (context) => const QrScannerScreen(),
+                        ),
                       );
 
-                      // Taramayı geçmişe kaydet
-                      try {
-                        final scanModel = QrScanModel.fromScan(data: result);
-                        await HiveService().saveQrScan(scanModel);
+                      if (result != null && isMounted) {
                         LogService().info(
-                          'QR tarama geçmişe kaydedildi',
-                          extra: {'id': scanModel.id},
+                          'QR kod başarıyla tarandı',
+                          extra: {'data': result, 'type': _getDataType(result)},
                         );
-                      } catch (e) {
-                        LogService().error(
-                          'QR tarama geçmişe kaydetme hatası',
-                          error: e,
+
+                        // Taramayı geçmişe kaydet (tekrar edenleri filtrele)
+                        try {
+                          final scanModel = QrScanModel.fromScan(data: result);
+                          final wasSaved = await HiveService().saveQrScan(
+                            scanModel,
+                          );
+
+                          if (wasSaved) {
+                            LogService().info(
+                              'QR tarama geçmişe kaydedildi',
+                              extra: {'id': scanModel.id},
+                            );
+                            // Başarı mesajı göster
+                            ScaffoldMessenger.of(currentContext).showSnackBar(
+                              const SnackBar(
+                                content: Text('QR kod tarandı ve kaydedildi!'),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          } else {
+                            LogService().info(
+                              'Tekrar eden QR tarama, kaydedilmedi',
+                              extra: {'data': result},
+                            );
+                            // Tekrar eden tarama mesajı göster
+                            ScaffoldMessenger.of(currentContext).showSnackBar(
+                              const SnackBar(
+                                content: Text('Bu QR kod daha önce taranmış!'),
+                                backgroundColor: Colors.orange,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          LogService().error(
+                            'QR tarama geçmişe kaydetme hatası',
+                            error: e,
+                          );
+                        }
+
+                        setState(() {
+                          _scannedData = result;
+                          _scannedType = _getDataType(result);
+                        });
+
+                        // Eğer URL ise kullanıcıya açmak isteyip istemediğini sor
+                        if (_isUrl(result) && mounted) {
+                          LogService().info(
+                            'URL algılandı, kullanıcıya onay soruluyor',
+                            extra: {'url': result},
+                          );
+                          await _showUrlDialog(currentContext, result);
+                        }
+                      } else {
+                        LogService().info(
+                          'QR tarama iptal edildi veya başarısız',
                         );
                       }
-
-                      setState(() {
-                        _scannedData = result;
-                        _scannedType = _getDataType(result);
-                      });
-
-                      // Eğer URL ise kullanıcıya açmak isteyip istemediğini sor
-                      if (_isUrl(result) && mounted) {
-                        LogService().info(
-                          'URL algılandı, kullanıcıya onay soruluyor',
-                          extra: {'url': result},
-                        );
-                        await _showUrlDialog(currentContext, result);
-                      }
-                    } else {
-                      LogService().info(
-                        'QR tarama iptal edildi veya başarısız',
+                    } catch (e, stackTrace) {
+                      LogService().error(
+                        'QR tarama sırasında hata',
+                        error: e,
+                        stackTrace: stackTrace,
                       );
                     }
-                  } catch (e, stackTrace) {
-                    LogService().error(
-                      'QR tarama sırasında hata',
-                      error: e,
-                      stackTrace: stackTrace,
-                    );
-                  }
-                },
-                icon: const Icon(Icons.qr_code_scanner),
-                label: const Text('QR Kod Tara'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
+                  },
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: const Text('QR Kod Tara'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
                   ),
                 ),
-              ),
-              if (_scannedData != null) ...[
-                const SizedBox(height: 32),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50,
-                    border: Border.all(color: Colors.green.shade200),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            color: Colors.green.shade600,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Son Tarama Sonucu',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade700,
+                if (_scannedData != null) ...[
+                  const SizedBox(height: 32),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      border: Border.all(color: Colors.green.shade200),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green.shade600,
                             ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Son Tarama Sonucu',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        if (_scannedType != null) ...[
+                          Text(
+                            'Tip: $_scannedType',
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(height: 4),
+                        ],
+                        if (_scannedType == 'WiFi' && _scannedData != null) ...[
+                          _buildWiFiResult(_scannedData!),
+                        ] else ...[
+                          Text(
+                            _scannedData!,
+                            style: const TextStyle(fontSize: 14),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 8),
-                      if (_scannedType != null) ...[
-                        Text(
-                          'Tip: $_scannedType',
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 4),
                       ],
-                      if (_scannedType == 'WiFi' && _scannedData != null) ...[
-                        _buildWiFiResult(_scannedData!),
-                      ] else ...[
-                        Text(
-                          _scannedData!,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

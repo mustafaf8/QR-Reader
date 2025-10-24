@@ -107,6 +107,9 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                 case 'stats':
                   _showStatistics();
                   break;
+                case 'removeDuplicates':
+                  await _removeDuplicateScans();
+                  break;
               }
             },
             itemBuilder: (context) => [
@@ -127,6 +130,16 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                     Icon(Icons.download, color: Colors.green),
                     SizedBox(width: 8),
                     Text('Dışa Aktar'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'removeDuplicates',
+                child: Row(
+                  children: [
+                    Icon(Icons.cleaning_services, color: Colors.orange),
+                    SizedBox(width: 8),
+                    Text('Tekrarları Kaldır'),
                   ],
                 ),
               ),
@@ -298,53 +311,75 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
             ),
           ],
         ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) async {
-            switch (value) {
-              case 'copy':
-                _copyToClipboard(scan);
-                break;
-              case 'delete':
-                await _deleteScan(scan);
-                break;
-              case 'open':
-                if (scan.isUrl) {
-                  _openUrl(scan.data);
-                }
-                break;
-            }
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'copy',
-              child: Row(
-                children: [
-                  Icon(Icons.copy, size: 16),
-                  SizedBox(width: 8),
-                  Text('Kopyala'),
-                ],
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Yıldız ikonu (Sık kullanılanlara ekle/çıkar)
+            IconButton(
+              onPressed: () => _toggleFavorite(scan),
+              icon: Icon(
+                _hiveService.isFavorite(scan.id)
+                    ? Icons.star
+                    : Icons.star_border,
+                color: _hiveService.isFavorite(scan.id)
+                    ? Colors.amber
+                    : Colors.grey,
+                size: 20,
               ),
+              tooltip: _hiveService.isFavorite(scan.id)
+                  ? 'Sık kullanılanlardan çıkar'
+                  : 'Sık kullanılanlara ekle',
             ),
-            if (scan.isUrl)
-              const PopupMenuItem(
-                value: 'open',
-                child: Row(
-                  children: [
-                    Icon(Icons.open_in_browser, size: 16),
-                    SizedBox(width: 8),
-                    Text('Aç'),
-                  ],
+            // Popup menü
+            PopupMenuButton<String>(
+              onSelected: (value) async {
+                switch (value) {
+                  case 'copy':
+                    _copyToClipboard(scan);
+                    break;
+                  case 'delete':
+                    await _deleteScan(scan);
+                    break;
+                  case 'open':
+                    if (scan.isUrl) {
+                      _openUrl(scan.data);
+                    }
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'copy',
+                  child: Row(
+                    children: [
+                      Icon(Icons.copy, size: 16),
+                      SizedBox(width: 8),
+                      Text('Kopyala'),
+                    ],
+                  ),
                 ),
-              ),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete, size: 16, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('Sil', style: TextStyle(color: Colors.red)),
-                ],
-              ),
+                if (scan.isUrl)
+                  const PopupMenuItem(
+                    value: 'open',
+                    child: Row(
+                      children: [
+                        Icon(Icons.open_in_browser, size: 16),
+                        SizedBox(width: 8),
+                        Text('Aç'),
+                      ],
+                    ),
+                  ),
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, size: 16, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Sil', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -622,6 +657,56 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
           );
         }
       }
+    }
+  }
+
+  Future<void> _toggleFavorite(QrScanModel scan) async {
+    try {
+      if (_hiveService.isFavorite(scan.id)) {
+        await _hiveService.removeFromFavorites(scan.id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sık kullanılanlardan çıkarıldı'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        await _hiveService.addToFavorites(scan);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sık kullanılanlara eklendi'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      setState(() {}); // UI'yi güncelle
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  Future<void> _removeDuplicateScans() async {
+    try {
+      await _hiveService.removeDuplicateScans();
+      await _loadScans(); // Listeyi yenile
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tekrar eden taramalar kaldırıldı'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Tekrarları kaldırma hatası: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
