@@ -7,6 +7,11 @@ import 'services/log_service.dart';
 import 'services/hive_service.dart';
 import 'screens/log_viewer_screen.dart';
 import 'screens/scan_history_screen.dart';
+import 'screens/image_scan_screen.dart';
+import 'screens/favorites_screen.dart';
+import 'screens/my_qr_screen.dart';
+import 'screens/create_qr_screen.dart';
+import 'screens/settings_screen.dart';
 import 'models/qr_scan_model.dart';
 
 void main() async {
@@ -79,6 +84,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: _buildDrawer(context),
       appBar: AppBar(
         title: const Text('QR Okuyucu'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -558,6 +564,206 @@ class _HomePageState extends State<HomePage> {
         );
       }
     }
+  }
+
+  /// Drawer menüsünü oluşturur
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          // Drawer Header
+          DrawerHeader(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade600, Colors.blue.shade800],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.qr_code_scanner, size: 48, color: Colors.white),
+                SizedBox(height: 8),
+                Text(
+                  'QR Reader',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Güçlü QR kod okuyucu',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+
+          // Menü öğeleri
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.qr_code_scanner,
+            title: 'Tara',
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.image_search,
+            title: 'Görüntü Tarama',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ImageScanScreen(),
+                ),
+              );
+            },
+          ),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.star,
+            title: 'Sık Kullanılanlar',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FavoritesScreen(),
+                ),
+              );
+            },
+          ),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.history,
+            title: 'Geçmiş',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ScanHistoryScreen(),
+                ),
+              );
+            },
+          ),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.person,
+            title: 'Benim QR\'ım',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyQrScreen()),
+              );
+            },
+          ),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.add_box,
+            title: 'QR Oluştur',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CreateQrScreen()),
+              );
+            },
+          ),
+
+          const Divider(),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.settings,
+            title: 'Ayarlar',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+          ),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.share,
+            title: 'Paylaş',
+            onTap: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Paylaş özelliği yakında eklenecek'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.apps,
+            title: 'Uygulamalarımız',
+            onTap: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Uygulamalarımız özelliği yakında eklenecek'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.block,
+            title: 'Reklamları Kaldır',
+            onTap: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Reklamları kaldır özelliği yakında eklenecek'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Drawer menü öğesi oluşturur
+  Widget _buildDrawerItem({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.blue.shade600),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      ),
+      onTap: onTap,
+      hoverColor: Colors.blue.shade50,
+    );
   }
 }
 
