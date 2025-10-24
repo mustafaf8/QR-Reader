@@ -85,204 +85,344 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.qr_code_scanner,
-                  size: 100,
-                  color: Theme.of(context).colorScheme.primary,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isSmallScreen = constraints.maxWidth < 600;
+              return SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 16 : 24,
+                  vertical: 16,
                 ),
-                const SizedBox(height: 24),
-                const Text(
-                  'QR Kod Taramak İçin',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Aşağıdaki butonlardan birini seçerek QR kod taramaya başlayabilirsiniz.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 24),
-                // Butonlar Row'u
-                Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // QR Kod Tara butonu
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          // Log removed
+                    const SizedBox(height: 32),
+                    // Ana başlık
+                    Text(
+                      'QR Okuyucu',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'QR kodları ve barkodları kolayca tarayın',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    // Ana Aksiyon Butonları
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isSmallScreen = constraints.maxWidth < 600;
+                        return Card(
+                          elevation: 8,
+                          shadowColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withOpacity(0.3),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+                            child: Column(
+                              children: [
+                                // QR Kod Tara butonu
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 56,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () async {
+                                      // Log removed
 
-                          final currentContext = context;
-                          final isMounted = mounted;
+                                      final currentContext = context;
+                                      final isMounted = mounted;
 
-                          try {
-                            final result = await Navigator.push<String>(
-                              currentContext,
-                              MaterialPageRoute(
-                                builder: (context) => const QrScannerScreen(),
+                                      try {
+                                        final result =
+                                            await Navigator.push<String>(
+                                              currentContext,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const QrScannerScreen(),
+                                              ),
+                                            );
+
+                                        if (result != null && isMounted) {
+                                          // QR kod başarıyla tarandı
+
+                                          // Taramayı geçmişe kaydet (tekrar edenleri filtrele)
+                                          try {
+                                            final scanModel =
+                                                QrScanModel.fromScan(
+                                                  data: result,
+                                                );
+                                            final wasSaved = await HiveService()
+                                                .saveQrScan(scanModel);
+
+                                            if (wasSaved) {
+                                              // QR tarama geçmişe kaydedildi
+                                              // Başarı mesajı göster
+                                              ScaffoldMessenger.of(
+                                                currentContext,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'QR kod tarandı ve kaydedildi!',
+                                                  ),
+                                                  backgroundColor: Colors.green,
+                                                  duration: Duration(
+                                                    seconds: 2,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              // Tekrar eden QR tarama, kaydedilmedi
+                                              // Tekrar eden tarama mesajı göster
+                                              ScaffoldMessenger.of(
+                                                currentContext,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Bu QR kod daha önce taranmış!',
+                                                  ),
+                                                  backgroundColor:
+                                                      Colors.orange,
+                                                  duration: Duration(
+                                                    seconds: 2,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          } catch (e) {
+                                            // QR tarama geçmişe kaydetme hatası
+                                          }
+
+                                          setState(() {
+                                            _scannedData = result;
+                                            _scannedType = _getDataType(result);
+                                          });
+
+                                          // Eğer URL ise kullanıcıya açmak isteyip istemediğini sor
+                                          if (_isUrl(result) && mounted) {
+                                            // URL algılandı, kullanıcıya onay soruluyor
+                                            await _showUrlDialog(
+                                              currentContext,
+                                              result,
+                                            );
+                                          }
+                                        } else {
+                                          // QR tarama iptal edildi veya başarısız
+                                        }
+                                      } catch (e) {
+                                        // QR tarama sırasında hata
+                                      }
+                                    },
+                                    icon: const Icon(
+                                      Icons.qr_code_scanner,
+                                      size: 24,
+                                    ),
+                                    label: const Text(
+                                      'QR Kod Tara',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      foregroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                      elevation: 4,
+                                      shadowColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary.withOpacity(0.3),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                // Galeriden Seç butonu
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 56,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () async {
+                                      // Log removed
+
+                                      try {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ImageScanScreen(),
+                                          ),
+                                        );
+                                      } catch (e) {
+                                        // Galeri tarama sırasında hata
+                                      }
+                                    },
+                                    icon: const Icon(
+                                      Icons.photo_library,
+                                      size: 24,
+                                    ),
+                                    label: const Text(
+                                      'Galeriden Seç',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
+                                      foregroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.onSecondary,
+                                      elevation: 4,
+                                      shadowColor: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary.withOpacity(0.3),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    if (_scannedData != null) ...[
+                      const SizedBox(height: 32),
+                      Card(
+                        elevation: 6,
+                        shadowColor: Colors.green.withOpacity(0.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.green.shade50,
+                                Colors.green.shade100.withOpacity(0.3),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.shade100,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green.shade600,
+                                      size: 24,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Son Tarama Sonucu',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green.shade700,
+                                          ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            );
-
-                            if (result != null && isMounted) {
-                              // QR kod başarıyla tarandı
-
-                              // Taramayı geçmişe kaydet (tekrar edenleri filtrele)
-                              try {
-                                final scanModel = QrScanModel.fromScan(
-                                  data: result,
-                                );
-                                final wasSaved = await HiveService().saveQrScan(
-                                  scanModel,
-                                );
-
-                                if (wasSaved) {
-                                  // QR tarama geçmişe kaydedildi
-                                  // Başarı mesajı göster
-                                  ScaffoldMessenger.of(
-                                    currentContext,
-                                  ).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'QR kod tarandı ve kaydedildi!',
-                                      ),
-                                      backgroundColor: Colors.green,
-                                      duration: Duration(seconds: 2),
+                              const SizedBox(height: 16),
+                              if (_scannedType != null) ...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade100,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    _scannedType!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.green.shade700,
+                                      fontSize: 12,
                                     ),
-                                  );
-                                } else {
-                                  // Tekrar eden QR tarama, kaydedilmedi
-                                  // Tekrar eden tarama mesajı göster
-                                  ScaffoldMessenger.of(
-                                    currentContext,
-                                  ).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Bu QR kod daha önce taranmış!',
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.green.shade200,
+                                  ),
+                                ),
+                                child:
+                                    _scannedType == 'WiFi' &&
+                                        _scannedData != null
+                                    ? _buildWiFiResult(_scannedData!)
+                                    : Text(
+                                        _scannedData!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(fontFamily: 'monospace'),
                                       ),
-                                      backgroundColor: Colors.orange,
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                // QR tarama geçmişe kaydetme hatası
-                              }
-
-                              setState(() {
-                                _scannedData = result;
-                                _scannedType = _getDataType(result);
-                              });
-
-                              // Eğer URL ise kullanıcıya açmak isteyip istemediğini sor
-                              if (_isUrl(result) && mounted) {
-                                // URL algılandı, kullanıcıya onay soruluyor
-                                await _showUrlDialog(currentContext, result);
-                              }
-                            } else {
-                              // QR tarama iptal edildi veya başarısız
-                            }
-                          } catch (e) {
-                            // QR tarama sırasında hata
-                          }
-                        },
-                        icon: const Icon(Icons.qr_code_scanner),
-                        label: const Text('QR Kod Tara'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Galeriden Seç butonu
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          // Log removed
-
-                          try {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ImageScanScreen(),
-                              ),
-                            );
-                          } catch (e) {
-                            // Galeri tarama sırasında hata
-                          }
-                        },
-                        icon: const Icon(Icons.photo_library),
-                        label: const Text('Galeriden Seç'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                      ),
-                    ),
+                    ],
                   ],
                 ),
-                if (_scannedData != null) ...[
-                  const SizedBox(height: 32),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      border: Border.all(color: Colors.green.shade200),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              color: Colors.green.shade600,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Son Tarama Sonucu',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green.shade700,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        if (_scannedType != null) ...[
-                          Text(
-                            'Tip: $_scannedType',
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(height: 4),
-                        ],
-                        if (_scannedType == 'WiFi' && _scannedData != null) ...[
-                          _buildWiFiResult(_scannedData!),
-                        ] else ...[
-                          Text(
-                            _scannedData!,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -558,136 +698,201 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Uygulamayı paylaşır
+  Future<void> _shareQrData() async {
+    try {
+      String shareText = 'QR Okuyucu uygulamasını kullanıyorum! 📱\n\n';
+      shareText += 'QR kodları ve barkodları kolayca tarayabilir, ';
+      shareText += 'yeni QR kodlar oluşturabilirsiniz.\n\n';
+      shareText += 'Siz de deneyin! 🚀';
+
+      await Share.share(shareText, subject: 'QR Okuyucu Uygulaması');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Paylaşım hatası: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   /// Drawer menüsünü oluşturur
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          // Drawer Header
-          DrawerHeader(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue.shade600, Colors.blue.shade800],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+            ],
+          ),
+        ),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Modern Drawer Header
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primaryContainer,
+                  ],
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
               ),
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Icon(Icons.qr_code_scanner, size: 48, color: Colors.white),
-                SizedBox(height: 8),
-                Text(
-                  'QR Reader',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.qr_code_scanner,
+                          size: 32,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'QR Okuyucu',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Güçlü QR kod okuyucu',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  'Güçlü QR kod okuyucu',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
-                ),
-              ],
+              ),
             ),
-          ),
 
-          // Menü öğeleri
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.qr_code_scanner,
-            title: 'Tara',
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+            // Menü öğeleri
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.qr_code_scanner,
+              title: 'Tara',
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
 
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.star,
-            title: 'Sık Kullanılanlar',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FavoritesScreen(),
-                ),
-              );
-            },
-          ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.star,
+              title: 'Sık Kullanılanlar',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FavoritesScreen(),
+                  ),
+                );
+              },
+            ),
 
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.history,
-            title: 'Geçmiş',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ScanHistoryScreen(),
-                ),
-              );
-            },
-          ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.history,
+              title: 'Geçmiş',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ScanHistoryScreen(),
+                  ),
+                );
+              },
+            ),
 
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.add_box,
-            title: 'QR Oluştur',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CreateQrScreen()),
-              );
-            },
-          ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.add_box,
+              title: 'QR Oluştur',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreateQrScreen(),
+                  ),
+                );
+              },
+            ),
 
-          const Divider(),
+            const Divider(),
 
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.settings,
-            title: 'Ayarlar',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
-            },
-          ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.settings,
+              title: 'Ayarlar',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
+              },
+            ),
 
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.share,
-            title: 'Paylaş',
-            onTap: () {
-              Navigator.pop(context);
-              _shareQrData();
-            },
-          ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.share,
+              title: 'Paylaş',
+              onTap: () {
+                Navigator.pop(context);
+                _shareQrData();
+              },
+            ),
 
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.block,
-            title: 'Reklamları Kaldır',
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Reklamları kaldır özelliği yakında eklenecek'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-          ),
-        ],
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.block,
+              title: 'Reklamları Kaldır',
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Reklamları kaldır özelliği yakında eklenecek',
+                    ),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -699,14 +904,43 @@ class _HomePageState extends State<HomePage> {
     required String title,
     required VoidCallback onTap,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blue.shade600),
-      title: Text(
-        title,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.transparent,
       ),
-      onTap: onTap,
-      hoverColor: Colors.blue.shade50,
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: Theme.of(context).colorScheme.primary,
+            size: 20,
+          ),
+        ),
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        onTap: onTap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        hoverColor: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withOpacity(0.1),
+        splashColor: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withOpacity(0.2),
+      ),
     );
   }
 }
