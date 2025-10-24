@@ -5,30 +5,35 @@ A powerful and feature-rich Flutter QR code scanner application with advanced pa
 ## ✨ Features
 
 ### 🔍 **QR Code Scanning**
+
 - **Real-time scanning** with camera integration
 - **Multiple QR code types** support (URL, WiFi, Contact, SMS, etc.)
 - **Smart parsing** for different data formats
 - **One-time scan** with automatic camera stop
 
 ### 📶 **WiFi QR Code Support**
+
 - **Automatic WiFi detection** from QR codes
 - **SSID extraction** and display
 - **Password parsing** with secure masking
 - **Easy WiFi connection** information
 
 ### 📊 **Scan History**
+
 - **Local storage** with Hive database
 - **Search and filter** functionality
 - **Export capabilities** for scan data
 - **Detailed scan information** with timestamps
 
 ### 🔧 **Advanced Logging**
+
 - **Comprehensive error tracking** with file logging
 - **Real-time log viewer** with filtering
 - **Debug information** for development
 - **Export logs** for troubleshooting
 
 ### 🌐 **URL Handling**
+
 - **Smart URL detection** and validation
 - **User confirmation** before opening URLs
 - **Multiple launch modes** (browser, in-app, etc.)
@@ -37,6 +42,7 @@ A powerful and feature-rich Flutter QR code scanner application with advanced pa
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Flutter SDK (3.0.0 or higher)
 - Dart SDK (2.17.0 or higher)
 - Android Studio / VS Code
@@ -45,17 +51,20 @@ A powerful and feature-rich Flutter QR code scanner application with advanced pa
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/qr-reader.git
    cd qr-reader
    ```
 
 2. **Install dependencies**
+
    ```bash
    flutter pub get
    ```
 
 3. **Generate Hive adapters**
+
    ```bash
    flutter packages pub run build_runner build
    ```
@@ -67,26 +76,28 @@ A powerful and feature-rich Flutter QR code scanner application with advanced pa
 
 ## 📱 Supported QR Code Types
 
-| Type | Format | Description |
-|------|--------|-------------|
-| **URL** | `https://example.com` | Web addresses |
-| **WiFi** | `WIFI:S:SSID;T:WPA;P:password;H:false;;` | WiFi network credentials |
-| **Email** | `mailto:user@example.com` | Email addresses |
-| **Phone** | `tel:+1234567890` | Phone numbers |
-| **SMS** | `sms:+1234567890:message` | SMS messages |
-| **Location** | `geo:lat,lng` | GPS coordinates |
-| **Contact** | `BEGIN:VCARD...` | vCard contact information |
-| **OTP** | `otpauth://totp/...` | Two-factor authentication |
+| Type         | Format                                   | Description               |
+| ------------ | ---------------------------------------- | ------------------------- |
+| **URL**      | `https://example.com`                    | Web addresses             |
+| **WiFi**     | `WIFI:S:SSID;T:WPA;P:password;H:false;;` | WiFi network credentials  |
+| **Email**    | `mailto:user@example.com`                | Email addresses           |
+| **Phone**    | `tel:+1234567890`                        | Phone numbers             |
+| **SMS**      | `sms:+1234567890:message`                | SMS messages              |
+| **Location** | `geo:lat,lng`                            | GPS coordinates           |
+| **Contact**  | `BEGIN:VCARD...`                         | vCard contact information |
+| **OTP**      | `otpauth://totp/...`                     | Two-factor authentication |
 
 ## 🛠️ Technical Details
 
 ### **Architecture**
+
 - **Flutter Framework** with Material Design
 - **State Management** with StatefulWidget
 - **Local Storage** with Hive database
 - **Camera Integration** with mobile_scanner package
 
 ### **Key Packages**
+
 - `mobile_scanner: ^7.1.3` - QR code scanning
 - `hive: ^2.2.3` - Local database
 - `url_launcher: ^6.3.1` - URL handling
@@ -94,6 +105,7 @@ A powerful and feature-rich Flutter QR code scanner application with advanced pa
 - `path_provider: ^2.1.4` - File system access
 
 ### **Project Structure**
+
 ```
 lib/
 ├── main.dart                 # Main application entry point
@@ -110,17 +122,19 @@ lib/
 ## 🔒 Permissions
 
 ### Android
+
 - `CAMERA` - For QR code scanning
 - `INTERNET` - For URL launching
 - `QUERY_ALL_PACKAGES` - For URL handling
 
 ### iOS
+
 - Camera access permission
 - Network access for URL launching
 
 ## 📸 Screenshots
 
-*Screenshots will be added here*
+_Screenshots will be added here_
 
 ## 🤝 Contributing
 
