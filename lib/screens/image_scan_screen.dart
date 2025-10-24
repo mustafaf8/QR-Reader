@@ -31,255 +31,339 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Görüntü Tarama'),
-        backgroundColor: Colors.blue.shade600,
-        foregroundColor: Colors.white,
+        title: const Text('Galeriden QR Tara'),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Başlık
-            const Text(
-              'Galeriden QR Kod Tara',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Galerinizden bir resim seçin ve içindeki QR kodu tarayın',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-
-            // Resim seç butonu
-            ElevatedButton.icon(
-              onPressed: _isLoading
-                  ? null
-                  : () => _pickImageFromSource(ImageSource.gallery),
-              icon: const Icon(Icons.photo_library),
-              label: const Text('Galeriden Resim Seç'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade600,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Yükleme göstergesi
-            if (_isLoading)
-              const Center(
-                child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text('Resim analiz ediliyor...'),
-                  ],
-                ),
-              ),
-
-            // Seçilen resim önizlemesi
-            if (_selectedImage != null && !_isLoading) ...[
-              Container(
-                constraints: const BoxConstraints(
-                  maxHeight: 200,
-                  minHeight: 150,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.file(
-                    _selectedImage!,
-                    fit: BoxFit.contain,
-                    width: double.infinity,
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 32),
+                // Modern Başlık
+                Text(
+                  'Galeriden QR Tara',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-            ],
-
-            // Tarama sonucu
-            if (_scanResult != null && !_isLoading) ...[
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color:
-                      _scanResult!.contains('hata') ||
-                          _scanResult!.contains('bulunamadı')
-                      ? Colors.red.shade50
-                      : Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color:
-                        _scanResult!.contains('hata') ||
-                            _scanResult!.contains('bulunamadı')
-                        ? Colors.red.shade200
-                        : Colors.green.shade200,
+                const SizedBox(height: 8),
+                Text(
+                  'Galeriden bir görüntü seçerek QR kod tarayın',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                const SizedBox(height: 40),
+                // Modern Aksiyon Butonu
+                Card(
+                  elevation: 8,
+                  shadowColor: Theme.of(
+                    context,
+                  ).colorScheme.primary.withOpacity(0.3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
                       children: [
-                        Icon(
-                          _scanResult!.contains('hata') ||
-                                  _scanResult!.contains('bulunamadı')
-                              ? Icons.error
-                              : Icons.check_circle,
-                          color:
-                              _scanResult!.contains('hata') ||
-                                  _scanResult!.contains('bulunamadı')
-                              ? Colors.red.shade600
-                              : Colors.green.shade600,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          _scanResult!.contains('hata') ||
-                                  _scanResult!.contains('bulunamadı')
-                              ? 'Tarama Sonucu'
-                              : 'QR Kod Bulundu!',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color:
-                                _scanResult!.contains('hata') ||
-                                    _scanResult!.contains('bulunamadı')
-                                ? Colors.red.shade700
-                                : Colors.green.shade700,
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton.icon(
+                            onPressed: _isLoading
+                                ? null
+                                : () =>
+                                      _pickImageFromSource(ImageSource.gallery),
+                            icon: const Icon(Icons.photo_library, size: 24),
+                            label: const Text(
+                              'Galeriden Resim Seç',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              foregroundColor: Theme.of(
+                                context,
+                              ).colorScheme.onPrimary,
+                              elevation: 4,
+                              shadowColor: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.3),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    SelectableText(
-                      _scanResult!,
-                      style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // Modern Yükleme göstergesi
+                if (_isLoading)
+                  Card(
+                    elevation: 4,
+                    shadowColor: Theme.of(
+                      context,
+                    ).colorScheme.shadow.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    if (!_scanResult!.contains('hata') &&
-                        !_scanResult!.contains('bulunamadı')) ...[
-                      const SizedBox(height: 12),
-                      Row(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () => _copyToClipboard(_scanResult!),
-                              icon: const Icon(Icons.copy),
-                              label: const Text('Kopyala'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue.shade600,
-                                foregroundColor: Colors.white,
-                              ),
-                            ),
+                          CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                          const SizedBox(width: 8),
-                          if (_isUrl(_scanResult!))
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () =>
-                                    _showUrlDialog(context, _scanResult!),
-                                icon: const Icon(Icons.open_in_browser),
-                                label: const Text('Aç'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green.shade600,
-                                  foregroundColor: Colors.white,
+                          const SizedBox(height: 16),
+                          Text(
+                            'Resim analiz ediliyor...',
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
-                              ),
-                            ),
+                          ),
                         ],
                       ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-
-            const SizedBox(height: 20),
-
-            // Bilgi metni
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blue.shade200),
-              ),
-              child: const Column(
-                children: [
-                  Icon(Icons.info, color: Colors.blue),
-                  SizedBox(height: 8),
-                  Text(
-                    'İpucu',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    'QR kod içeren resimleri galeriden seçin. Desteklenen formatlar: JPG, PNG, GIF',
-                    style: TextStyle(fontSize: 12, color: Colors.blue),
-                    textAlign: TextAlign.center,
+
+                // Modern Seçilen resim önizlemesi
+                if (_selectedImage != null && !_isLoading) ...[
+                  const SizedBox(height: 20),
+                  Card(
+                    elevation: 6,
+                    shadowColor: Theme.of(
+                      context,
+                    ).colorScheme.shadow.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Container(
+                      constraints: const BoxConstraints(
+                        maxHeight: 200,
+                        minHeight: 150,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.file(
+                          _selectedImage!,
+                          fit: BoxFit.contain,
+                          width: double.infinity,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+
+                // Modern Tarama sonucu
+                if (_scanResult != null && !_isLoading) ...[
+                  const SizedBox(height: 20),
+                  Card(
+                    elevation: 6,
+                    shadowColor:
+                        _scanResult!.contains('hata') ||
+                            _scanResult!.contains('bulunamadı')
+                        ? Colors.red.withOpacity(0.2)
+                        : Colors.green.withOpacity(0.2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors:
+                              _scanResult!.contains('hata') ||
+                                  _scanResult!.contains('bulunamadı')
+                              ? [
+                                  Colors.red.shade50,
+                                  Colors.red.shade100.withOpacity(0.3),
+                                ]
+                              : [
+                                  Colors.green.shade50,
+                                  Colors.green.shade100.withOpacity(0.3),
+                                ],
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color:
+                                      (_scanResult!.contains('hata') ||
+                                          _scanResult!.contains('bulunamadı')
+                                      ? Colors.red.shade100
+                                      : Colors.green.shade100),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  _scanResult!.contains('hata') ||
+                                          _scanResult!.contains('bulunamadı')
+                                      ? Icons.error_outline
+                                      : Icons.check_circle,
+                                  color:
+                                      _scanResult!.contains('hata') ||
+                                          _scanResult!.contains('bulunamadı')
+                                      ? Colors.red.shade600
+                                      : Colors.green.shade600,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  _scanResult!.contains('hata') ||
+                                          _scanResult!.contains('bulunamadı')
+                                      ? 'Tarama Sonucu'
+                                      : 'QR Kod Bulundu!',
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            _scanResult!.contains('hata') ||
+                                                _scanResult!.contains(
+                                                  'bulunamadı',
+                                                )
+                                            ? Colors.red.shade700
+                                            : Colors.green.shade700,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color:
+                                    (_scanResult!.contains('hata') ||
+                                        _scanResult!.contains('bulunamadı')
+                                    ? Colors.red.shade200
+                                    : Colors.green.shade200),
+                              ),
+                            ),
+                            child: SelectableText(
+                              _scanResult!,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(fontFamily: 'monospace'),
+                            ),
+                          ),
+                          if (!_scanResult!.contains('hata') &&
+                              !_scanResult!.contains('bulunamadı')) ...[
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () =>
+                                        _copyToClipboard(_scanResult!),
+                                    icon: const Icon(Icons.copy),
+                                    label: const Text('Kopyala'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      foregroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () => _launchUrl(_scanResult!),
+                                    icon: const Icon(Icons.open_in_new),
+                                    label: const Text('Aç'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
+                                      foregroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.onSecondary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
                   ),
                 ],
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  /// Belirtilen kaynaktan resim seçer ve QR kodunu tarar
+  /// Galeriden resim seçer
   Future<void> _pickImageFromSource(ImageSource source) async {
-    // Resim seçme başlatıldı
-
-    setState(() {
-      _isLoading = true;
-      _selectedImage = null;
-      _scanResult = null;
-    });
-
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: source,
-        imageQuality: 80,
-      );
+      setState(() {
+        _isLoading = true;
+        _scanResult = null;
+      });
 
-      if (pickedFile != null) {
+      final XFile? image = await _picker.pickImage(source: source);
+      if (image != null) {
         setState(() {
-          _selectedImage = File(pickedFile.path);
+          _selectedImage = File(image.path);
         });
 
-        await _analyzeImage(pickedFile.path);
-      } else {
-        // Resim seçme iptal edildi
-        setState(() {
-          _scanResult = 'Resim seçimi iptal edildi.';
-        });
+        // QR kod tarama
+        await _scanImageForQrCode(_selectedImage!);
       }
     } catch (e) {
-      // Resim seçme hatası
-
-      String errorMessage = 'Resim seçilirken hata: $e';
-
-      // PlatformException için özel mesaj
-      if (e.toString().contains('PlatformException')) {
-        errorMessage =
-            'Galeri erişim hatası. Lütfen uygulama izinlerini kontrol edin.';
-      }
-
       setState(() {
-        _scanResult = errorMessage;
+        _scanResult = 'Hata: Resim seçilirken bir sorun oluştu';
       });
     } finally {
       setState(() {
@@ -288,199 +372,111 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
     }
   }
 
-  /// Seçilen resmi analiz eder ve QR kodunu tarar
-  Future<void> _analyzeImage(String path) async {
+  /// Resimdeki QR kodu tarar
+  Future<void> _scanImageForQrCode(File imageFile) async {
     try {
-      // Resim analizi başlatıldı
-
       final BarcodeCapture? capture = await _scannerController.analyzeImage(
-        path,
+        imageFile.path,
+      );
+      final List<Barcode> barcodes = capture?.barcodes ?? [];
+
+      if (barcodes.isNotEmpty) {
+        final String qrData = barcodes.first.rawValue ?? '';
+        setState(() {
+          _scanResult = qrData;
+        });
+
+        // QR kod verisini kaydet
+        await _saveQrData(qrData);
+      } else {
+        setState(() {
+          _scanResult = 'Bu resimde QR kod bulunamadı';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _scanResult = 'Hata: QR kod taranırken bir sorun oluştu';
+      });
+    }
+  }
+
+  /// QR kod verisini kaydeder
+  Future<void> _saveQrData(String data) async {
+    try {
+      final qrScan = QrScanModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        data: data,
+        timestamp: DateTime.now(),
+        type: _determineQrType(data),
       );
 
-      if (capture != null &&
-          capture.barcodes.isNotEmpty &&
-          capture.barcodes.first.rawValue != null) {
-        final String result = capture.barcodes.first.rawValue!;
-        // Görüntüden QR kod başarıyla okundu
-
-        await _handleScanResult(result);
-      } else {
-        setState(() {
-          _scanResult = 'Seçilen resimde QR kod bulunamadı.';
-        });
-        // Görüntüde QR kod bulunamadı
-      }
+      await HiveService().saveQrScan(qrScan);
     } catch (e) {
-      // Görüntü analiz hatası
-      setState(() {
-        _scanResult = 'Görüntü analiz edilirken hata: $e';
-      });
+      // Hata durumunda sessizce devam et
     }
   }
 
-  /// Tarama sonucunu işler ve kaydeder
-  Future<void> _handleScanResult(String data) async {
-    try {
-      // QR scan model oluştur ve kaydet (tekrar edenleri filtrele)
-      final QrScanModel scanModel = QrScanModel.fromScan(data: data);
-      final wasSaved = await HiveService().saveQrScan(scanModel);
-
-      // WiFi QR kodu ise özel gösterim yap
-      if (data.startsWith('WIFI:') || data.startsWith('wifi:')) {
-        final ssid = _extractWiFiSSID(data);
-        final password = _extractWiFiPassword(data);
-
-        setState(() {
-          _scanResult = 'WiFi Ağı: $ssid\nŞifre: $password';
-        });
-      } else {
-        setState(() {
-          _scanResult = data;
-        });
-      }
-
-      // Kaydetme durumuna göre mesaj göster
-      if (wasSaved) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('QR kod başarıyla tarandı ve kaydedildi!'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 3),
-          ),
-        );
-        // QR kod başarıyla kaydedildi
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Bu QR kod daha önce taranmış!'),
-            backgroundColor: Colors.orange,
-            duration: Duration(seconds: 3),
-          ),
-        );
-        // Tekrar eden QR tarama, kaydedilmedi
-      }
-    } catch (e) {
-      // QR kod kaydetme hatası
-      setState(() {
-        _scanResult = 'QR kod kaydedilirken hata: $e';
-      });
+  /// QR kod tipini belirler
+  String _determineQrType(String data) {
+    if (data.startsWith('http://') || data.startsWith('https://')) {
+      return 'URL';
+    } else if (data.startsWith('mailto:')) {
+      return 'Email';
+    } else if (data.startsWith('tel:')) {
+      return 'Telefon';
+    } else if (data.startsWith('sms:')) {
+      return 'SMS';
+    } else if (data.startsWith('WIFI:')) {
+      return 'WiFi';
+    } else if (data.startsWith('BEGIN:VCARD')) {
+      return 'Kişi';
+    } else if (data.startsWith('BEGIN:VEVENT')) {
+      return 'Takvim';
+    } else {
+      return 'Metin';
     }
   }
 
-  /// WiFi QR kodundan SSID'i çıkarır
-  String _extractWiFiSSID(String data) {
-    try {
-      if (!data.startsWith('WIFI:')) return 'WiFi Ağı';
-
-      final ssidIndex = data.indexOf('S:');
-      if (ssidIndex == -1) return 'WiFi Ağı';
-
-      final afterSSID = data.substring(ssidIndex + 2);
-      final semicolonIndex = afterSSID.indexOf(';');
-      if (semicolonIndex == -1) return afterSSID;
-
-      return afterSSID.substring(0, semicolonIndex);
-    } catch (e) {
-      return 'WiFi Ağı';
-    }
-  }
-
-  /// WiFi QR kodundan şifreyi çıkarır
-  String _extractWiFiPassword(String data) {
-    try {
-      if (!data.startsWith('WIFI:')) return 'WiFi ağ bilgileri';
-
-      final passwordIndex = data.indexOf('P:');
-      if (passwordIndex == -1) return 'WiFi ağ bilgileri';
-
-      final afterPassword = data.substring(passwordIndex + 2);
-      final semicolonIndex = afterPassword.indexOf(';');
-      if (semicolonIndex == -1) return afterPassword;
-
-      final password = afterPassword.substring(0, semicolonIndex);
-
-      if (password.isEmpty) return 'Şifre yok';
-      if (password == 'HIDDEN') return 'Gizli şifre';
-
-      return password;
-    } catch (e) {
-      return 'WiFi ağ bilgileri';
-    }
-  }
-
-  /// URL kontrolü yapar
-  bool _isUrl(String data) {
-    return data.startsWith('http://') || data.startsWith('https://');
-  }
-
-  /// URL dialog gösterir
-  Future<void> _showUrlDialog(BuildContext context, String url) async {
-    // URL dialog gösteriliyor
-
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Row(
+  /// Panoya kopyalar
+  Future<void> _copyToClipboard(String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
             children: [
-              Icon(Icons.link, color: Colors.blue),
-              SizedBox(width: 8),
-              Text('URL Bulundu'),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'QR kodda bir web adresi bulundu. Bu sayfayı açmak istiyor musunuz?',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: SelectableText(
-                  url,
-                  style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                child: const Icon(Icons.copy, color: Colors.white, size: 20),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Panoya kopyalandı!',
+                  style: TextStyle(fontWeight: FontWeight.w500),
                 ),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _copyToClipboard(url);
-              },
-              child: const Text('Kopyala'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('İptal'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _launchUrl(url);
-              },
-              child: const Text('Aç'),
-            ),
-          ],
-        );
-      },
-    );
+          backgroundColor: Colors.blue.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   /// URL'yi açar
   Future<void> _launchUrl(String url) async {
     try {
-      // URL açma denemesi
-
       // URL'ye https:// ekle eğer yoksa
       String finalUrl = url;
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -488,84 +484,83 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
       }
 
       final Uri uri = Uri.parse(finalUrl);
-
-      // Farklı launch mode'ları dene
-      bool launched = false;
-
-      // Önce external application ile dene
-      try {
-        launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-        if (launched) {
-          // URL başarıyla açıldı (external)
-          return;
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.error_outline,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'URL açılamadı',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.red.shade600,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.all(16),
+              duration: const Duration(seconds: 2),
+            ),
+          );
         }
-      } catch (e) {
-        // External application ile açılamadı
-      }
-
-      // Platform default ile dene
-      try {
-        launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
-        if (launched) {
-          // URL başarıyla açıldı (platform default)
-          return;
-        }
-      } catch (e) {
-        // Platform default ile açılamadı
-      }
-
-      // In-app web view ile dene
-      try {
-        launched = await launchUrl(uri, mode: LaunchMode.inAppWebView);
-        if (launched) {
-          // URL başarıyla açıldı (in-app web view)
-          return;
-        }
-      } catch (e) {
-        // In-app web view ile açılamadı
-      }
-
-      // Hiçbiri çalışmazsa hata göster
-      if (!launched) {
-        throw Exception('URL açılamadı');
       }
     } catch (e) {
-      // URL açma hatası
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('URL açılamadı: $e'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
-          action: SnackBarAction(
-            label: 'Kopyala',
-            onPressed: () => _copyToClipboard(url),
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.error_outline,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    'URL açılırken hata oluştu',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red.shade600,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 2),
           ),
-        ),
-      );
-    }
-  }
-
-  /// Metni panoya kopyalar
-  void _copyToClipboard(String text) {
-    String textToCopy = text;
-    String message = 'Panoya kopyalandı';
-
-    // WiFi QR kodu ise sadece şifreyi kopyala
-    if (text.contains('WiFi Ağı:') && text.contains('Şifre:')) {
-      final lines = text.split('\n');
-      if (lines.length >= 2) {
-        final passwordLine = lines[1];
-        if (passwordLine.startsWith('Şifre: ')) {
-          textToCopy = passwordLine.substring(7); // "Şifre: " kısmını çıkar
-          message = 'WiFi şifresi panoya kopyalandı';
-        }
+        );
       }
     }
-
-    Clipboard.setData(ClipboardData(text: textToCopy));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
-    );
   }
 }
