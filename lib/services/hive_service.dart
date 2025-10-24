@@ -8,7 +8,9 @@ class HiveService {
   HiveService._internal();
 
   static const String _qrScansBoxName = 'qr_scans';
+  static const String _favoritesBoxName = 'favorites';
   Box<QrScanModel>? _qrScansBox;
+  Box<QrScanModel>? _favoritesBox;
 
   Future<void> initialize() async {
     try {
@@ -24,6 +26,7 @@ class HiveService {
 
       // Box'ları aç
       _qrScansBox = await Hive.openBox<QrScanModel>(_qrScansBoxName);
+      _favoritesBox = await Hive.openBox<QrScanModel>(_favoritesBoxName);
 
       LogService().info(
         'HiveService başarıyla başlatıldı',
@@ -39,14 +42,38 @@ class HiveService {
     }
   }
 
-  // QR tarama kaydetme
-  Future<void> saveQrScan(QrScanModel scan) async {
+  // QR tarama kaydetme (tekrar edenleri otomatik filtrele)
+  Future<bool> saveQrScan(QrScanModel scan) async {
     try {
+      // Aynı data'ya sahip tarama var mı kontrol et
+      final existingScans = getAllQrScans();
+      final duplicateScan = existingScans.firstWhere(
+        (existingScan) => existingScan.data == scan.data,
+        orElse: () =>
+            QrScanModel(id: '', data: '', type: '', timestamp: DateTime.now()),
+      );
+
+      // Eğer aynı data'ya sahip tarama varsa, kaydetme
+      if (duplicateScan.data.isNotEmpty) {
+        LogService().info(
+          'Tekrar eden QR tarama tespit edildi, kaydedilmedi',
+          extra: {
+            'existingId': duplicateScan.id,
+            'newId': scan.id,
+            'data': scan.data,
+            'type': scan.type,
+          },
+        );
+        return false; // Kaydedilmedi
+      }
+
+      // Benzersiz tarama, kaydet
       await _qrScansBox?.put(scan.id, scan);
       LogService().info(
         'QR tarama kaydedildi',
         extra: {'id': scan.id, 'type': scan.type, 'data': scan.data},
       );
+      return true; // Kaydedildi
     } catch (e, stackTrace) {
       LogService().error(
         'QR tarama kaydetme hatası',
@@ -263,4 +290,140 @@ class HiveService {
 
   // Box'ın dolu olup olmadığını kontrol et
   bool get isNotEmpty => _qrScansBox?.isNotEmpty ?? false;
+
+  // ========== SIK KULLANILANLAR METODLARI ==========
+
+  // Sık kullanılanlara ekle
+  Future<void> addToFavorites(QrScanModel scan) async {
+    try {
+      // Yeni bir instance oluştur (aynı objeyi iki box'ta saklayamayız)
+      final favoriteScan = QrScanModel.copy(
+        id: scan.id,
+        timestamp: scan.timestamp,
+        data: scan.data,
+        type: scan.type,
+        title: scan.title,
+        description: scan.description,
+        format: scan.format,
+        isUrl: scan.isUrl,
+      );
+
+      await _favoritesBox?.put(scan.id, favoriteScan);
+      LogService().info(
+        'Sık kullanılanlara eklendi',
+        extra: {'id': scan.id, 'type': scan.type, 'data': scan.data},
+      );
+    } catch (e, stackTrace) {
+      LogService().error(
+        'Sık kullanılanlara ekleme hatası',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  // Sık kullanılanlardan çıkar
+  Future<void> removeFromFavorites(String id) async {
+    try {
+      await _favoritesBox?.delete(id);
+      LogService().info('Sık kullanılanlardan çıkarıldı', extra: {'id': id});
+    } catch (e, stackTrace) {
+      LogService().error(
+        'Sık kullanılanlardan çıkarma hatası',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  // Tüm sık kullanılanları getir
+  List<QrScanModel> getAllFavorites() {
+    try {
+      final favorites = _favoritesBox?.values.toList() ?? [];
+      // En yeni eklenenler önce gelecek şekilde sırala
+      favorites.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      return favorites;
+    } catch (e, stackTrace) {
+      LogService().error(
+        'Sık kullanılanları getirme hatası',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return [];
+    }
+  }
+
+  // Sık kullanılanlarda var mı kontrol et
+  bool isFavorite(String id) {
+    try {
+      return _favoritesBox?.containsKey(id) ?? false;
+    } catch (e, stackTrace) {
+      LogService().error(
+        'Sık kullanılan kontrol hatası',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
+  }
+
+  // Tüm sık kullanılanları sil
+  Future<void> clearAllFavorites() async {
+    try {
+      await _favoritesBox?.clear();
+      LogService().info('Tüm sık kullanılanlar silindi');
+    } catch (e, stackTrace) {
+      LogService().error(
+        'Tüm sık kullanılanları silme hatası',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  // Sık kullanılanlar sayısını getir
+  int get favoritesCount => _favoritesBox?.length ?? 0;
+
+  // Tekrar eden taramaları kaldır
+  Future<void> removeDuplicateScans() async {
+    try {
+      final allScans = getAllQrScans();
+      final uniqueScans = <String, QrScanModel>{};
+
+      // Aynı data'ya sahip taramaları grupla, en yenisini tut
+      for (final scan in allScans) {
+        if (!uniqueScans.containsKey(scan.data) ||
+            scan.timestamp.isAfter(uniqueScans[scan.data]!.timestamp)) {
+          uniqueScans[scan.data] = scan;
+        }
+      }
+
+      // Tüm taramaları sil
+      await _qrScansBox?.clear();
+
+      // Benzersiz taramaları tekrar ekle
+      for (final scan in uniqueScans.values) {
+        await _qrScansBox?.put(scan.id, scan);
+      }
+
+      LogService().info(
+        'Tekrar eden taramalar kaldırıldı',
+        extra: {
+          'originalCount': allScans.length,
+          'uniqueCount': uniqueScans.length,
+          'removedCount': allScans.length - uniqueScans.length,
+        },
+      );
+    } catch (e, stackTrace) {
+      LogService().error(
+        'Tekrar eden taramaları kaldırma hatası',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
 }

@@ -5,6 +5,11 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- URL açma için gerekli izinler -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <!-- Galeri erişimi için izinler -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     
     <application
         android:label="qr_okuyucu"

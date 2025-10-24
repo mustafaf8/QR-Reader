@@ -39,6 +39,18 @@ class QrScanModel extends HiveObject {
     this.description,
   });
 
+  // Copy constructor
+  QrScanModel.copy({
+    required this.id,
+    required this.data,
+    required this.type,
+    required this.timestamp,
+    this.format,
+    this.isUrl = false,
+    this.title,
+    this.description,
+  });
+
   factory QrScanModel.fromScan({required String data, String? format}) {
     final now = DateTime.now();
     final type = _getDataType(data);
