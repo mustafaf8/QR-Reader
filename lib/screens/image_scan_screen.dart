@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../services/log_service.dart';
 import '../services/hive_service.dart';
 import '../models/qr_scan_model.dart';
 
@@ -242,10 +241,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
 
   /// Belirtilen kaynaktan resim seçer ve QR kodunu tarar
   Future<void> _pickImageFromSource(ImageSource source) async {
-    LogService().info(
-      'Resim seçme başlatıldı',
-      extra: {'source': source.toString()},
-    );
+    // Resim seçme başlatıldı
 
     setState(() {
       _isLoading = true;
@@ -266,17 +262,13 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
 
         await _analyzeImage(pickedFile.path);
       } else {
-        LogService().info('Resim seçme iptal edildi');
+        // Resim seçme iptal edildi
         setState(() {
           _scanResult = 'Resim seçimi iptal edildi.';
         });
       }
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Resim seçme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // Resim seçme hatası
 
       String errorMessage = 'Resim seçilirken hata: $e';
 
@@ -299,7 +291,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
   /// Seçilen resmi analiz eder ve QR kodunu tarar
   Future<void> _analyzeImage(String path) async {
     try {
-      LogService().info('Resim analizi başlatıldı', extra: {'path': path});
+      // Resim analizi başlatıldı
 
       final BarcodeCapture? capture = await _scannerController.analyzeImage(
         path,
@@ -309,24 +301,17 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
           capture.barcodes.isNotEmpty &&
           capture.barcodes.first.rawValue != null) {
         final String result = capture.barcodes.first.rawValue!;
-        LogService().info(
-          'Görüntüden QR kod başarıyla okundu',
-          extra: {'result': result},
-        );
+        // Görüntüden QR kod başarıyla okundu
 
         await _handleScanResult(result);
       } else {
         setState(() {
           _scanResult = 'Seçilen resimde QR kod bulunamadı.';
         });
-        LogService().warning('Görüntüde QR kod bulunamadı');
+        // Görüntüde QR kod bulunamadı
       }
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Görüntü analiz hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // Görüntü analiz hatası
       setState(() {
         _scanResult = 'Görüntü analiz edilirken hata: $e';
       });
@@ -363,7 +348,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
             duration: Duration(seconds: 3),
           ),
         );
-        LogService().info('QR kod başarıyla kaydedildi', extra: {'data': data});
+        // QR kod başarıyla kaydedildi
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -372,17 +357,10 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
             duration: Duration(seconds: 3),
           ),
         );
-        LogService().info(
-          'Tekrar eden QR tarama, kaydedilmedi',
-          extra: {'data': data},
-        );
+        // Tekrar eden QR tarama, kaydedilmedi
       }
-    } catch (e, stackTrace) {
-      LogService().error(
-        'QR kod kaydetme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // QR kod kaydetme hatası
       setState(() {
         _scanResult = 'QR kod kaydedilirken hata: $e';
       });
@@ -437,7 +415,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
 
   /// URL dialog gösterir
   Future<void> _showUrlDialog(BuildContext context, String url) async {
-    LogService().info('URL dialog gösteriliyor', extra: {'url': url});
+    // URL dialog gösteriliyor
 
     return showDialog<void>(
       context: context,
@@ -501,7 +479,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
   /// URL'yi açar
   Future<void> _launchUrl(String url) async {
     try {
-      LogService().info('URL açma denemesi', extra: {'url': url});
+      // URL açma denemesi
 
       // URL'ye https:// ekle eğer yoksa
       String finalUrl = url;
@@ -518,59 +496,41 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
       try {
         launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
         if (launched) {
-          LogService().info(
-            'URL başarıyla açıldı (external)',
-            extra: {'url': finalUrl},
-          );
+          // URL başarıyla açıldı (external)
           return;
         }
       } catch (e) {
-        LogService().warning(
-          'External application ile açılamadı',
-          extra: {'error': e.toString()},
-        );
+        // External application ile açılamadı
       }
 
       // Platform default ile dene
       try {
         launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
         if (launched) {
-          LogService().info(
-            'URL başarıyla açıldı (platform default)',
-            extra: {'url': finalUrl},
-          );
+          // URL başarıyla açıldı (platform default)
           return;
         }
       } catch (e) {
-        LogService().warning(
-          'Platform default ile açılamadı',
-          extra: {'error': e.toString()},
-        );
+        // Platform default ile açılamadı
       }
 
       // In-app web view ile dene
       try {
         launched = await launchUrl(uri, mode: LaunchMode.inAppWebView);
         if (launched) {
-          LogService().info(
-            'URL başarıyla açıldı (in-app web view)',
-            extra: {'url': finalUrl},
-          );
+          // URL başarıyla açıldı (in-app web view)
           return;
         }
       } catch (e) {
-        LogService().warning(
-          'In-app web view ile açılamadı',
-          extra: {'error': e.toString()},
-        );
+        // In-app web view ile açılamadı
       }
 
       // Hiçbiri çalışmazsa hata göster
       if (!launched) {
         throw Exception('URL açılamadı');
       }
-    } catch (e, stackTrace) {
-      LogService().error('URL açma hatası', error: e, stackTrace: stackTrace);
+    } catch (e) {
+      // URL açma hatası
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

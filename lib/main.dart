@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'services/log_service.dart';
+import 'package:share_plus/share_plus.dart';
 import 'services/hive_service.dart';
-import 'screens/log_viewer_screen.dart';
 import 'screens/scan_history_screen.dart';
 import 'screens/image_scan_screen.dart';
 import 'screens/favorites_screen.dart';
-import 'screens/my_qr_screen.dart';
 import 'screens/create_qr_screen.dart';
 import 'screens/settings_screen.dart';
 import 'models/qr_scan_model.dart';
@@ -17,37 +15,21 @@ import 'models/qr_scan_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Log servisini başlat
-  LogService().initialize();
-
   // Hive servisini başlat
   try {
     await HiveService().initialize();
-    LogService().info('HiveService başarıyla başlatıldı');
   } catch (e) {
-    LogService().error('HiveService başlatma hatası', error: e);
+    // Hive başlatma hatası
   }
 
   // Global hata yakalama
   FlutterError.onError = (FlutterErrorDetails details) {
-    LogService().fatal(
-      'Flutter Error: ${details.exception}',
-      error: details.exception,
-      stackTrace: details.stack,
-      extra: {
-        'library': details.library,
-        'context': details.context?.toString(),
-      },
-    );
+    // Hata yakalama
   };
 
   // Platform hata yakalama
   PlatformDispatcher.instance.onError = (error, stack) {
-    LogService().fatal(
-      'Platform Error: $error',
-      error: error,
-      stackTrace: stack,
-    );
+    // Platform hata yakalama
     return true;
   };
 
@@ -101,18 +83,6 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.history),
             tooltip: 'Tarama Geçmişi',
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LogViewerScreen(),
-                ),
-              );
-            },
-            icon: const Icon(Icons.bug_report),
-            tooltip: 'Log Görüntüleyici',
-          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -134,107 +104,134 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Aşağıdaki butona tıklayarak QR kod taramaya başlayabilirsiniz.',
+                  'Aşağıdaki butonlardan birini seçerek QR kod taramaya başlayabilirsiniz.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 24),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    LogService().info('QR tarama başlatıldı');
+                // Butonlar Row'u
+                Row(
+                  children: [
+                    // QR Kod Tara butonu
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          // Log removed
 
-                    final currentContext = context;
-                    final isMounted = mounted;
+                          final currentContext = context;
+                          final isMounted = mounted;
 
-                    try {
-                      final result = await Navigator.push<String>(
-                        currentContext,
-                        MaterialPageRoute(
-                          builder: (context) => const QrScannerScreen(),
-                        ),
-                      );
-
-                      if (result != null && isMounted) {
-                        LogService().info(
-                          'QR kod başarıyla tarandı',
-                          extra: {'data': result, 'type': _getDataType(result)},
-                        );
-
-                        // Taramayı geçmişe kaydet (tekrar edenleri filtrele)
-                        try {
-                          final scanModel = QrScanModel.fromScan(data: result);
-                          final wasSaved = await HiveService().saveQrScan(
-                            scanModel,
-                          );
-
-                          if (wasSaved) {
-                            LogService().info(
-                              'QR tarama geçmişe kaydedildi',
-                              extra: {'id': scanModel.id},
-                            );
-                            // Başarı mesajı göster
-                            ScaffoldMessenger.of(currentContext).showSnackBar(
-                              const SnackBar(
-                                content: Text('QR kod tarandı ve kaydedildi!'),
-                                backgroundColor: Colors.green,
-                                duration: Duration(seconds: 2),
+                          try {
+                            final result = await Navigator.push<String>(
+                              currentContext,
+                              MaterialPageRoute(
+                                builder: (context) => const QrScannerScreen(),
                               ),
                             );
-                          } else {
-                            LogService().info(
-                              'Tekrar eden QR tarama, kaydedilmedi',
-                              extra: {'data': result},
-                            );
-                            // Tekrar eden tarama mesajı göster
-                            ScaffoldMessenger.of(currentContext).showSnackBar(
-                              const SnackBar(
-                                content: Text('Bu QR kod daha önce taranmış!'),
-                                backgroundColor: Colors.orange,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
+
+                            if (result != null && isMounted) {
+                              // QR kod başarıyla tarandı
+
+                              // Taramayı geçmişe kaydet (tekrar edenleri filtrele)
+                              try {
+                                final scanModel = QrScanModel.fromScan(
+                                  data: result,
+                                );
+                                final wasSaved = await HiveService().saveQrScan(
+                                  scanModel,
+                                );
+
+                                if (wasSaved) {
+                                  // QR tarama geçmişe kaydedildi
+                                  // Başarı mesajı göster
+                                  ScaffoldMessenger.of(
+                                    currentContext,
+                                  ).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'QR kod tarandı ve kaydedildi!',
+                                      ),
+                                      backgroundColor: Colors.green,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                } else {
+                                  // Tekrar eden QR tarama, kaydedilmedi
+                                  // Tekrar eden tarama mesajı göster
+                                  ScaffoldMessenger.of(
+                                    currentContext,
+                                  ).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Bu QR kod daha önce taranmış!',
+                                      ),
+                                      backgroundColor: Colors.orange,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                // QR tarama geçmişe kaydetme hatası
+                              }
+
+                              setState(() {
+                                _scannedData = result;
+                                _scannedType = _getDataType(result);
+                              });
+
+                              // Eğer URL ise kullanıcıya açmak isteyip istemediğini sor
+                              if (_isUrl(result) && mounted) {
+                                // URL algılandı, kullanıcıya onay soruluyor
+                                await _showUrlDialog(currentContext, result);
+                              }
+                            } else {
+                              // QR tarama iptal edildi veya başarısız
+                            }
+                          } catch (e) {
+                            // QR tarama sırasında hata
                           }
-                        } catch (e) {
-                          LogService().error(
-                            'QR tarama geçmişe kaydetme hatası',
-                            error: e,
-                          );
-                        }
-
-                        setState(() {
-                          _scannedData = result;
-                          _scannedType = _getDataType(result);
-                        });
-
-                        // Eğer URL ise kullanıcıya açmak isteyip istemediğini sor
-                        if (_isUrl(result) && mounted) {
-                          LogService().info(
-                            'URL algılandı, kullanıcıya onay soruluyor',
-                            extra: {'url': result},
-                          );
-                          await _showUrlDialog(currentContext, result);
-                        }
-                      } else {
-                        LogService().info(
-                          'QR tarama iptal edildi veya başarısız',
-                        );
-                      }
-                    } catch (e, stackTrace) {
-                      LogService().error(
-                        'QR tarama sırasında hata',
-                        error: e,
-                        stackTrace: stackTrace,
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.qr_code_scanner),
-                  label: const Text('QR Kod Tara'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
+                        },
+                        icon: const Icon(Icons.qr_code_scanner),
+                        label: const Text('QR Kod Tara'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 12),
+                    // Galeriden Seç butonu
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          // Log removed
+
+                          try {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ImageScanScreen(),
+                              ),
+                            );
+                          } catch (e) {
+                            // Galeri tarama sırasında hata
+                          }
+                        },
+                        icon: const Icon(Icons.photo_library),
+                        label: const Text('Galeriden Seç'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.purple,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 if (_scannedData != null) ...[
                   const SizedBox(height: 32),
@@ -399,7 +396,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showUrlDialog(BuildContext context, String url) async {
-    LogService().info('URL dialog gösteriliyor', extra: {'url': url});
+    // Log removed
 
     return showDialog<void>(
       context: context,
@@ -451,14 +448,14 @@ class _HomePageState extends State<HomePage> {
           actions: [
             TextButton(
               onPressed: () {
-                LogService().info('URL açma iptal edildi', extra: {'url': url});
+                // Log removed
                 Navigator.of(context).pop();
               },
               child: const Text('İptal'),
             ),
             ElevatedButton.icon(
               onPressed: () async {
-                LogService().info('URL açma onaylandı', extra: {'url': url});
+                // Log removed
                 Navigator.of(context).pop();
                 await _launchUrl(url);
               },
@@ -477,78 +474,50 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _launchUrl(String url) async {
     try {
-      LogService().info('URL açma işlemi başlatıldı', extra: {'url': url});
+      // Log removed
 
       // URL formatını kontrol et ve düzelt
       String cleanUrl = url.trim();
       if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
         cleanUrl = 'https://$cleanUrl';
-        LogService().info(
-          'URL formatı düzeltildi',
-          extra: {'original': url, 'fixed': cleanUrl},
-        );
+        // URL formatı düzeltildi
       }
 
       final Uri uri = Uri.parse(cleanUrl);
 
       // Önce canLaunchUrl kontrolü
       final canLaunch = await canLaunchUrl(uri);
-      LogService().info(
-        'canLaunchUrl sonucu: $canLaunch',
-        extra: {'url': cleanUrl},
-      );
+      // canLaunchUrl sonucu kontrol edildi
 
       if (canLaunch) {
         // İlk deneme: externalApplication
         try {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
-          LogService().info(
-            'URL başarıyla açıldı (externalApplication)',
-            extra: {'url': cleanUrl},
-          );
+          // URL başarıyla açıldı (externalApplication)
           return;
         } catch (e) {
-          LogService().warning(
-            'externalApplication başarısız, platformDefault deneniyor',
-            extra: {'error': e.toString()},
-          );
+          // externalApplication başarısız, platformDefault deneniyor
         }
 
         // İkinci deneme: platformDefault
         try {
           await launchUrl(uri, mode: LaunchMode.platformDefault);
-          LogService().info(
-            'URL başarıyla açıldı (platformDefault)',
-            extra: {'url': cleanUrl},
-          );
+          // URL başarıyla açıldı (platformDefault)
           return;
         } catch (e) {
-          LogService().warning(
-            'platformDefault başarısız, inAppWebView deneniyor',
-            extra: {'error': e.toString()},
-          );
+          // platformDefault başarısız, inAppWebView deneniyor
         }
 
         // Üçüncü deneme: inAppWebView
         try {
           await launchUrl(uri, mode: LaunchMode.inAppWebView);
-          LogService().info(
-            'URL başarıyla açıldı (inAppWebView)',
-            extra: {'url': cleanUrl},
-          );
+          // URL başarıyla açıldı (inAppWebView)
           return;
         } catch (e) {
-          LogService().error(
-            'Tüm URL açma yöntemleri başarısız',
-            error: e,
-            extra: {'url': cleanUrl},
-          );
+          // Tüm URL açma yöntemleri başarısız
         }
       } else {
-        LogService().warning(
-          'canLaunchUrl false döndü',
-          extra: {'url': cleanUrl},
-        );
+        // canLaunchUrl false döndü
       }
 
       // Tüm yöntemler başarısız oldu
@@ -575,13 +544,8 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       }
-    } catch (e, stackTrace) {
-      LogService().error(
-        'URL açma hatası',
-        error: e,
-        stackTrace: stackTrace,
-        extra: {'url': url},
-      );
+    } catch (e) {
+      // URL açma hatası
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -643,21 +607,6 @@ class _HomePageState extends State<HomePage> {
 
           _buildDrawerItem(
             context: context,
-            icon: Icons.image_search,
-            title: 'Görüntü Tarama',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ImageScanScreen(),
-                ),
-              );
-            },
-          ),
-
-          _buildDrawerItem(
-            context: context,
             icon: Icons.star,
             title: 'Sık Kullanılanlar',
             onTap: () {
@@ -682,19 +631,6 @@ class _HomePageState extends State<HomePage> {
                 MaterialPageRoute(
                   builder: (context) => const ScanHistoryScreen(),
                 ),
-              );
-            },
-          ),
-
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.person,
-            title: 'Benim QR\'ım',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyQrScreen()),
               );
             },
           ),
@@ -733,27 +669,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Paylaş',
             onTap: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Paylaş özelliği yakında eklenecek'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-          ),
-
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.apps,
-            title: 'Uygulamalarımız',
-            onTap: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Uygulamalarımız özelliği yakında eklenecek'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
+              _shareQrData();
             },
           ),
 
@@ -809,12 +725,12 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
   @override
   void initState() {
     super.initState();
-    LogService().info('QR Scanner ekranı açıldı');
+    // Log removed
   }
 
   @override
   void dispose() {
-    LogService().info('QR Scanner ekranı kapatıldı');
+    // Log removed
     cameraController.dispose();
     super.dispose();
   }
@@ -829,14 +745,14 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              LogService().info('Fener durumu değiştiriliyor');
+              // Log removed
               cameraController.toggleTorch();
             },
             icon: const Icon(Icons.flash_on),
           ),
           IconButton(
             onPressed: () {
-              LogService().info('Kamera değiştiriliyor');
+              // Log removed
               cameraController.switchCamera();
             },
             icon: const Icon(Icons.camera_front),
@@ -899,17 +815,11 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     if (!_isScanning) return;
 
     final List<Barcode> barcodes = capture.barcodes;
-    LogService().debug(
-      'QR kod algılandı',
-      extra: {'barcodeCount': barcodes.length, 'isScanning': _isScanning},
-    );
+    // QR kod algılandı
 
     for (final barcode in barcodes) {
       if (barcode.rawValue != null) {
-        LogService().info(
-          'QR kod başarıyla okundu',
-          extra: {'rawValue': barcode.rawValue, 'format': barcode.format.name},
-        );
+        // QR kod başarıyla okundu
 
         setState(() {
           _isScanning = false;
@@ -917,7 +827,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
 
         // Kamerayı durdur
         cameraController.stop();
-        LogService().info('Kamera durduruldu');
+        // Log removed
 
         // Sonucu ana sayfaya gönder
         Navigator.pop(context, barcode.rawValue);

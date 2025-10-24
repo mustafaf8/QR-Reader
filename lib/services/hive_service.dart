@@ -1,6 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/qr_scan_model.dart';
-import 'log_service.dart';
 
 class HiveService {
   static final HiveService _instance = HiveService._internal();
@@ -14,7 +13,7 @@ class HiveService {
 
   Future<void> initialize() async {
     try {
-      LogService().info('HiveService başlatılıyor');
+      // Log removed
 
       // Hive'ı başlat
       await Hive.initFlutter();
@@ -28,16 +27,9 @@ class HiveService {
       _qrScansBox = await Hive.openBox<QrScanModel>(_qrScansBoxName);
       _favoritesBox = await Hive.openBox<QrScanModel>(_favoritesBoxName);
 
-      LogService().info(
-        'HiveService başarıyla başlatıldı',
-        extra: {'totalScans': _qrScansBox?.length ?? 0},
-      );
-    } catch (e, stackTrace) {
-      LogService().error(
-        'HiveService başlatma hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // HiveService başarıyla başlatıldı
+    } catch (e) {
+      // HiveService başlatma hatası
       rethrow;
     }
   }
@@ -55,31 +47,16 @@ class HiveService {
 
       // Eğer aynı data'ya sahip tarama varsa, kaydetme
       if (duplicateScan.data.isNotEmpty) {
-        LogService().info(
-          'Tekrar eden QR tarama tespit edildi, kaydedilmedi',
-          extra: {
-            'existingId': duplicateScan.id,
-            'newId': scan.id,
-            'data': scan.data,
-            'type': scan.type,
-          },
-        );
+        // Tekrar eden QR tarama tespit edildi, kaydedilmedi
         return false; // Kaydedilmedi
       }
 
       // Benzersiz tarama, kaydet
       await _qrScansBox?.put(scan.id, scan);
-      LogService().info(
-        'QR tarama kaydedildi',
-        extra: {'id': scan.id, 'type': scan.type, 'data': scan.data},
-      );
+      // QR tarama kaydedildi
       return true; // Kaydedildi
-    } catch (e, stackTrace) {
-      LogService().error(
-        'QR tarama kaydetme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // QR tarama kaydetme hatası
       rethrow;
     }
   }
@@ -91,12 +68,8 @@ class HiveService {
       // En yeni taramalar önce gelecek şekilde sırala
       scans.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       return scans;
-    } catch (e, stackTrace) {
-      LogService().error(
-        'QR taramaları getirme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // QR taramaları getirme hatası
       return [];
     }
   }
@@ -106,12 +79,8 @@ class HiveService {
     try {
       final allScans = getAllQrScans();
       return allScans.where((scan) => scan.type == type).toList();
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Tip bazlı QR taramaları getirme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // Tip bazlı QR taramaları getirme hatası
       return [];
     }
   }
@@ -120,12 +89,8 @@ class HiveService {
   QrScanModel? getQrScanById(String id) {
     try {
       return _qrScansBox?.get(id);
-    } catch (e, stackTrace) {
-      LogService().error(
-        'ID bazlı QR tarama getirme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // ID bazlı QR tarama getirme hatası
       return null;
     }
   }
@@ -134,13 +99,9 @@ class HiveService {
   Future<void> deleteQrScan(String id) async {
     try {
       await _qrScansBox?.delete(id);
-      LogService().info('QR tarama silindi', extra: {'id': id});
-    } catch (e, stackTrace) {
-      LogService().error(
-        'QR tarama silme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // QR tarama silindi
+    } catch (e) {
+      // QR tarama silme hatası
       rethrow;
     }
   }
@@ -149,13 +110,9 @@ class HiveService {
   Future<void> deleteAllQrScans() async {
     try {
       await _qrScansBox?.clear();
-      LogService().info('Tüm QR taramaları silindi');
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Tüm QR taramaları silme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // Tüm QR taramaları silindi
+    } catch (e) {
+      // Tüm QR taramaları silme hatası
       rethrow;
     }
   }
@@ -164,13 +121,9 @@ class HiveService {
   Future<void> updateQrScan(QrScanModel scan) async {
     try {
       await _qrScansBox?.put(scan.id, scan);
-      LogService().info('QR tarama güncellendi', extra: {'id': scan.id});
-    } catch (e, stackTrace) {
-      LogService().error(
-        'QR tarama güncelleme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // Log removed
+    } catch (e) {
+      // QR tarama güncelleme hatası
       rethrow;
     }
   }
@@ -187,12 +140,8 @@ class HiveService {
             (scan.title?.toLowerCase().contains(lowercaseQuery) ?? false) ||
             (scan.description?.toLowerCase().contains(lowercaseQuery) ?? false);
       }).toList();
-    } catch (e, stackTrace) {
-      LogService().error(
-        'QR tarama arama hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // QR tarama arama hatası
       return [];
     }
   }
@@ -216,12 +165,8 @@ class HiveService {
         'lastScan': allScans.isNotEmpty ? allScans.first.timestamp : null,
         'firstScan': allScans.isNotEmpty ? allScans.last.timestamp : null,
       };
-    } catch (e, stackTrace) {
-      LogService().error(
-        'İstatistik hesaplama hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // İstatistik hesaplama hatası
       return {
         'totalScans': 0,
         'urlScans': 0,
@@ -237,12 +182,8 @@ class HiveService {
     try {
       final allScans = getAllQrScans();
       return allScans.take(limit).toList();
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Son QR taramaları getirme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // Son QR taramaları getirme hatası
       return [];
     }
   }
@@ -258,12 +199,8 @@ class HiveService {
         return scan.timestamp.isAfter(startDate) &&
             scan.timestamp.isBefore(endDate);
       }).toList();
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Tarih aralığı QR taramaları getirme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // Tarih aralığı QR taramaları getirme hatası
       return [];
     }
   }
@@ -272,13 +209,9 @@ class HiveService {
   Future<void> close() async {
     try {
       await _qrScansBox?.close();
-      LogService().info('HiveService kapatıldı');
-    } catch (e, stackTrace) {
-      LogService().error(
-        'HiveService kapatma hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // Log removed
+    } catch (e) {
+      // HiveService kapatma hatası
     }
   }
 
@@ -309,16 +242,9 @@ class HiveService {
       );
 
       await _favoritesBox?.put(scan.id, favoriteScan);
-      LogService().info(
-        'Sık kullanılanlara eklendi',
-        extra: {'id': scan.id, 'type': scan.type, 'data': scan.data},
-      );
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Sık kullanılanlara ekleme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // Sık kullanılanlara eklendi
+    } catch (e) {
+      // Sık kullanılanlara ekleme hatası
       rethrow;
     }
   }
@@ -327,13 +253,9 @@ class HiveService {
   Future<void> removeFromFavorites(String id) async {
     try {
       await _favoritesBox?.delete(id);
-      LogService().info('Sık kullanılanlardan çıkarıldı', extra: {'id': id});
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Sık kullanılanlardan çıkarma hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // Log removed
+    } catch (e) {
+      // Sık kullanılanlardan çıkarma hatası
       rethrow;
     }
   }
@@ -345,12 +267,8 @@ class HiveService {
       // En yeni eklenenler önce gelecek şekilde sırala
       favorites.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       return favorites;
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Sık kullanılanları getirme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // Sık kullanılanları getirme hatası
       return [];
     }
   }
@@ -359,12 +277,8 @@ class HiveService {
   bool isFavorite(String id) {
     try {
       return _favoritesBox?.containsKey(id) ?? false;
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Sık kullanılan kontrol hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e) {
+      // Sık kullanılan kontrol hatası
       return false;
     }
   }
@@ -373,13 +287,9 @@ class HiveService {
   Future<void> clearAllFavorites() async {
     try {
       await _favoritesBox?.clear();
-      LogService().info('Tüm sık kullanılanlar silindi');
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Tüm sık kullanılanları silme hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // Log removed
+    } catch (e) {
+      // Tüm sık kullanılanları silme hatası
       rethrow;
     }
   }
@@ -409,20 +319,9 @@ class HiveService {
         await _qrScansBox?.put(scan.id, scan);
       }
 
-      LogService().info(
-        'Tekrar eden taramalar kaldırıldı',
-        extra: {
-          'originalCount': allScans.length,
-          'uniqueCount': uniqueScans.length,
-          'removedCount': allScans.length - uniqueScans.length,
-        },
-      );
-    } catch (e, stackTrace) {
-      LogService().error(
-        'Tekrar eden taramaları kaldırma hatası',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      // Tekrar eden taramalar kaldırıldı
+    } catch (e) {
+      // Tekrar eden taramaları kaldırma hatası
       rethrow;
     }
   }
