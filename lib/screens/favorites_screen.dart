@@ -685,7 +685,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 border: Border.all(color: color.withValues(alpha: 0.2)),
               ),
               child: SelectableText(
-                content,
+                CommonHelpers.truncateText(content, 500),
                 style: TextStyle(
                   fontSize: 14,
                   color: Theme.of(context).colorScheme.onSurface,

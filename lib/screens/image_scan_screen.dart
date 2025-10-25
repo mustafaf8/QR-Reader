@@ -167,8 +167,8 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Container(
-                      constraints: const BoxConstraints(
-                        maxHeight: 200,
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.3,
                         minHeight: 150,
                       ),
                       decoration: BoxDecoration(

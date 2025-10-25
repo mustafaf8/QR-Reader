@@ -20,7 +20,6 @@
   "turkish": "Türkçe",
   "english": "English",
   "spanish": "Español",
-  "myQrCodes": "QR Kodlarım",
   "imageScan": "Resim Tara",
   "scanFromImage": "Resimden Tara",
   "createWifi": "WiFi QR Oluştur",
@@ -281,7 +280,6 @@
       "powerfulQrReader": "Güçlü QR kod okuyucu",
       "removeAds": "Reklamları Kaldır",
       "removeAdsFeature": "Reklamları kaldır özelliği yakında eklenecek",
-      "myQrPage": "Benim QR'ım Sayfası",
       "featureComingSoon": "Bu özellik yakında eklenecek",
       "qrCodeScannedAndSaved": "QR kod tarandı ve kaydedildi!",
       "qrCodeAlreadyScanned": "Bu QR kod daha önce taranmış!",
@@ -454,7 +452,6 @@
       "themeSelection": "Tema Seçimi",
       "selectTheme": "Tema Seçin",
       "imageAnalyzing": "Resim analiz ediliyor...",
-      "myQrPage": "QR Kodlarım",
       "featureComingSoon": "Bu özellik yakında gelecek",
       "wifiInfo": "Wi-Fi Bilgileri",
       "vEventData": "vEvent Verisi",
@@ -474,5 +471,6 @@
       "savedToDownloads": "İndirilenler klasörüne kaydedildi",
       "saveFailed": "Kaydetme başarısız",
       "shareFailed": "Paylaşma başarısız",
-      "urlOpenFailed": "URL açılamadı"
+      "urlOpenFailed": "URL açılamadı",
+  "enterData": "Veri girin"
     }

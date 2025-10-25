@@ -65,7 +65,11 @@ class QRReaderApp extends StatelessWidget {
             title: 'QR Okuyucu',
             theme: themeService.getThemeData(false),
             darkTheme: themeService.getThemeData(true),
-            themeMode: ThemeMode.system,
+            themeMode: themeService.currentThemeMode == AppThemeMode.light
+                ? ThemeMode.light
+                : themeService.currentThemeMode == AppThemeMode.dark
+                ? ThemeMode.dark
+                : ThemeMode.system,
             locale: localeProvider.locale,
             localizationsDelegates: [
               AppLocalizations.delegate,

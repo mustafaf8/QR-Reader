@@ -4,11 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
 import '../l10n/app_localizations.dart';
 import 'error_service.dart';
 
 class CommonHelpers {
-  /// Tarih formatlaması için ortak fonksiyon
+  /// Tarih formatlaması için ortak fonksiyon - göreceli format
   static String formatDateTime(DateTime dateTime, BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
@@ -23,6 +24,30 @@ class CommonHelpers {
     } else {
       return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
     }
+  }
+
+  /// Standart tarih formatlaması - GG.AA.YYYY HH:MM
+  static String formatDateTimeStandard(
+    DateTime dateTime,
+    BuildContext context,
+  ) {
+    final locale = Localizations.localeOf(context);
+    final formatter = DateFormat('dd.MM.yyyy HH:mm', locale.toString());
+    return formatter.format(dateTime);
+  }
+
+  /// Sadece tarih formatlaması - GG.AA.YYYY
+  static String formatDate(DateTime dateTime, BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    final formatter = DateFormat('dd.MM.yyyy', locale.toString());
+    return formatter.format(dateTime);
+  }
+
+  /// Sadece saat formatlaması - HH:MM
+  static String formatTime(DateTime dateTime, BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    final formatter = DateFormat('HH:mm', locale.toString());
+    return formatter.format(dateTime);
   }
 
   /// Metin kopyalama
@@ -41,14 +66,16 @@ class CommonHelpers {
     }
   }
 
-  /// Dosya kaydetme
+  /// Dosya kaydetme - Downloads klasörüne
   static Future<void> saveToFile(
     String content,
     String fileName,
     BuildContext context,
   ) async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
+      final directory =
+          await getDownloadsDirectory() ??
+          await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/$fileName');
       await file.writeAsString(content);
       ErrorService.showSuccessSnackBar(
@@ -61,6 +88,122 @@ class CommonHelpers {
         AppLocalizations.of(context)!.saveFailed,
       );
     }
+  }
+
+  /// QR/Barkod kaydetme - otomatik dosya adı oluşturur
+  static Future<void> saveQrData(
+    String content,
+    String type,
+    String title,
+    BuildContext context,
+  ) async {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final fileName = '${type}_${title}_$timestamp.txt';
+    await saveToFile(content, fileName, context);
+  }
+
+  /// WiFi QR kaydetme - özel format
+  static Future<void> saveWiFiQr(
+    String ssid,
+    String securityType,
+    String password,
+    bool isHidden,
+    String rawData,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final content =
+        '${l10n.wifiQrCode}\n'
+        '${l10n.creationDateLabel}: ${DateTime.now().toString()}\n'
+        '${l10n.networkNameSSID}: $ssid\n'
+        '${l10n.securityType}: $securityType\n'
+        '${l10n.passwordLabel}: ${password.isNotEmpty ? password : l10n.none}\n'
+        '${l10n.hiddenNetwork}: ${isHidden ? l10n.yes : l10n.no}\n'
+        '${l10n.rawData}: $rawData';
+
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final fileName = 'WiFi_QR_${ssid.replaceAll(' ', '_')}_$timestamp.txt';
+    await saveToFile(content, fileName, context);
+  }
+
+  /// WiFi QR paylaşma - özel format
+  static Future<void> shareWiFiQr(
+    String ssid,
+    String securityType,
+    String password,
+    bool isHidden,
+    String rawData,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final content =
+        '${l10n.wifiQrCode}\n\n'
+        '${l10n.networkNameSSID}: $ssid\n'
+        '${l10n.securityType}: $securityType\n'
+        '${l10n.passwordLabel}: ${password.isNotEmpty ? password : l10n.none}\n'
+        '${l10n.hiddenNetwork}: ${isHidden ? l10n.yes : l10n.no}\n'
+        '${l10n.rawData}: $rawData\n'
+        '${l10n.creationDateLabel}: ${DateTime.now().toString()}';
+
+    await shareContent(content, '${l10n.wifiQrCode} - $ssid', context);
+  }
+
+  /// Calendar Event QR kaydetme - özel format
+  static Future<void> saveCalendarQr(
+    String title,
+    String description,
+    String location,
+    String organizer,
+    DateTime startDate,
+    TimeOfDay startTime,
+    DateTime endDate,
+    TimeOfDay endTime,
+    String rawData,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final content =
+        '${l10n.eventQrCodeVevent}\n'
+        '${l10n.creationDateLabel}: ${DateTime.now().toString()}\n'
+        '${l10n.titleLabel}: $title\n'
+        '${l10n.descriptionLabel}: $description\n'
+        '${l10n.location}: $location\n'
+        '${l10n.organizerLabel}: $organizer\n'
+        '${l10n.startDateLabel}: ${startDate.day}/${startDate.month}/${startDate.year} ${startTime.format(context)}\n'
+        '${l10n.endDateLabel}: ${endDate.day}/${endDate.month}/${endDate.year} ${endTime.format(context)}\n'
+        '${l10n.vEventData}: $rawData';
+
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final fileName = 'Event_QR_${title.replaceAll(' ', '_')}_$timestamp.txt';
+    await saveToFile(content, fileName, context);
+  }
+
+  /// Calendar Event QR paylaşma - özel format
+  static Future<void> shareCalendarQr(
+    String title,
+    String description,
+    String location,
+    String organizer,
+    DateTime startDate,
+    TimeOfDay startTime,
+    DateTime endDate,
+    TimeOfDay endTime,
+    String rawData,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final content =
+        '${l10n.eventQrCodeVevent}\n\n'
+        '${l10n.titleLabel}: $title\n'
+        '${l10n.descriptionLabel}: $description\n'
+        '${l10n.location}: $location\n'
+        '${l10n.organizerLabel}: $organizer\n'
+        '${l10n.startDateLabel}: ${startDate.day}/${startDate.month}/${startDate.year} ${startTime.format(context)}\n'
+        '${l10n.endDateLabel}: ${endDate.day}/${endDate.month}/${endDate.year} ${endTime.format(context)}\n'
+        '${l10n.vEventData}: $rawData\n'
+        '${l10n.creationDateLabel}: ${DateTime.now().toString()}';
+
+    await shareContent(content, '${l10n.eventQrCodeVevent} - $title', context);
   }
 
   /// Paylaşma

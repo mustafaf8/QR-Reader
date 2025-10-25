@@ -69,9 +69,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spanish => 'Español';
 
   @override
-  String get myQrCodes => 'My QR Codes';
-
-  @override
   String get imageScan => 'Image Scan';
 
   @override
@@ -786,9 +783,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get removeAdsFeature => 'Remove ads feature coming soon';
-
-  @override
-  String get myQrPage => 'My QR Page';
 
   @override
   String get featureComingSoon => 'This feature is coming soon';

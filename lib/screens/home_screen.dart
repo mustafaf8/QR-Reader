@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
       drawer: _buildDrawer(context),
       appBar: AppBar(
         title: Text(l10n.homeScreenTitle),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           IconButton(
             onPressed: () {

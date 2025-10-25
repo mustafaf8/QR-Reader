@@ -309,7 +309,9 @@ class _CreateGenericBarcodeScreenState
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
-                                            'Veri girin',
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.enterData,
                                             style: TextStyle(
                                               color: Colors.grey.shade600,
                                               fontSize: 16,
