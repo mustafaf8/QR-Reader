@@ -360,37 +360,40 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
+          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 650),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header
+              // Modern Header with Gradient
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
                       _getTypeColor(favorite.type),
-                      _getTypeColor(favorite.type).withOpacity(0.7),
+                      _getTypeColor(favorite.type).withOpacity(0.8),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
                   ),
                 ),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 25,
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Icon(
                         _getTypeIcon(favorite.type),
-                        color: _getTypeColor(favorite.type),
+                        color: Colors.white,
                         size: 28,
                       ),
                     ),
@@ -403,18 +406,29 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             favorite.title ?? 'Sık Kullanılan Detayı',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            favorite.type,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              favorite.type,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -423,31 +437,34 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close, color: Colors.white),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              // Content
+              // Content with Better Spacing
               Flexible(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Veri bölümü
-                      _buildDetailCard(
+                      // Veri bölümü - Modern Card Design
+                      _buildModernDetailCard(
                         'Veri İçeriği',
                         Icons.data_object,
                         favorite.data,
-                        Colors.blue,
+                        _getTypeColor(favorite.type),
                       ),
 
                       const SizedBox(height: 16),
 
                       // Açıklama bölümü (varsa)
                       if (favorite.description != null)
-                        _buildDetailCard(
+                        _buildModernDetailCard(
                           'Açıklama',
                           Icons.description,
                           favorite.description!,
@@ -457,82 +474,137 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       if (favorite.description != null)
                         const SizedBox(height: 16),
 
-                      // Tarih bölümü
-                      _buildDetailCard(
-                        'Tarih',
-                        Icons.access_time,
-                        _formatTimestamp(favorite.timestamp),
-                        Colors.orange,
-                      ),
-
-                      const SizedBox(height: 16),
-
                       // WiFi özel bilgileri
                       if (favorite.type == 'WiFi' &&
                           favorite.description != null)
-                        _buildWiFiDetails(favorite.description!),
+                        _buildModernWiFiDetails(favorite.description!),
+
+                      const SizedBox(height: 16),
+
+                      // Tarih bölümü - Bottom positioned
+                      Card(
+                        elevation: 0,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceVariant.withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.access_time,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                'Tarih: ${_formatTimestamp(favorite.timestamp)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
 
-              // Action buttons
+              // Action buttons - Modern Design
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surfaceVariant.withOpacity(0.3),
                   borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
                   ),
                 ),
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _copyToClipboard(favorite);
-                        },
-                        icon: const Icon(Icons.copy, size: 18),
-                        label: const Text('Kopyala'),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
                     if (favorite.isUrl)
-                      Expanded(
+                      SizedBox(
+                        width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: () {
                             Navigator.of(context).pop();
                             _openUrl(favorite.data);
                           },
-                          icon: const Icon(Icons.open_in_browser, size: 18),
-                          label: const Text('Aç'),
+                          icon: const Icon(Icons.open_in_browser, size: 20),
+                          label: const Text(
+                            'Web Sayfasını Aç',
+                            style: TextStyle(fontSize: 15),
+                          ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            elevation: 2,
+                            shadowColor: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
-                    if (favorite.isUrl) const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          Navigator.of(context).pop();
-                          await _removeFromFavorites(favorite);
-                        },
-                        icon: const Icon(Icons.delete, size: 18),
-                        label: const Text('Sil'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                    if (favorite.isUrl) const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _copyToClipboard(favorite);
+                            },
+                            icon: const Icon(Icons.copy, size: 18),
+                            label: const Text('Kopyala'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              await _removeFromFavorites(favorite);
+                            },
+                            icon: const Icon(Icons.delete, size: 18),
+                            label: const Text('Sil'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red.shade600,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              elevation: 2,
+                              shadowColor: Colors.red.withOpacity(0.3),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -581,6 +653,73 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
+  Widget _buildModernDetailCard(
+    String title,
+    IconData icon,
+    String content,
+    Color color,
+  ) {
+    return Card(
+      elevation: 2,
+      shadowColor: color.withOpacity(0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [color.withOpacity(0.08), color.withOpacity(0.03)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: color.withOpacity(0.2)),
+              ),
+              child: SelectableText(
+                content,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontFamily: 'monospace',
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildWiFiDetails(String description) {
     final lines = description.split('\n');
     String ssid = 'Bilinmiyor';
@@ -622,6 +761,133 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           _buildWiFiInfoRow('Ağ Adı (SSID)', ssid),
           const SizedBox(height: 8),
           _buildWiFiInfoRow('Şifre', password),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModernWiFiDetails(String description) {
+    final lines = description.split('\n');
+    String ssid = 'Bilinmiyor';
+    String password = 'Bilinmiyor';
+
+    for (final line in lines) {
+      if (line.startsWith('WiFi Ağı: ')) {
+        ssid = line.substring(10);
+      } else if (line.startsWith('Şifre: ')) {
+        password = line.substring(7);
+      }
+    }
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.cyan.withOpacity(0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.cyan.withOpacity(0.08),
+              Colors.cyan.withOpacity(0.03),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.cyan.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.wifi, color: Colors.cyan, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'WiFi Bilgileri',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.cyan,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildModernWiFiInfoRow(
+              'Ağ Adı (SSID)',
+              ssid,
+              Icons.router,
+              Colors.blue,
+            ),
+            const SizedBox(height: 12),
+            _buildModernWiFiInfoRow(
+              'Şifre',
+              password,
+              Icons.lock,
+              Colors.orange,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernWiFiInfoRow(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, color: color, size: 16),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                SelectableText(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'monospace',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
