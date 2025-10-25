@@ -206,6 +206,72 @@ class CommonHelpers {
     await shareContent(content, '${l10n.eventQrCodeVevent} - $title', context);
   }
 
+  /// Contact QR kaydetme - özel format
+  static Future<void> saveContactQr(
+    String firstName,
+    String lastName,
+    String phone,
+    String email,
+    String organization,
+    String title,
+    String address,
+    String website,
+    String rawData,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final content =
+        '${l10n.contactQrCodeVcard}\n'
+        '${l10n.creationDateLabel}: ${DateTime.now().toString()}\n'
+        '${l10n.firstNameLabel}: $firstName\n'
+        '${l10n.lastNameLabel}: $lastName\n'
+        '${l10n.phoneLabel}: $phone\n'
+        '${l10n.emailLabel}: $email\n'
+        '${l10n.organizationLabel}: $organization\n'
+        '${l10n.titleLabel}: $title\n'
+        '${l10n.addressLabel}: $address\n'
+        '${l10n.websiteLabel}: $website\n'
+        '${l10n.rawData}: $rawData';
+
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final fileName = 'Contact_QR_${firstName}_${lastName}_$timestamp.txt';
+    await saveToFile(content, fileName, context);
+  }
+
+  /// Contact QR paylaşma - özel format
+  static Future<void> shareContactQr(
+    String firstName,
+    String lastName,
+    String phone,
+    String email,
+    String organization,
+    String title,
+    String address,
+    String website,
+    String rawData,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final content =
+        '${l10n.contactQrCodeVcard}\n\n'
+        '${l10n.firstNameLabel}: $firstName\n'
+        '${l10n.lastNameLabel}: $lastName\n'
+        '${l10n.phoneLabel}: $phone\n'
+        '${l10n.emailLabel}: $email\n'
+        '${l10n.organizationLabel}: $organization\n'
+        '${l10n.titleLabel}: $title\n'
+        '${l10n.addressLabel}: $address\n'
+        '${l10n.websiteLabel}: $website\n'
+        '${l10n.rawData}: $rawData\n'
+        '${l10n.creationDateLabel}: ${DateTime.now().toString()}';
+
+    await shareContent(
+      content,
+      '${l10n.contactQrCodeVcard} - $firstName $lastName',
+      context,
+    );
+  }
+
   /// Paylaşma
   static Future<void> shareContent(
     String content,

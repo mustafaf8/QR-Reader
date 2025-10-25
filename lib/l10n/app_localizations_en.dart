@@ -1175,4 +1175,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get urlOpenFailed => 'Failed to open URL';
+
+  @override
+  String get addressLabel => 'Address';
 }

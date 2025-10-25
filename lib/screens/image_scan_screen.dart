@@ -176,10 +176,17 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
-                        child: Image.file(
-                          _selectedImage!,
-                          fit: BoxFit.contain,
-                          width: double.infinity,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return AspectRatio(
+                              aspectRatio: 16 / 9, // Varsayılan oran
+                              child: Image.file(
+                                _selectedImage!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),

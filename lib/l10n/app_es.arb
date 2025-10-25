@@ -472,5 +472,6 @@
       "saveFailed": "Error al guardar",
       "shareFailed": "Error al compartir",
       "urlOpenFailed": "Error al abrir URL",
-  "enterData": "Ingrese datos"
+  "enterData": "Ingrese datos",
+  "addressLabel": "Dirección"
     }

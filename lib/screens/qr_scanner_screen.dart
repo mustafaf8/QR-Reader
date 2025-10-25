@@ -52,10 +52,6 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             onPressed: () => cameraController.toggleTorch(),
             icon: const Icon(Icons.flash_on, size: 28),
           ),
-          IconButton(
-            onPressed: () => cameraController.switchCamera(),
-            icon: const Icon(Icons.camera_front, size: 28),
-          ),
         ],
       ),
       body: Stack(
@@ -79,24 +75,26 @@ class _QrScannerScreenState extends State<QrScannerScreen>
   Widget _buildGradientOverlay() {
     return Stack(
       children: [
+        // Üst gradient
         Positioned(
           top: 0,
           left: 0,
           right: 0,
           child: Container(
-            height: 150,
+            height: MediaQuery.of(context).size.height * 0.3,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withValues(alpha: 0.7),
+                  Colors.black.withValues(alpha: 0.8),
                   Colors.transparent,
                 ],
               ),
             ),
           ),
         ),
+        // Alt gradient
         Positioned(
           bottom: 0,
           left: 0,
@@ -140,7 +138,6 @@ class _QrScannerScreenState extends State<QrScannerScreen>
         animation: _animation,
         builder: (context, child) {
           return Opacity(
-            // 1. Opaklığı %30'dan %70'e çıkar
             opacity: 0.4,
             child: Container(
               width: _getCutOutSize(),
@@ -160,9 +157,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                   boxShadow: [
                     BoxShadow(
                       color: Theme.of(context).colorScheme.primary,
-                      // 2. Parlama yarıçapını 1000'den 50'ye düşür
                       blurRadius: 500.0,
-                      // 3. Yayılmayı biraz azalt
                       spreadRadius: 2.0,
                     ),
                   ],
@@ -185,6 +180,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
         builder: (context, child) {
           return Stack(
             children: [
+              // Sol üst köşe
               Positioned(
                 top:
                     MediaQuery.of(context).size.height * 0.42 -
@@ -219,6 +215,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                   ),
                 ),
               ),
+              // Sağ üst köşe
               Positioned(
                 top:
                     MediaQuery.of(context).size.height * 0.42 -
@@ -253,6 +250,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                   ),
                 ),
               ),
+              // Sol alt köşe
               Positioned(
                 bottom:
                     MediaQuery.of(context).size.height * 0.58 -
@@ -287,6 +285,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                   ),
                 ),
               ),
+              // Sağ alt köşe
               Positioned(
                 bottom:
                     MediaQuery.of(context).size.height * 0.58 -

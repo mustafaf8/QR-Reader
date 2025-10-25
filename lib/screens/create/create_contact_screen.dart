@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import '../../l10n/app_localizations.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import '../../services/common_helpers.dart';
 
 class CreateContactScreen extends StatefulWidget {
   const CreateContactScreen({super.key});
@@ -823,141 +821,32 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
   }
 
   Future<void> _saveContact() async {
-    try {
-      // Kişi QR kod verisini metin dosyası olarak kaydet
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final name = '${_firstNameController.text}_${_lastNameController.text}'
-          .replaceAll(' ', '_');
-      final fileName = 'Contact_QR_$name$timestamp.txt';
-
-      // Downloads klasörüne kaydet
-      final directory = await getDownloadsDirectory();
-      if (directory == null) {
-        _showErrorSnackBar(
-          AppLocalizations.of(context)!.downloadsFolderNotFound,
-        );
-        return;
-      }
-
-      final file = File('${directory.path}/$fileName');
-      final content =
-          '${AppLocalizations.of(context)!.contactQrCodeVcard}\n'
-          '${AppLocalizations.of(context)!.creationDate}: ${DateTime.now().toString()}\n'
-          '${AppLocalizations.of(context)!.firstName}: ${_firstNameController.text}\n'
-          '${AppLocalizations.of(context)!.lastName}: ${_lastNameController.text}\n'
-          '${AppLocalizations.of(context)!.phone}: ${_phoneController.text}\n'
-          '${AppLocalizations.of(context)!.email}: ${_emailController.text}\n'
-          '${AppLocalizations.of(context)!.organization}: ${_organizationController.text}\n'
-          '${AppLocalizations.of(context)!.title}: ${_titleController.text}\n'
-          '${AppLocalizations.of(context)!.website}: ${_websiteController.text}\n'
-          '${AppLocalizations.of(context)!.address}: ${_addressController.text}\n'
-          '${AppLocalizations.of(context)!.vCardData}: ${_getVCardString()}';
-
-      await file.writeAsString(content);
-
-      _showSuccessSnackBar(
-        '${AppLocalizations.of(context)!.contactQrCodeSaved}: ${file.path}',
-      );
-    } catch (e) {
-      _showErrorSnackBar('${AppLocalizations.of(context)!.saveError}: $e');
-    }
-  }
-
-  Future<void> _shareContact() async {
-    try {
-      // Kişi QR kod verisini paylaş
-      final content =
-          '${AppLocalizations.of(context)!.contactQrCodeVcard}\n\n'
-          '${AppLocalizations.of(context)!.firstName}: ${_firstNameController.text}\n'
-          '${AppLocalizations.of(context)!.lastName}: ${_lastNameController.text}\n'
-          '${AppLocalizations.of(context)!.phone}: ${_phoneController.text}\n'
-          '${AppLocalizations.of(context)!.email}: ${_emailController.text}\n'
-          '${AppLocalizations.of(context)!.organization}: ${_organizationController.text}\n'
-          '${AppLocalizations.of(context)!.title}: ${_titleController.text}\n'
-          '${AppLocalizations.of(context)!.website}: ${_websiteController.text}\n'
-          '${AppLocalizations.of(context)!.address}: ${_addressController.text}\n'
-          '${AppLocalizations.of(context)!.vCardData}: ${_getVCardString()}\n'
-          '${AppLocalizations.of(context)!.creationDate}: ${DateTime.now().toString()}';
-
-      await Share.share(
-        content,
-        subject:
-            '${AppLocalizations.of(context)!.contactQrCodeTitle} - ${_firstNameController.text} ${_lastNameController.text}',
-      );
-
-      _showSuccessSnackBar(AppLocalizations.of(context)!.contactQrCodeShared);
-    } catch (e) {
-      _showErrorSnackBar('${AppLocalizations.of(context)!.shareError}: $e');
-    }
-  }
-
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.check_circle,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.green.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 3),
-      ),
+    await CommonHelpers.saveContactQr(
+      _firstNameController.text,
+      _lastNameController.text,
+      _phoneController.text,
+      _emailController.text,
+      _organizationController.text,
+      _titleController.text,
+      _addressController.text,
+      _websiteController.text,
+      _getVCardString(),
+      context,
     );
   }
 
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.error_outline,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.red.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 3),
-      ),
+  Future<void> _shareContact() async {
+    await CommonHelpers.shareContactQr(
+      _firstNameController.text,
+      _lastNameController.text,
+      _phoneController.text,
+      _emailController.text,
+      _organizationController.text,
+      _titleController.text,
+      _addressController.text,
+      _websiteController.text,
+      _getVCardString(),
+      context,
     );
   }
 }

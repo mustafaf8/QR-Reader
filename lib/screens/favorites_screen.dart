@@ -454,7 +454,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               ),
 
               // Content with Better Spacing
-              Flexible(
+              Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
                   child: Column(
