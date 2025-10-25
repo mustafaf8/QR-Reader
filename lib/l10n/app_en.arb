@@ -472,5 +472,6 @@
       "saveFailed": "Save failed",
       "shareFailed": "Share failed",
       "urlOpenFailed": "Failed to open URL",
-  "enterData": "Enter data"
+  "enterData": "Enter data",
+  "addressLabel": "Address"
     }

@@ -2391,6 +2391,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'URL açılamadı'**
   String get urlOpenFailed;
+
+  /// No description provided for @addressLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Adres'**
+  String get addressLabel;
 }
 
 class _AppLocalizationsDelegate

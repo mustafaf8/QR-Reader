@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import '../../l10n/app_localizations.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import '../../services/common_helpers.dart';
 
 class CreateCalendarScreen extends StatefulWidget {
   const CreateCalendarScreen({super.key});
@@ -757,135 +755,37 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
   }
 
   Future<void> _saveEvent() async {
-    try {
-      // Etkinlik QR kod verisini metin dosyası olarak kaydet
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final title = _titleController.text.replaceAll(' ', '_');
-      final fileName = 'Event_QR_$title$timestamp.txt';
-
-      // Downloads klasörüne kaydet
-      final directory = await getDownloadsDirectory();
-      if (directory == null) {
-        _showErrorSnackBar(
-          AppLocalizations.of(context)!.downloadsFolderNotFound,
-        );
-        return;
-      }
-
-      final file = File('${directory.path}/$fileName');
-      final content =
-          '${AppLocalizations.of(context)!.eventQrCodeVevent}\n'
-          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}\n'
-          '${AppLocalizations.of(context)!.titleLabel}: ${_titleController.text}\n'
-          '${AppLocalizations.of(context)!.descriptionLabel}: ${_descriptionController.text}\n'
-          '${AppLocalizations.of(context)!.location}: ${_locationController.text}\n'
-          '${AppLocalizations.of(context)!.organizerLabel}: ${_organizerController.text}\n'
-          '${AppLocalizations.of(context)!.startDateLabel}: ${_startDate.day}/${_startDate.month}/${_startDate.year} ${_startTime.format(context)}\n'
-          '${AppLocalizations.of(context)!.endDateLabel}: ${_endDate.day}/${_endDate.month}/${_endDate.year} ${_endTime.format(context)}\n'
-          '${AppLocalizations.of(context)!.vEventData}: ${_getVEventString()}';
-
-      await file.writeAsString(content);
-
-      _showSuccessSnackBar(
-        '${AppLocalizations.of(context)!.eventQrCodeShared}: ${file.path}',
-      );
-    } catch (e) {
-      _showErrorSnackBar('${AppLocalizations.of(context)!.saveError}: $e');
-    }
+    await CommonHelpers.saveCalendarQr(
+      _titleController.text,
+      _descriptionController.text,
+      _locationController.text,
+      _organizerController.text,
+      _startDate,
+      _startTime,
+      _endDate,
+      _endTime,
+      _getVEventString(),
+      context,
+    );
   }
 
   Future<void> _shareEvent() async {
     try {
       // Etkinlik QR kod verisini paylaş
-      final content =
-          'Etkinlik QR Kodu (vEvent)\n\n'
-          '${AppLocalizations.of(context)!.titleLabel}: ${_titleController.text}\n'
-          '${AppLocalizations.of(context)!.descriptionLabel}: ${_descriptionController.text}\n'
-          '${AppLocalizations.of(context)!.location}: ${_locationController.text}\n'
-          '${AppLocalizations.of(context)!.organizerLabel}: ${_organizerController.text}\n'
-          '${AppLocalizations.of(context)!.startDateLabel}: ${_startDate.day}/${_startDate.month}/${_startDate.year} ${_startTime.format(context)}\n'
-          '${AppLocalizations.of(context)!.endDateLabel}: ${_endDate.day}/${_endDate.month}/${_endDate.year} ${_endTime.format(context)}\n'
-          'Ham Veri (vEvent): ${_getVEventString()}\n'
-          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}';
-
-      await Share.share(
-        content,
-        subject: 'Etkinlik QR Kodu - ${_titleController.text}',
+      await CommonHelpers.shareCalendarQr(
+        _titleController.text,
+        _descriptionController.text,
+        _locationController.text,
+        _organizerController.text,
+        _startDate,
+        _startTime,
+        _endDate,
+        _endTime,
+        _getVEventString(),
+        context,
       );
-
-      _showSuccessSnackBar(AppLocalizations.of(context)!.eventQrCodeShared);
     } catch (e) {
-      _showErrorSnackBar('${AppLocalizations.of(context)!.shareError}: $e');
+      // Hata yönetimi CommonHelpers içinde yapılıyor
     }
-  }
-
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.check_circle,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.green.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.error_outline,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.red.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 3),
-      ),
-    );
   }
 }

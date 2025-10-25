@@ -678,7 +678,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
               ),
 
               // Content with Better Spacing
-              Flexible(
+              Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
                   child: Column(

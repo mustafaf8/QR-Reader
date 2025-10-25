@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import '../../l10n/app_localizations.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import '../../services/common_helpers.dart';
 
 class CreateGenericBarcodeScreen extends StatefulWidget {
   final String title;
@@ -537,121 +535,31 @@ class _CreateGenericBarcodeScreenState
   }
 
   Future<void> _saveBarcode() async {
-    try {
-      // QR kod verisini metin dosyası olarak kaydet
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileName = '${widget.title.replaceAll(' ', '_')}_$timestamp.txt';
+    final content =
+        '${widget.title} QR Kodu\n'
+        '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}\n'
+        'Veri: ${_getFormattedData()}\n'
+        'Format: ${widget.barcode.toString()}';
 
-      // Downloads klasörüne kaydet
-      final directory = await getDownloadsDirectory();
-      if (directory == null) {
-        _showErrorSnackBar(
-          AppLocalizations.of(context)!.downloadsFolderNotFound,
-        );
-        return;
-      }
-
-      final file = File('${directory.path}/$fileName');
-      final content =
-          '${widget.title} QR Kodu\n'
-          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}\n'
-          'Veri: ${_getFormattedData()}\n'
-          'Format: ${widget.barcode.toString()}';
-
-      await file.writeAsString(content);
-
-      _showSuccessSnackBar(
-        '${AppLocalizations.of(context)!.qrCodeDataSaved}: ${file.path}',
-      );
-    } catch (e) {
-      _showErrorSnackBar('${AppLocalizations.of(context)!.saveError}: $e');
-    }
-  }
-
-  Future<void> _shareBarcode() async {
-    try {
-      // QR kod verisini paylaş
-      final content =
-          '${widget.title} QR Kodu\n\n'
-          'Veri: ${_getFormattedData()}\n'
-          'Format: ${widget.barcode.toString()}\n'
-          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}';
-
-      await Share.share(content, subject: '${widget.title} QR Kodu');
-
-      _showSuccessSnackBar(AppLocalizations.of(context)!.qrCodeDataShared);
-    } catch (e) {
-      _showErrorSnackBar('${AppLocalizations.of(context)!.shareError}: $e');
-    }
-  }
-
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.check_circle,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.green.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 3),
-      ),
+    await CommonHelpers.saveQrData(
+      content,
+      widget.title,
+      _getFormattedData(),
+      context,
     );
   }
 
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.error_outline,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.red.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 3),
-      ),
+  Future<void> _shareBarcode() async {
+    final content =
+        '${widget.title} QR Kodu\n\n'
+        'Veri: ${_getFormattedData()}\n'
+        'Format: ${widget.barcode.toString()}\n'
+        '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}';
+
+    await CommonHelpers.shareContent(
+      content,
+      '${widget.title} QR Kodu',
+      context,
     );
   }
 }

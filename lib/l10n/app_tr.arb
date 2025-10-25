@@ -472,5 +472,6 @@
       "saveFailed": "Kaydetme başarısız",
       "shareFailed": "Paylaşma başarısız",
       "urlOpenFailed": "URL açılamadı",
-  "enterData": "Veri girin"
+  "enterData": "Veri girin",
+  "addressLabel": "Adres"
     }

@@ -1173,4 +1173,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get urlOpenFailed => 'URL açılamadı';
+
+  @override
+  String get addressLabel => 'Adres';
 }

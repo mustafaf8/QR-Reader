@@ -37,16 +37,14 @@ class HiveService {
   // QR tarama kaydetme (tekrar edenleri otomatik filtrele)
   Future<bool> saveQrScan(QrScanModel scan) async {
     try {
-      // Aynı data'ya sahip tarama var mı kontrol et
+      // Aynı data'ya sahip tarama var mı kontrol et - daha okunabilir
       final existingScans = getAllQrScans();
-      final duplicateScan = existingScans.firstWhere(
+      final hasDuplicate = existingScans.any(
         (existingScan) => existingScan.data == scan.data,
-        orElse: () =>
-            QrScanModel(id: '', data: '', type: '', timestamp: DateTime.now()),
       );
 
       // Eğer aynı data'ya sahip tarama varsa, kaydetme
-      if (duplicateScan.data.isNotEmpty) {
+      if (hasDuplicate) {
         // Tekrar eden QR tarama tespit edildi, kaydedilmedi
         return false; // Kaydedilmedi
       }
