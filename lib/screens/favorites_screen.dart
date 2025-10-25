@@ -43,10 +43,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Sık Kullanılanlar'),
-        backgroundColor: Colors.orange.shade600,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
         actions: [
           if (_favorites.isNotEmpty)
             IconButton(
@@ -56,149 +59,202 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _favorites.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.star_border, size: 80, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'Henüz sık kullanılan yok',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+            ],
+          ),
+        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _favorites.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Icon(
+                        Icons.star_border,
+                        size: 80,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Tarama geçmişinden yıldız ikonuna tıklayarak\nsık kullanılanlara ekleyebilirsiniz',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    Text(
+                      'Henüz sık kullanılan yok',
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Text(
+                        'Tarama geçmişinden yıldız ikonuna tıklayarak\nsık kullanılanlara ekleyebilirsiniz',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _favorites.length,
+                itemBuilder: (context, index) {
+                  final favorite = _favorites[index];
+                  return _buildFavoriteItem(favorite);
+                },
               ),
-            )
-          : ListView.builder(
-              itemCount: _favorites.length,
-              itemBuilder: (context, index) {
-                final favorite = _favorites[index];
-                return _buildFavoriteItem(favorite);
-              },
-            ),
+      ),
     );
   }
 
   Widget _buildFavoriteItem(QrScanModel favorite) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: _getTypeColor(favorite.type),
-          child: Icon(
-            _getTypeIcon(favorite.type),
-            color: Colors.white,
-            size: 20,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        elevation: 3,
+        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(16),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _getTypeColor(favorite.type).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              _getTypeIcon(favorite.type),
+              color: _getTypeColor(favorite.type),
+              size: 20,
+            ),
           ),
-        ),
-        title: Text(
-          favorite.title ?? favorite.data,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              favorite.type,
-              style: TextStyle(
-                fontSize: 12,
-                color: _getTypeColor(favorite.type),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (favorite.type == 'WiFi' && favorite.description != null)
-              Text(
-                'Şifre: ${_maskPassword(favorite.description!)}',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey.shade700,
-                  fontFamily: 'monospace',
+          title: Text(
+            favorite.title ?? favorite.data,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: _getTypeColor(favorite.type).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-            Text(
-              _formatTimestamp(favorite.timestamp),
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-            ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Yıldız ikonu (Sık kullanılanlardan çıkar)
-            IconButton(
-              onPressed: () => _removeFromFavorites(favorite),
-              icon: const Icon(Icons.star, color: Colors.amber, size: 20),
-              tooltip: 'Sık kullanılanlardan çıkar',
-            ),
-            // Popup menü
-            PopupMenuButton<String>(
-              onSelected: (value) async {
-                switch (value) {
-                  case 'copy':
-                    _copyToClipboard(favorite);
-                    break;
-                  case 'open':
-                    if (favorite.isUrl) {
-                      _openUrl(favorite.data);
-                    }
-                    break;
-                  case 'remove':
-                    await _removeFromFavorites(favorite);
-                    break;
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'copy',
-                  child: Row(
-                    children: [
-                      Icon(Icons.copy, size: 16),
-                      SizedBox(width: 8),
-                      Text('Kopyala'),
-                    ],
+                child: Text(
+                  favorite.type,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: _getTypeColor(favorite.type),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                if (favorite.isUrl)
+              ),
+              if (favorite.type == 'WiFi' && favorite.description != null)
+                Text(
+                  'Şifre: ${_maskPassword(favorite.description!)}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade700,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              Text(
+                _formatTimestamp(favorite.timestamp),
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Yıldız ikonu (Sık kullanılanlardan çıkar)
+              IconButton(
+                onPressed: () => _removeFromFavorites(favorite),
+                icon: const Icon(Icons.star, color: Colors.amber, size: 20),
+                tooltip: 'Sık kullanılanlardan çıkar',
+              ),
+              // Popup menü
+              PopupMenuButton<String>(
+                onSelected: (value) async {
+                  switch (value) {
+                    case 'copy':
+                      _copyToClipboard(favorite);
+                      break;
+                    case 'open':
+                      if (favorite.isUrl) {
+                        _openUrl(favorite.data);
+                      }
+                      break;
+                    case 'remove':
+                      await _removeFromFavorites(favorite);
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
                   const PopupMenuItem(
-                    value: 'open',
+                    value: 'copy',
                     child: Row(
                       children: [
-                        Icon(Icons.open_in_browser, size: 16),
+                        Icon(Icons.copy, size: 16),
                         SizedBox(width: 8),
-                        Text('Aç'),
+                        Text('Kopyala'),
                       ],
                     ),
                   ),
-                const PopupMenuItem(
-                  value: 'remove',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, size: 16, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Sil', style: TextStyle(color: Colors.red)),
-                    ],
+                  if (favorite.isUrl)
+                    const PopupMenuItem(
+                      value: 'open',
+                      child: Row(
+                        children: [
+                          Icon(Icons.open_in_browser, size: 16),
+                          SizedBox(width: 8),
+                          Text('Aç'),
+                        ],
+                      ),
+                    ),
+                  const PopupMenuItem(
+                    value: 'remove',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, size: 16, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('Sil', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
+          onTap: () => _showFavoriteDetails(favorite),
         ),
-        onTap: () => _showFavoriteDetails(favorite),
       ),
     );
   }
@@ -665,17 +721,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   String _formatTimestamp(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inDays > 0) {
-      return '${difference.inDays} gün önce';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours} saat önce';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} dakika önce';
-    } else {
-      return 'Az önce';
-    }
+    // Sadece tarih formatı: "15.12.2024"
+    return '${timestamp.day.toString().padLeft(2, '0')}.${timestamp.month.toString().padLeft(2, '0')}.${timestamp.year}';
   }
 }

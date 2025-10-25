@@ -85,9 +85,13 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Tarama Geçmişi'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
         actions: [
           IconButton(
             onPressed: _loadScans,
@@ -156,100 +160,144 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Filtre ve arama bölümü
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Arama kutusu
-                TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Tarama geçmişinde ara...',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _searchQuery = '';
-                              });
-                              _filterScans();
-                            },
-                            icon: const Icon(Icons.clear),
-                          )
-                        : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                    });
-                    _filterScans();
-                  },
-                ),
-                const SizedBox(height: 12),
-                // Tip filtresi
-                if (_availableTypes.isNotEmpty) ...[
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        _buildFilterChip('Tümü', null),
-                        const SizedBox(width: 8),
-                        ..._availableTypes.map(
-                          (type) => Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: _buildFilterChip(type, type),
-                          ),
-                        ),
-                      ],
-                    ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            // Modern Filtre ve arama bölümü
+            Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.shadow.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
                 ],
-              ],
-            ),
-          ),
-          // Tarama listesi
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _filteredScans.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.qr_code_scanner,
-                          size: 64,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          'Henüz tarama yapılmamış',
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'QR kod taramaya başlayın!',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
+              ),
+              child: Column(
+                children: [
+                  // Arama kutusu
+                  TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Tarama geçmişinde ara...',
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchQuery = '';
+                                });
+                                _filterScans();
+                              },
+                              icon: const Icon(Icons.clear),
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Theme.of(
+                        context,
+                      ).colorScheme.surfaceVariant.withOpacity(0.3),
                     ),
-                  )
-                : ListView.builder(
-                    itemCount: _filteredScans.length,
-                    itemBuilder: (context, index) {
-                      final scan = _filteredScans[index];
-                      return _buildScanItem(scan);
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                      _filterScans();
                     },
                   ),
-          ),
-        ],
+                  const SizedBox(height: 16),
+                  // Modern Tip filtresi
+                  if (_availableTypes.isNotEmpty) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Filtrele:',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildFilterChip('Tümü', null),
+                          const SizedBox(width: 8),
+                          ..._availableTypes.map(
+                            (type) => Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: _buildFilterChip(type, type),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            // Tarama listesi
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _filteredScans.isEmpty
+                  ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.qr_code_scanner,
+                            size: 64,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            'Henüz tarama yapılmamış',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'QR kod taramaya başlayın!',
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _filteredScans.length,
+                      itemBuilder: (context, index) {
+                        final scan = _filteredScans[index];
+                        return _buildScanItem(scan);
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -257,7 +305,15 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
   Widget _buildFilterChip(String label, String? type) {
     final isSelected = _selectedType == type;
     return FilterChip(
-      label: Text(label),
+      label: Text(
+        label,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          color: isSelected
+              ? Theme.of(context).colorScheme.onPrimary
+              : Theme.of(context).colorScheme.onSurface,
+        ),
+      ),
       selected: isSelected,
       onSelected: (selected) {
         setState(() {
@@ -265,124 +321,157 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
         });
         _filterScans();
       },
-      selectedColor: Colors.blue.shade100,
-      checkmarkColor: Colors.blue,
+      selectedColor: Theme.of(context).colorScheme.primary,
+      checkmarkColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(
+        context,
+      ).colorScheme.surfaceVariant.withOpacity(0.3),
+      side: BorderSide(
+        color: isSelected
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
   }
 
   Widget _buildScanItem(QrScanModel scan) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: _getTypeColor(scan.type),
-          child: Icon(_getTypeIcon(scan.type), color: Colors.white, size: 20),
-        ),
-        title: Text(
-          scan.title ?? scan.data,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              scan.type,
-              style: TextStyle(
-                fontSize: 12,
-                color: _getTypeColor(scan.type),
-                fontWeight: FontWeight.w500,
-              ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Card(
+        elevation: 2,
+        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(16),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _getTypeColor(scan.type).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
             ),
-            if (scan.type == 'WiFi' && scan.description != null)
-              Text(
-                'Şifre: ${_maskPassword(scan.description!)}',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey.shade700,
-                  fontFamily: 'monospace',
+            child: Icon(
+              _getTypeIcon(scan.type),
+              color: _getTypeColor(scan.type),
+              size: 20,
+            ),
+          ),
+          title: Text(
+            scan.title ?? scan.data,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: _getTypeColor(scan.type).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-            Text(
-              _formatTimestamp(scan.timestamp),
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-            ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Yıldız ikonu (Sık kullanılanlara ekle/çıkar)
-            IconButton(
-              onPressed: () => _toggleFavorite(scan),
-              icon: Icon(
-                _hiveService.isFavorite(scan.id)
-                    ? Icons.star
-                    : Icons.star_border,
-                color: _hiveService.isFavorite(scan.id)
-                    ? Colors.amber
-                    : Colors.grey,
-                size: 20,
-              ),
-              tooltip: _hiveService.isFavorite(scan.id)
-                  ? 'Sık kullanılanlardan çıkar'
-                  : 'Sık kullanılanlara ekle',
-            ),
-            // Popup menü
-            PopupMenuButton<String>(
-              onSelected: (value) async {
-                switch (value) {
-                  case 'copy':
-                    _copyToClipboard(scan);
-                    break;
-                  case 'delete':
-                    await _deleteScan(scan);
-                    break;
-                  case 'open':
-                    if (scan.isUrl) {
-                      _openUrl(scan.data);
-                    }
-                    break;
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'copy',
-                  child: Row(
-                    children: [
-                      Icon(Icons.copy, size: 16),
-                      SizedBox(width: 8),
-                      Text('Kopyala'),
-                    ],
+                child: Text(
+                  scan.type,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: _getTypeColor(scan.type),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                if (scan.isUrl)
+              ),
+              if (scan.type == 'WiFi' && scan.description != null)
+                Text(
+                  'Şifre: ${_maskPassword(scan.description!)}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade700,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              Text(
+                _formatTimestamp(scan.timestamp),
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Yıldız ikonu (Sık kullanılanlara ekle/çıkar)
+              IconButton(
+                onPressed: () => _toggleFavorite(scan),
+                icon: Icon(
+                  _hiveService.isFavorite(scan.id)
+                      ? Icons.star
+                      : Icons.star_border,
+                  color: _hiveService.isFavorite(scan.id)
+                      ? Colors.amber
+                      : Colors.grey,
+                  size: 20,
+                ),
+                tooltip: _hiveService.isFavorite(scan.id)
+                    ? 'Sık kullanılanlardan çıkar'
+                    : 'Sık kullanılanlara ekle',
+              ),
+              // Popup menü
+              PopupMenuButton<String>(
+                onSelected: (value) async {
+                  switch (value) {
+                    case 'copy':
+                      _copyToClipboard(scan);
+                      break;
+                    case 'delete':
+                      await _deleteScan(scan);
+                      break;
+                    case 'open':
+                      if (scan.isUrl) {
+                        _openUrl(scan.data);
+                      }
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
                   const PopupMenuItem(
-                    value: 'open',
+                    value: 'copy',
                     child: Row(
                       children: [
-                        Icon(Icons.open_in_browser, size: 16),
+                        Icon(Icons.copy, size: 16),
                         SizedBox(width: 8),
-                        Text('Aç'),
+                        Text('Kopyala'),
                       ],
                     ),
                   ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, size: 16, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Sil', style: TextStyle(color: Colors.red)),
-                    ],
+                  if (scan.isUrl)
+                    const PopupMenuItem(
+                      value: 'open',
+                      child: Row(
+                        children: [
+                          Icon(Icons.open_in_browser, size: 16),
+                          SizedBox(width: 8),
+                          Text('Aç'),
+                        ],
+                      ),
+                    ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, size: 16, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('Sil', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
+          onTap: () => _showScanDetails(scan),
         ),
-        onTap: () => _showScanDetails(scan),
       ),
     );
   }
@@ -442,18 +531,8 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
   }
 
   String _formatTimestamp(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inDays > 0) {
-      return '${difference.inDays} gün önce';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours} saat önce';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} dakika önce';
-    } else {
-      return 'Az önce';
-    }
+    // Sadece tarih formatı: "15.12.2024"
+    return '${timestamp.day.toString().padLeft(2, '0')}.${timestamp.month.toString().padLeft(2, '0')}.${timestamp.year}';
   }
 
   String _maskPassword(String password) {
