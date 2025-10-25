@@ -198,78 +198,84 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 Expanded(
                                   child: TextField(
                                     controller: _firstNameController,
-                                    style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
+                                    style: CommonHelpers.getResponsiveTextStyle(
+                                      context,
                                     ),
-                                    decoration: InputDecoration(
-                                      labelText: AppLocalizations.of(
-                                        context,
-                                      )!.firstNameLabel,
-                                      labelStyle: TextStyle(
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      hintText: AppLocalizations.of(
-                                        context,
-                                      )!.firstNameHint,
-                                      hintStyle: TextStyle(
-                                        color: Colors.grey.shade400,
-                                      ),
-                                      filled: true,
-                                      fillColor: Theme.of(
-                                        context,
-                                      ).colorScheme.surfaceContainerHighest,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                      prefixIcon: Icon(
-                                        Icons.person_outline,
-                                        color: Theme.of(
+                                    decoration:
+                                        CommonHelpers.getResponsiveInputDecoration(
                                           context,
-                                        ).colorScheme.primary,
-                                      ),
-                                    ),
+                                          labelText: AppLocalizations.of(
+                                            context,
+                                          )!.firstNameLabel,
+                                          hintText: AppLocalizations.of(
+                                            context,
+                                          )!.firstNameHint,
+                                          prefixIcon: Icon(
+                                            Icons.person_outline,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                        ).copyWith(
+                                          filled: true,
+                                          fillColor: Theme.of(
+                                            context,
+                                          ).colorScheme.surfaceContainerHighest,
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          prefixIcon: Icon(
+                                            Icons.person_outline,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                        ),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: TextField(
                                     controller: _lastNameController,
-                                    style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
+                                    style: CommonHelpers.getResponsiveTextStyle(
+                                      context,
                                     ),
-                                    decoration: InputDecoration(
-                                      labelText: AppLocalizations.of(
-                                        context,
-                                      )!.lastNameLabel,
-                                      labelStyle: TextStyle(
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      hintText: AppLocalizations.of(
-                                        context,
-                                      )!.lastNameHint,
-                                      hintStyle: TextStyle(
-                                        color: Colors.grey.shade400,
-                                      ),
-                                      filled: true,
-                                      fillColor: Theme.of(
-                                        context,
-                                      ).colorScheme.surfaceContainerHighest,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                      prefixIcon: Icon(
-                                        Icons.person_outline,
-                                        color: Theme.of(
+                                    decoration:
+                                        CommonHelpers.getResponsiveInputDecoration(
                                           context,
-                                        ).colorScheme.primary,
-                                      ),
-                                    ),
+                                          labelText: AppLocalizations.of(
+                                            context,
+                                          )!.lastNameLabel,
+                                          hintText: AppLocalizations.of(
+                                            context,
+                                          )!.lastNameHint,
+                                          prefixIcon: Icon(
+                                            Icons.person_outline,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                        ).copyWith(
+                                          filled: true,
+                                          fillColor: Theme.of(
+                                            context,
+                                          ).colorScheme.surfaceContainerHighest,
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          prefixIcon: Icon(
+                                            Icons.person_outline,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                        ),
                                   ),
                                 ),
                               ],

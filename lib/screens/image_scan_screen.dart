@@ -6,6 +6,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../l10n/app_localizations.dart';
 import '../services/hive_service.dart';
+import '../services/common_helpers.dart';
 import '../models/qr_scan_model.dart';
 
 class ImageScanScreen extends StatefulWidget {
@@ -305,7 +306,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     onPressed: () =>
-                                        _copyToClipboard(_scanResult!),
+                                        _handleCopyResult(_scanResult!),
                                     icon: const Icon(Icons.copy),
                                     label: Text(
                                       AppLocalizations.of(context)!.copyAction,
@@ -457,6 +458,46 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
   }
 
   /// Panoya kopyalar
+  Future<void> _handleCopyResult(String text) async {
+    // QR tipini belirle
+    final qrType = _getQRType(text);
+
+    if (qrType == 'WIFI') {
+      // WiFi QR kodu için özel menü göster
+      final scanModel = QrScanModel.fromData(text);
+      await CommonHelpers.showWiFiCopyOptions(scanModel, context);
+    } else {
+      // Diğer QR kodları için normal kopyalama
+      await _copyToClipboard(text);
+    }
+  }
+
+  String _getQRType(String data) {
+    if (data.startsWith('WIFI:') || data.startsWith('wifi:')) {
+      return 'WIFI';
+    } else if (data.startsWith('http://') || data.startsWith('https://')) {
+      return 'URL';
+    } else if (data.startsWith('mailto:')) {
+      return 'EMAIL';
+    } else if (data.startsWith('tel:')) {
+      return 'PHONE';
+    } else if (data.startsWith('sms:')) {
+      return 'SMS';
+    } else if (data.startsWith('geo:')) {
+      return 'LOCATION';
+    } else if (data.startsWith('vcard:') || data.startsWith('BEGIN:VCARD')) {
+      return 'VCARD';
+    } else if (data.startsWith('mecard:')) {
+      return 'MECARD';
+    } else if (data.startsWith('otpauth:')) {
+      return 'OTP';
+    } else if (data.startsWith('bitcoin:') || data.startsWith('ethereum:')) {
+      return 'CRYPTO';
+    } else {
+      return 'TEXT';
+    }
+  }
+
   Future<void> _copyToClipboard(String text) async {
     final l10n = AppLocalizations.of(context)!;
     await Clipboard.setData(ClipboardData(text: text));

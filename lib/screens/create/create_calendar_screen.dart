@@ -189,38 +189,47 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                             // Başlık
                             TextField(
                               controller: _titleController,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
+                              style: CommonHelpers.getResponsiveTextStyle(
+                                context,
                               ),
-                              decoration: InputDecoration(
-                                labelText:
-                                    '${AppLocalizations.of(context)!.eventTitle} *',
-                                labelStyle: TextStyle(
-                                  color: Theme.of(
+                              decoration:
+                                  CommonHelpers.getResponsiveInputDecoration(
                                     context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                                hintText: AppLocalizations.of(
-                                  context,
-                                )!.enterEventName,
-                                hintStyle: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                                filled: true,
-                                fillColor: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainerHighest,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.title,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
+                                    labelText:
+                                        '${AppLocalizations.of(context)!.eventTitle} *',
+                                    hintText: AppLocalizations.of(
+                                      context,
+                                    )!.enterEventName,
+                                  ).copyWith(
+                                    labelStyle:
+                                        CommonHelpers.getResponsiveTextStyle(
+                                          context,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
+                                    hintStyle:
+                                        CommonHelpers.getResponsiveTextStyle(
+                                          context,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
+                                    filled: true,
+                                    fillColor: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.title,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
+                                  ),
                             ),
 
                             const SizedBox(height: 16),

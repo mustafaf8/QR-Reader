@@ -54,25 +54,32 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          MobileScanner(controller: cameraController, onDetect: _onDetect),
-          _buildGradientOverlay(),
-          if (_isScanning) _buildAdvancedScannerOverlay(),
-          if (_isScanning) _buildScanningLine(),
-          if (_isScanning) _buildAnimatedCorners(),
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: _buildInstructions(),
-          ),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              MobileScanner(controller: cameraController, onDetect: _onDetect),
+              _buildGradientOverlay(constraints),
+              if (_isScanning) _buildAdvancedScannerOverlay(constraints),
+              if (_isScanning) _buildScanningLine(constraints),
+              if (_isScanning) _buildAnimatedCorners(constraints),
+              Positioned(
+                bottom: 40,
+                left: 0,
+                right: 0,
+                child: _buildInstructions(),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildGradientOverlay() {
+  Widget _buildGradientOverlay(BoxConstraints constraints) {
+    final screenHeight = constraints.maxHeight;
+    final gradientHeight = (screenHeight * 0.25).clamp(80.0, 200.0);
+
     return Stack(
       children: [
         // Üst gradient
@@ -81,7 +88,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           left: 0,
           right: 0,
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: gradientHeight,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -100,14 +107,14 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           left: 0,
           right: 0,
           child: Container(
-            height: 200,
+            height: gradientHeight,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
                 colors: [
-                  Colors.transparent,
                   Colors.black.withValues(alpha: 0.8),
+                  Colors.transparent,
                 ],
               ),
             ),
@@ -117,30 +124,54 @@ class _QrScannerScreenState extends State<QrScannerScreen>
     );
   }
 
-  Widget _buildAdvancedScannerOverlay() {
-    return CustomPaint(painter: AdvancedScannerPainter());
+  Widget _buildAdvancedScannerOverlay(BoxConstraints constraints) {
+    final cutOutSize = _getCutOutSize(constraints);
+    return CustomPaint(painter: AdvancedScannerPainter(cutOutSize: cutOutSize));
   }
 
-  double _getCutOutSize() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    return (screenWidth * 0.7).clamp(200.0, 350.0);
+  double _getCutOutSize(BoxConstraints constraints) {
+    final screenWidth = constraints.maxWidth;
+    final screenHeight = constraints.maxHeight;
+
+    // Ekran oranına göre dinamik boyut hesapla
+    final aspectRatio = screenWidth / screenHeight;
+
+    if (aspectRatio > 1.5) {
+      // Çok geniş ekranlar (tablet landscape)
+      return (screenWidth * 0.5).clamp(250.0, 400.0);
+    } else if (aspectRatio < 0.6) {
+      // Çok uzun ekranlar (katlanabilir telefon)
+      return (screenWidth * 0.8).clamp(200.0, 300.0);
+    } else {
+      // Normal telefon ekranları
+      return (screenWidth * 0.7).clamp(200.0, 350.0);
+    }
   }
 
-  double _getCornerOffset() {
-    return _getCutOutSize() / 2;
+  double _getCornerOffset(BoxConstraints constraints) {
+    return _getCutOutSize(constraints) / 2;
   }
 
-  Widget _buildScanningLine() {
+  Widget _buildScanningLine(BoxConstraints constraints) {
+    final screenWidth = constraints.maxWidth;
+    final screenHeight = constraints.maxHeight;
+    final cutOutSize = _getCutOutSize(constraints);
+    final cornerOffset = _getCornerOffset(constraints);
+
+    // Merkez pozisyonunu hesapla
+    final centerX = screenWidth / 2;
+    final centerY = screenHeight * 0.5; // Daha merkezi konumlandırma
+
     return Positioned(
-      top: MediaQuery.of(context).size.height * 0.42 - _getCornerOffset(),
-      left: MediaQuery.of(context).size.width * 0.5 - _getCornerOffset(),
+      top: centerY - cornerOffset,
+      left: centerX - cornerOffset,
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
           return Opacity(
             opacity: 0.4,
             child: Container(
-              width: _getCutOutSize(),
+              width: cutOutSize,
               height: 200,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -170,9 +201,17 @@ class _QrScannerScreenState extends State<QrScannerScreen>
     );
   }
 
-  Widget _buildAnimatedCorners() {
+  Widget _buildAnimatedCorners(BoxConstraints constraints) {
     final cornerWidth = 5.0;
     final cornerLength = 40.0;
+    final screenWidth = constraints.maxWidth;
+    final screenHeight = constraints.maxHeight;
+    final cutOutSize = _getCutOutSize(constraints);
+    final cornerOffset = _getCornerOffset(constraints);
+
+    // Merkez pozisyonunu hesapla
+    final centerX = screenWidth / 2;
+    final centerY = screenHeight * 0.5;
 
     return Positioned.fill(
       child: AnimatedBuilder(
@@ -182,12 +221,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             children: [
               // Sol üst köşe
               Positioned(
-                top:
-                    MediaQuery.of(context).size.height * 0.42 -
-                    _getCornerOffset(),
-                left:
-                    MediaQuery.of(context).size.width * 0.5 -
-                    _getCornerOffset(),
+                top: centerY - cornerOffset,
+                left: centerX - cornerOffset,
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -217,12 +252,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               ),
               // Sağ üst köşe
               Positioned(
-                top:
-                    MediaQuery.of(context).size.height * 0.42 -
-                    _getCornerOffset(),
-                right:
-                    MediaQuery.of(context).size.width * 0.5 -
-                    _getCornerOffset(),
+                top: centerY - cornerOffset,
+                right: screenWidth - centerX - cornerOffset,
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -252,12 +283,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               ),
               // Sol alt köşe
               Positioned(
-                bottom:
-                    MediaQuery.of(context).size.height * 0.58 -
-                    _getCornerOffset(),
-                left:
-                    MediaQuery.of(context).size.width * 0.5 -
-                    _getCornerOffset(),
+                bottom: screenHeight - centerY - cornerOffset,
+                left: centerX - cornerOffset,
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -287,12 +314,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               ),
               // Sağ alt köşe
               Positioned(
-                bottom:
-                    MediaQuery.of(context).size.height * 0.58 -
-                    _getCornerOffset(),
-                right:
-                    MediaQuery.of(context).size.width * 0.5 -
-                    _getCornerOffset(),
+                bottom: screenHeight - centerY - cornerOffset,
+                right: screenWidth - centerX - cornerOffset,
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -370,6 +393,10 @@ class _QrScannerScreenState extends State<QrScannerScreen>
 }
 
 class AdvancedScannerPainter extends CustomPainter {
+  final double cutOutSize;
+
+  AdvancedScannerPainter({required this.cutOutSize});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
@@ -378,10 +405,9 @@ class AdvancedScannerPainter extends CustomPainter {
 
     final screenWidth = size.width;
     final screenHeight = size.height;
-    final cutOutSize = (screenWidth * 0.7).clamp(200.0, 350.0);
 
     final centerX = screenWidth / 2;
-    final centerY = screenHeight * 0.42;
+    final centerY = screenHeight * 0.5; // Daha merkezi konumlandırma
 
     final cutOutRect = Rect.fromCenter(
       center: Offset(centerX, centerY),

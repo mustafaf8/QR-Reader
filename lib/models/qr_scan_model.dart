@@ -2,6 +2,16 @@ import 'package:hive/hive.dart';
 
 part 'qr_scan_model.g.dart';
 
+/// WiFi şifre durumu için enum
+enum PasswordStatus {
+  @HiveField(0)
+  none, // Şifre yok
+  @HiveField(1)
+  hidden, // Gizli şifre
+  @HiveField(2)
+  available, // Şifre mevcut
+}
+
 @HiveType(typeId: 0)
 class QrScanModel extends HiveObject {
   @HiveField(0)
@@ -39,6 +49,25 @@ class QrScanModel extends HiveObject {
     this.description,
   });
 
+  /// Ham veriden QrScanModel oluşturur
+  factory QrScanModel.fromData(String data) {
+    final now = DateTime.now();
+    final type = _getDataType(data);
+    final format = 'QR_CODE';
+    final isUrl = _isUrl(data);
+
+    return QrScanModel(
+      id: '${now.millisecondsSinceEpoch}_${data.hashCode}',
+      data: data,
+      type: type,
+      timestamp: now,
+      format: format,
+      isUrl: isUrl,
+      title: _generateTitle(data, type),
+      description: _generateDescription(data, type),
+    );
+  }
+
   // Copy constructor
   QrScanModel.copy({
     required this.id,
@@ -72,25 +101,25 @@ class QrScanModel extends HiveObject {
     if (data.startsWith('http://') || data.startsWith('https://')) {
       return 'URL';
     } else if (data.startsWith('mailto:')) {
-      return 'E-posta';
+      return 'EMAIL';
     } else if (data.startsWith('tel:')) {
-      return 'Telefon';
+      return 'PHONE';
     } else if (data.startsWith('sms:')) {
       return 'SMS';
     } else if (data.startsWith('geo:')) {
-      return 'Konum';
+      return 'LOCATION';
     } else if (data.startsWith('WIFI:') || data.startsWith('wifi:')) {
-      return 'WiFi';
+      return 'WIFI';
     } else if (data.startsWith('vcard:') || data.startsWith('BEGIN:VCARD')) {
-      return 'vCard';
+      return 'VCARD';
     } else if (data.startsWith('mecard:')) {
-      return 'MeCard';
+      return 'MECARD';
     } else if (data.startsWith('otpauth:')) {
       return 'OTP';
     } else if (data.startsWith('bitcoin:') || data.startsWith('ethereum:')) {
-      return 'Kripto Para';
+      return 'CRYPTO';
     } else {
-      return 'Metin';
+      return 'TEXT';
     }
   }
 
@@ -99,7 +128,7 @@ class QrScanModel extends HiveObject {
   }
 
   /// WiFi QR kodundan SSID'i çıkarır - Regex ile iyileştirildi
-  static String _extractWiFiSSID(String data) {
+  static String extractWiFiSSID(String data) {
     try {
       if (!data.startsWith('WIFI:')) return 'WiFi Ağı';
 
@@ -118,10 +147,10 @@ class QrScanModel extends HiveObject {
     }
   }
 
-  /// WiFi QR kodundan şifreyi çıkarır - Regex ile iyileştirildi
-  static String _extractWiFiPassword(String data) {
+  /// WiFi QR kodundan şifre durumunu belirler
+  static PasswordStatus getWiFiPasswordStatus(String data) {
     try {
-      if (!data.startsWith('WIFI:')) return 'WiFi ağ bilgileri';
+      if (!data.startsWith('WIFI:')) return PasswordStatus.none;
 
       // Regex ile P: etiketini ve değerini çıkar
       final passwordRegex = RegExp(r'P:([^;]*)');
@@ -130,16 +159,39 @@ class QrScanModel extends HiveObject {
       if (match != null && match.group(1) != null) {
         final password = match.group(1)!.trim();
 
-        // Şifre boşsa veya gizliyse uygun mesaj döndür
-        if (password.isEmpty) return 'Şifre yok';
-        if (password == 'HIDDEN') return 'Gizli şifre';
-
-        return password;
+        // Şifre durumunu belirle
+        if (password.isEmpty) return PasswordStatus.none;
+        if (password == 'HIDDEN') return PasswordStatus.hidden;
+        return PasswordStatus.available;
       }
 
-      return 'WiFi ağ bilgileri';
+      return PasswordStatus.none;
     } catch (e) {
-      return 'WiFi ağ bilgileri';
+      return PasswordStatus.none;
+    }
+  }
+
+  /// WiFi QR kodundan şifreyi çıkarır (sadece mevcut şifreler için)
+  static String extractWiFiPassword(String data) {
+    try {
+      if (!data.startsWith('WIFI:')) return '';
+
+      // Regex ile P: etiketini ve değerini çıkar
+      final passwordRegex = RegExp(r'P:([^;]*)');
+      final match = passwordRegex.firstMatch(data);
+
+      if (match != null && match.group(1) != null) {
+        final password = match.group(1)!.trim();
+
+        // Sadece gerçek şifreleri döndür
+        if (password.isNotEmpty && password != 'HIDDEN') {
+          return password;
+        }
+      }
+
+      return '';
+    } catch (e) {
+      return '';
     }
   }
 
@@ -150,26 +202,26 @@ class QrScanModel extends HiveObject {
           final uri = Uri.parse(data);
           return uri.host;
         } catch (e) {
-          return 'Web Adresi';
+          return data; // Fallback olarak orijinal data'yı döndür
         }
-      case 'E-posta':
+      case 'EMAIL':
         return data.replaceFirst('mailto:', '');
-      case 'Telefon':
+      case 'PHONE':
         return data.replaceFirst('tel:', '');
       case 'SMS':
-        return 'SMS Mesajı';
-      case 'Konum':
-        return 'Konum Bilgisi';
-      case 'WiFi':
-        return _extractWiFiSSID(data);
-      case 'vCard':
-        return 'İletişim Kartı';
-      case 'MeCard':
-        return 'MeCard';
+        return data; // SMS içeriğini döndür
+      case 'LOCATION':
+        return data; // Konum bilgisini döndür
+      case 'WIFI':
+        return extractWiFiSSID(data);
+      case 'VCARD':
+        return data; // vCard içeriğini döndür
+      case 'MECARD':
+        return data; // MeCard içeriğini döndür
       case 'OTP':
-        return 'OTP Kodu';
-      case 'Kripto Para':
-        return 'Kripto Para Adresi';
+        return data; // OTP içeriğini döndür
+      case 'CRYPTO':
+        return data; // Kripto adresini döndür
       default:
         return data.length > 30 ? '${data.substring(0, 30)}...' : data;
     }
@@ -179,24 +231,24 @@ class QrScanModel extends HiveObject {
     switch (type) {
       case 'URL':
         return data;
-      case 'E-posta':
-        return 'E-posta adresi';
-      case 'Telefon':
-        return 'Telefon numarası';
+      case 'EMAIL':
+        return data.replaceFirst('mailto:', '');
+      case 'PHONE':
+        return data.replaceFirst('tel:', '');
       case 'SMS':
         return data.replaceFirst('sms:', '');
-      case 'Konum':
+      case 'LOCATION':
         return data.replaceFirst('geo:', '');
-      case 'WiFi':
-        return _extractWiFiPassword(data);
-      case 'vCard':
-        return 'İletişim bilgileri';
-      case 'MeCard':
-        return 'MeCard bilgileri';
+      case 'WIFI':
+        return extractWiFiPassword(data);
+      case 'VCARD':
+        return data; // vCard içeriğini döndür
+      case 'MECARD':
+        return data; // MeCard içeriğini döndür
       case 'OTP':
-        return 'İki faktörlü kimlik doğrulama';
-      case 'Kripto Para':
-        return 'Kripto para adresi';
+        return data; // OTP içeriğini döndür
+      case 'CRYPTO':
+        return data; // Kripto adresini döndür
       default:
         return data;
     }

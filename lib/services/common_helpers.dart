@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import '../l10n/app_localizations.dart';
+import '../models/qr_scan_model.dart';
 import 'error_service.dart';
 
 class CommonHelpers {
@@ -361,5 +362,271 @@ class CommonHelpers {
       default:
         return Icons.qr_code;
     }
+  }
+
+  /// QR tipini yerelleştirilmiş metne çevirir
+  static String getLocalizedType(String type, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (type) {
+      case 'EMAIL':
+        return l10n.emailType;
+      case 'PHONE':
+        return l10n.phoneType;
+      case 'LOCATION':
+        return l10n.locationType;
+      case 'WIFI':
+        return l10n.wifiType;
+      case 'VCARD':
+        return l10n.vcardType;
+      case 'MECARD':
+        return l10n.mecardType;
+      case 'OTP':
+        return l10n.otpType;
+      case 'CRYPTO':
+        return l10n.cryptoType;
+      case 'TEXT':
+        return l10n.textType;
+      default:
+        return type;
+    }
+  }
+
+  /// WiFi şifre durumunu yerelleştirilmiş metne çevirir
+  static String getLocalizedPasswordStatus(
+    PasswordStatus status,
+    BuildContext context,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (status) {
+      case PasswordStatus.none:
+        return l10n.noPasswordText;
+      case PasswordStatus.hidden:
+        return l10n.hiddenPassword;
+      case PasswordStatus.available:
+        return l10n.wifiNetwork;
+    }
+  }
+
+  /// WiFi QR kodu için kopyalama seçenekleri
+  static Future<void> showWiFiCopyOptions(
+    QrScanModel scan,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    return showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                l10n.wifiCopyOptions,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.wifi, color: Colors.cyan),
+                title: Text(l10n.copyWifiPassword),
+                subtitle: Text(l10n.copyWifiPasswordDesc),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _copyWiFiPassword(scan, context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.data_object, color: Colors.blue),
+                title: Text(l10n.copyRawData),
+                subtitle: Text(l10n.copyRawDataDesc),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await copyToClipboard(scan.data, context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info, color: Colors.green),
+                title: Text(l10n.copyWifiInfo),
+                subtitle: Text(l10n.copyWifiInfoDesc),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _copyWiFiInfo(scan, context);
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// WiFi şifresini kopyalar
+  static Future<void> _copyWiFiPassword(
+    QrScanModel scan,
+    BuildContext context,
+  ) async {
+    final password = QrScanModel.extractWiFiPassword(scan.data);
+    if (password.isNotEmpty) {
+      await copyToClipboard(password, context);
+    } else {
+      final l10n = AppLocalizations.of(context)!;
+      ErrorService.showInfoSnackBar(context, l10n.noPasswordToCopy);
+    }
+  }
+
+  /// WiFi bilgilerini kopyalar
+  static Future<void> _copyWiFiInfo(
+    QrScanModel scan,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final ssid = QrScanModel.extractWiFiSSID(scan.data);
+    final password = QrScanModel.extractWiFiPassword(scan.data);
+    final passwordStatus = QrScanModel.getWiFiPasswordStatus(scan.data);
+
+    String info = '${l10n.networkNameSSID}: $ssid\n';
+    info +=
+        '${l10n.passwordLabel}: ${getLocalizedPasswordStatus(passwordStatus, context)}';
+
+    if (password.isNotEmpty) {
+      info += '\n$password';
+    }
+
+    await copyToClipboard(info, context);
+  }
+
+  /// Responsive dialog boyutları hesaplar
+  static BoxConstraints getResponsiveDialogConstraints(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
+    // Ekran oranına göre dinamik boyutlar
+    final aspectRatio = screenWidth / screenHeight;
+
+    double maxWidth;
+    double maxHeight;
+
+    if (aspectRatio > 1.2) {
+      // Yatay mod veya tablet landscape
+      maxWidth = (screenWidth * 0.6).clamp(300.0, 500.0);
+      maxHeight = (screenHeight * 0.85).clamp(400.0, 700.0);
+    } else if (screenHeight < 600) {
+      // Çok küçük ekranlar
+      maxWidth = (screenWidth * 0.95).clamp(280.0, 400.0);
+      maxHeight = (screenHeight * 0.9).clamp(300.0, 500.0);
+    } else {
+      // Normal telefon ekranları
+      maxWidth = (screenWidth * 0.9).clamp(300.0, 400.0);
+      maxHeight = (screenHeight * 0.8).clamp(400.0, 650.0);
+    }
+
+    return BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight);
+  }
+
+  /// Responsive text style hesaplar
+  static TextStyle getResponsiveTextStyle(
+    BuildContext context, {
+    double? baseFontSize,
+    FontWeight? fontWeight,
+    Color? color,
+  }) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
+    // Ekran boyutuna göre font boyutu hesapla
+    double fontSize = baseFontSize ?? 14.0;
+
+    if (screenHeight < 600) {
+      // Çok küçük ekranlar - daha küçük font
+      fontSize = (fontSize * 0.85).clamp(10.0, 16.0);
+    } else if (screenWidth < 360) {
+      // Dar ekranlar - biraz küçük font
+      fontSize = (fontSize * 0.9).clamp(11.0, 18.0);
+    } else if (screenWidth > 600) {
+      // Geniş ekranlar - biraz büyük font
+      fontSize = (fontSize * 1.1).clamp(12.0, 20.0);
+    }
+
+    return TextStyle(
+      fontSize: fontSize,
+      fontWeight: fontWeight ?? FontWeight.normal,
+      color: color ?? Theme.of(context).colorScheme.onSurface,
+    );
+  }
+
+  /// Responsive InputDecoration oluşturur
+  static InputDecoration getResponsiveInputDecoration(
+    BuildContext context, {
+    required String labelText,
+    String? hintText,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+  }) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.height < 600 || screenSize.width < 360;
+
+    return InputDecoration(
+      labelText: labelText,
+      hintText: hintText,
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
+      labelStyle: getResponsiveTextStyle(
+        context,
+        baseFontSize: isSmallScreen ? 12.0 : 14.0,
+        color: Colors.grey.shade300,
+      ),
+      hintStyle: getResponsiveTextStyle(
+        context,
+        baseFontSize: isSmallScreen ? 12.0 : 14.0,
+        color: Colors.grey.shade400,
+      ),
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: isSmallScreen ? 12 : 16,
+      ),
+    );
+  }
+
+  /// Responsive ListTile subtitle oluşturur
+  static Widget buildResponsiveSubtitle(
+    BuildContext context,
+    String text, {
+    int? maxLines,
+    TextOverflow? overflow,
+  }) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.height < 600 || screenSize.width < 360;
+
+    return Text(
+      text,
+      maxLines: maxLines ?? (isSmallScreen ? 2 : 1),
+      overflow:
+          overflow ??
+          (isSmallScreen ? TextOverflow.ellipsis : TextOverflow.ellipsis),
+      style: getResponsiveTextStyle(
+        context,
+        baseFontSize: isSmallScreen ? 12.0 : 14.0,
+        color: Colors.grey.shade600,
+      ),
+    );
   }
 }

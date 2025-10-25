@@ -254,7 +254,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noPasswordText => 'Sin contraseña';
 
   @override
-  String get hiddenPassword => 'OCULTO';
+  String get hiddenPassword => 'Contraseña oculta';
 
   @override
   String get content => 'Contenido';
@@ -1051,10 +1051,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mecardType => 'MeCard';
 
   @override
-  String get otpType => 'OTP';
+  String get otpType => 'Código OTP';
 
   @override
-  String get cryptoType => 'Cripto';
+  String get cryptoType => 'Dirección Cripto';
 
   @override
   String get saveTooltip => 'Guardar';
@@ -1105,7 +1105,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get lastScanResult => 'Último Resultado del Escaneo';
 
   @override
-  String get vcardType => 'vCard';
+  String get vcardType => 'Tarjeta de Contacto';
 
   @override
   String get textType => 'Texto';
@@ -1184,4 +1184,29 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addressLabel => 'Dirección';
+
+  @override
+  String get wifiCopyOptions => 'Opciones de Copia WiFi';
+
+  @override
+  String get copyWifiPassword => 'Copiar Contraseña';
+
+  @override
+  String get copyWifiPasswordDesc => 'Copiar solo la contraseña WiFi';
+
+  @override
+  String get copyRawData => 'Copiar Datos Raw';
+
+  @override
+  String get copyRawDataDesc => 'Copiar los datos completos del código QR';
+
+  @override
+  String get copyWifiInfo => 'Copiar Info WiFi';
+
+  @override
+  String get copyWifiInfoDesc =>
+      'Copiar nombre de red e información de contraseña';
+
+  @override
+  String get noPasswordToCopy => 'No hay contraseña disponible para copiar';
 }

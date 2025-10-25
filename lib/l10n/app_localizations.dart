@@ -583,7 +583,7 @@ abstract class AppLocalizations {
   /// No description provided for @hiddenPassword.
   ///
   /// In tr, this message translates to:
-  /// **'GİZLİ'**
+  /// **'Gizli şifre'**
   String get hiddenPassword;
 
   /// No description provided for @content.
@@ -2131,13 +2131,13 @@ abstract class AppLocalizations {
   /// No description provided for @otpType.
   ///
   /// In tr, this message translates to:
-  /// **'OTP'**
+  /// **'OTP Kodu'**
   String get otpType;
 
   /// No description provided for @cryptoType.
   ///
   /// In tr, this message translates to:
-  /// **'Kripto Para'**
+  /// **'Kripto Adresi'**
   String get cryptoType;
 
   /// No description provided for @saveTooltip.
@@ -2239,7 +2239,7 @@ abstract class AppLocalizations {
   /// No description provided for @vcardType.
   ///
   /// In tr, this message translates to:
-  /// **'vCard'**
+  /// **'İletişim Kartı'**
   String get vcardType;
 
   /// No description provided for @textType.
@@ -2397,6 +2397,54 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Adres'**
   String get addressLabel;
+
+  /// No description provided for @wifiCopyOptions.
+  ///
+  /// In tr, this message translates to:
+  /// **'WiFi Kopyalama Seçenekleri'**
+  String get wifiCopyOptions;
+
+  /// No description provided for @copyWifiPassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifreyi Kopyala'**
+  String get copyWifiPassword;
+
+  /// No description provided for @copyWifiPasswordDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sadece WiFi şifresini kopyala'**
+  String get copyWifiPasswordDesc;
+
+  /// No description provided for @copyRawData.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ham Veriyi Kopyala'**
+  String get copyRawData;
+
+  /// No description provided for @copyRawDataDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tam QR kod verisini kopyala'**
+  String get copyRawDataDesc;
+
+  /// No description provided for @copyWifiInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'WiFi Bilgilerini Kopyala'**
+  String get copyWifiInfo;
+
+  /// No description provided for @copyWifiInfoDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ağ adı ve şifre bilgilerini kopyala'**
+  String get copyWifiInfoDesc;
+
+  /// No description provided for @noPasswordToCopy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kopyalanacak şifre bulunamadı'**
+  String get noPasswordToCopy;
 }
 
 class _AppLocalizationsDelegate

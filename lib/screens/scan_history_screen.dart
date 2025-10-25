@@ -374,9 +374,11 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
           ),
           title: Text(
             scan.title ?? scan.data,
-            style: Theme.of(
+            style: CommonHelpers.getResponsiveTextStyle(
               context,
-            ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+              baseFontSize: 16.0,
+              fontWeight: FontWeight.w600,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -524,30 +526,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
   }
 
   String _getTranslatedType(String type) {
-    switch (type) {
-      case 'URL':
-        return AppLocalizations.of(context)!.urlType;
-      case 'E-posta':
-        return AppLocalizations.of(context)!.emailType;
-      case 'Telefon':
-        return AppLocalizations.of(context)!.phoneType;
-      case 'SMS':
-        return AppLocalizations.of(context)!.smsType;
-      case 'Konum':
-        return AppLocalizations.of(context)!.locationType;
-      case 'WiFi':
-        return AppLocalizations.of(context)!.wifiType;
-      case 'vCard':
-        return AppLocalizations.of(context)!.contactType;
-      case 'MeCard':
-        return AppLocalizations.of(context)!.mecardType;
-      case 'OTP':
-        return AppLocalizations.of(context)!.otpType;
-      case 'Kripto Para':
-        return AppLocalizations.of(context)!.cryptoType;
-      default:
-        return type;
-    }
+    return CommonHelpers.getLocalizedType(type, context);
   }
 
   IconData _getTypeIcon(String type) {
@@ -607,7 +586,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 650),
+          constraints: CommonHelpers.getResponsiveDialogConstraints(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -828,15 +807,13 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
   }
 
   void _copyToClipboard(QrScanModel scan) async {
-    String textToCopy;
-
-    if (scan.type == 'WiFi' && scan.description != null) {
-      textToCopy = scan.description!;
+    // WiFi QR kodu için özel kopyalama menüsü göster
+    if (scan.type == 'WIFI') {
+      await CommonHelpers.showWiFiCopyOptions(scan, context);
     } else {
-      textToCopy = scan.data;
+      // Diğer QR kodları için normal kopyalama
+      await CommonHelpers.copyToClipboard(scan.data, context);
     }
-
-    await CommonHelpers.copyToClipboard(textToCopy, context);
   }
 
   Future<void> _deleteScan(QrScanModel scan) async {
