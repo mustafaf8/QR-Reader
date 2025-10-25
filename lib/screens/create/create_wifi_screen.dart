@@ -136,38 +136,47 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                             // SSID
                             TextField(
                               controller: _ssidController,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
+                              style: CommonHelpers.getResponsiveTextStyle(
+                                context,
                               ),
-                              decoration: InputDecoration(
-                                labelText:
-                                    '${AppLocalizations.of(context)!.networkNameLabel} *',
-                                labelStyle: TextStyle(
-                                  color: Theme.of(
+                              decoration:
+                                  CommonHelpers.getResponsiveInputDecoration(
                                     context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                                hintText: AppLocalizations.of(
-                                  context,
-                                )!.networkNameHint,
-                                hintStyle: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                                filled: true,
-                                fillColor: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainerHighest,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.router,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
+                                    labelText:
+                                        '${AppLocalizations.of(context)!.networkNameLabel} *',
+                                    hintText: AppLocalizations.of(
+                                      context,
+                                    )!.networkNameHint,
+                                  ).copyWith(
+                                    labelStyle:
+                                        CommonHelpers.getResponsiveTextStyle(
+                                          context,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
+                                    hintStyle:
+                                        CommonHelpers.getResponsiveTextStyle(
+                                          context,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
+                                    filled: true,
+                                    fillColor: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.router,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
+                                  ),
                             ),
 
                             const SizedBox(height: 16),

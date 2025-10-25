@@ -251,7 +251,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noPasswordText => 'No password';
 
   @override
-  String get hiddenPassword => 'HIDDEN';
+  String get hiddenPassword => 'Hidden password';
 
   @override
   String get content => 'Content';
@@ -1045,10 +1045,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mecardType => 'MeCard';
 
   @override
-  String get otpType => 'OTP';
+  String get otpType => 'OTP Code';
 
   @override
-  String get cryptoType => 'Crypto';
+  String get cryptoType => 'Crypto Address';
 
   @override
   String get saveTooltip => 'Save';
@@ -1099,7 +1099,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lastScanResult => 'Last Scan Result';
 
   @override
-  String get vcardType => 'vCard';
+  String get vcardType => 'Contact Card';
 
   @override
   String get textType => 'Text';
@@ -1178,4 +1178,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addressLabel => 'Address';
+
+  @override
+  String get wifiCopyOptions => 'WiFi Copy Options';
+
+  @override
+  String get copyWifiPassword => 'Copy Password';
+
+  @override
+  String get copyWifiPasswordDesc => 'Copy only the WiFi password';
+
+  @override
+  String get copyRawData => 'Copy Raw Data';
+
+  @override
+  String get copyRawDataDesc => 'Copy the complete QR code data';
+
+  @override
+  String get copyWifiInfo => 'Copy WiFi Info';
+
+  @override
+  String get copyWifiInfoDesc => 'Copy network name and password info';
+
+  @override
+  String get noPasswordToCopy => 'No password available to copy';
 }

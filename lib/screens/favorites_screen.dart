@@ -160,9 +160,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
           title: Text(
             favorite.title ?? favorite.data,
-            style: Theme.of(
+            style: CommonHelpers.getResponsiveTextStyle(
               context,
-            ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+              baseFontSize: 16.0,
+              fontWeight: FontWeight.w600,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -341,22 +343,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   void _copyToClipboard(QrScanModel favorite) async {
-    String textToCopy = favorite.data;
-
-    // WiFi QR kodu ise sadece şifreyi kopyala
-    if (favorite.type == 'WiFi' && favorite.description != null) {
-      final lines = favorite.description!.split('\n');
-      if (lines.length >= 2) {
-        final passwordLine = lines[1];
-        if (passwordLine.startsWith(
-          '${AppLocalizations.of(context)!.password}: ',
-        )) {
-          textToCopy = passwordLine.substring(7);
-        }
-      }
+    // WiFi QR kodu için özel kopyalama menüsü göster
+    if (favorite.type == 'WIFI') {
+      await CommonHelpers.showWiFiCopyOptions(favorite, context);
+    } else {
+      // Diğer QR kodları için normal kopyalama
+      await CommonHelpers.copyToClipboard(favorite.data, context);
     }
-
-    await CommonHelpers.copyToClipboard(textToCopy, context);
   }
 
   void _openUrl(String url) async {
@@ -369,7 +362,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 650),
+          constraints: CommonHelpers.getResponsiveDialogConstraints(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -831,23 +824,23 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     switch (type) {
       case 'URL':
         return theme.colorScheme.primary;
-      case 'E-posta':
+      case 'EMAIL':
         return Colors.green;
-      case 'Telefon':
+      case 'PHONE':
         return Colors.purple;
       case 'SMS':
         return Colors.orange;
-      case 'Konum':
+      case 'LOCATION':
         return Colors.red;
-      case 'WiFi':
+      case 'WIFI':
         return Colors.cyan;
-      case 'vCard':
+      case 'VCARD':
         return Colors.indigo;
-      case 'MeCard':
+      case 'MECARD':
         return Colors.teal;
       case 'OTP':
         return Colors.amber;
-      case 'Kripto Para':
+      case 'CRYPTO':
         return Colors.deepOrange;
       default:
         return theme.colorScheme.primary;
@@ -858,23 +851,23 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     switch (type) {
       case 'URL':
         return Icons.link;
-      case 'E-posta':
+      case 'EMAIL':
         return Icons.email;
-      case 'Telefon':
+      case 'PHONE':
         return Icons.phone;
       case 'SMS':
         return Icons.message;
-      case 'Konum':
+      case 'LOCATION':
         return Icons.location_on;
-      case 'WiFi':
+      case 'WIFI':
         return Icons.wifi;
-      case 'vCard':
+      case 'VCARD':
         return Icons.contact_page;
-      case 'MeCard':
+      case 'MECARD':
         return Icons.person;
       case 'OTP':
         return Icons.security;
-      case 'Kripto Para':
+      case 'CRYPTO':
         return Icons.currency_bitcoin;
       default:
         return Icons.text_fields;
@@ -882,8 +875,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   String _maskPassword(String description) {
-    if (description.contains('Şifre: ')) {
-      final parts = description.split('Şifre: ');
+    final l10n = AppLocalizations.of(context)!;
+    if (description.contains('${l10n.passwordLabel}: ')) {
+      final parts = description.split('${l10n.passwordLabel}: ');
       if (parts.length > 1) {
         final password = parts[1];
         if (password.length > 2) {

@@ -252,7 +252,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noPasswordText => 'Şifre yok';
 
   @override
-  String get hiddenPassword => 'GİZLİ';
+  String get hiddenPassword => 'Gizli şifre';
 
   @override
   String get content => 'İçerik';
@@ -1043,10 +1043,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get mecardType => 'MeCard';
 
   @override
-  String get otpType => 'OTP';
+  String get otpType => 'OTP Kodu';
 
   @override
-  String get cryptoType => 'Kripto Para';
+  String get cryptoType => 'Kripto Adresi';
 
   @override
   String get saveTooltip => 'Kaydet';
@@ -1097,7 +1097,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get lastScanResult => 'Son Tarama Sonucu';
 
   @override
-  String get vcardType => 'vCard';
+  String get vcardType => 'İletişim Kartı';
 
   @override
   String get textType => 'Metin';
@@ -1176,4 +1176,28 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get addressLabel => 'Adres';
+
+  @override
+  String get wifiCopyOptions => 'WiFi Kopyalama Seçenekleri';
+
+  @override
+  String get copyWifiPassword => 'Şifreyi Kopyala';
+
+  @override
+  String get copyWifiPasswordDesc => 'Sadece WiFi şifresini kopyala';
+
+  @override
+  String get copyRawData => 'Ham Veriyi Kopyala';
+
+  @override
+  String get copyRawDataDesc => 'Tam QR kod verisini kopyala';
+
+  @override
+  String get copyWifiInfo => 'WiFi Bilgilerini Kopyala';
+
+  @override
+  String get copyWifiInfoDesc => 'Ağ adı ve şifre bilgilerini kopyala';
+
+  @override
+  String get noPasswordToCopy => 'Kopyalanacak şifre bulunamadı';
 }
