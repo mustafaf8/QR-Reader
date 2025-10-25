@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../l10n/app_localizations.dart';
 import '../models/qr_scan_model.dart';
 import '../services/hive_service.dart';
+import '../services/common_helpers.dart';
 
 class ScanHistoryScreen extends StatefulWidget {
   const ScanHistoryScreen({super.key});
@@ -826,22 +827,16 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
     );
   }
 
-  void _copyToClipboard(QrScanModel scan) {
+  void _copyToClipboard(QrScanModel scan) async {
     String textToCopy;
-    String message;
 
     if (scan.type == 'WiFi' && scan.description != null) {
       textToCopy = scan.description!;
-      message = AppLocalizations.of(context)!.wifiPassword;
     } else {
       textToCopy = scan.data;
-      message = AppLocalizations.of(context)!.copiedToClipboard;
     }
 
-    Clipboard.setData(ClipboardData(text: textToCopy));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
-    );
+    await CommonHelpers.copyToClipboard(textToCopy, context);
   }
 
   Future<void> _deleteScan(QrScanModel scan) async {
@@ -1084,11 +1079,8 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
     );
   }
 
-  void _openUrl(String url) {
-    // URL açma işlemi ana sayfadaki _launchUrl fonksiyonuna benzer
-    // Burada sadece log yazıyoruz, gerçek açma işlemi ana sayfada yapılacak
-    // Log removed
-    // TODO: URL açma işlemi burada da implement edilebilir
+  void _openUrl(String url) async {
+    await CommonHelpers.openUrl(url, context);
   }
 
   Widget _buildModernDetailCard(

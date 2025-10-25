@@ -288,7 +288,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get removeFromFavoritesTooltip => 'Quitar de favoritos';
 
   @override
-  String get copiedToClipboard => '¡Copiado al portapapeles!';
+  String get copiedToClipboard => 'Copiado al portapapeles';
 
   @override
   String get favoriteDetail => 'Detalle de Favorito';
@@ -794,10 +794,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get removeAdsFeature => 'Función de eliminar anuncios próximamente';
 
   @override
-  String get myQrPage => 'Mi Página QR';
+  String get myQrPage => 'Mis Códigos QR';
 
   @override
-  String get featureComingSoon => 'Esta función estará disponible pronto';
+  String get featureComingSoon => 'Esta función llegará pronto';
 
   @override
   String get pleaseEnsureBrowser =>
@@ -1145,4 +1145,46 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get selectTheme => 'Seleccionar Tema';
+
+  @override
+  String get imageAnalyzing => 'Analizando imagen...';
+
+  @override
+  String get wifiInfo => 'Información Wi-Fi';
+
+  @override
+  String get urlNotFound => 'URL no encontrada';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get confirm => 'Confirmar';
+
+  @override
+  String get errorOccurred => 'Ocurrió un error';
+
+  @override
+  String get operationCompleted => 'Operación completada exitosamente';
+
+  @override
+  String get yesterday => 'Ayer';
+
+  @override
+  String get daysAgo => 'días atrás';
+
+  @override
+  String get copyFailed => 'Error al copiar';
+
+  @override
+  String get savedToDownloads => 'Guardado en Descargas';
+
+  @override
+  String get saveFailed => 'Error al guardar';
+
+  @override
+  String get shareFailed => 'Error al compartir';
+
+  @override
+  String get urlOpenFailed => 'Error al abrir URL';
 }

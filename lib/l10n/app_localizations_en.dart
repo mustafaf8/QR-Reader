@@ -285,7 +285,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removeFromFavoritesTooltip => 'Remove from favorites';
 
   @override
-  String get copiedToClipboard => 'Copied to clipboard!';
+  String get copiedToClipboard => 'Copied to clipboard';
 
   @override
   String get favoriteDetail => 'Favorite Detail';
@@ -1139,4 +1139,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectTheme => 'Select Theme';
+
+  @override
+  String get imageAnalyzing => 'Analyzing image...';
+
+  @override
+  String get wifiInfo => 'Wi-Fi Information';
+
+  @override
+  String get urlNotFound => 'URL not found';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get errorOccurred => 'An error occurred';
+
+  @override
+  String get operationCompleted => 'Operation completed successfully';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get daysAgo => 'days ago';
+
+  @override
+  String get copyFailed => 'Copy failed';
+
+  @override
+  String get savedToDownloads => 'Saved to Downloads';
+
+  @override
+  String get saveFailed => 'Save failed';
+
+  @override
+  String get shareFailed => 'Share failed';
+
+  @override
+  String get urlOpenFailed => 'Failed to open URL';
 }

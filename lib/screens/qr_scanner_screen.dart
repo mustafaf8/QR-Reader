@@ -89,7 +89,10 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
+                colors: [
+                  Colors.black.withValues(alpha: 0.7),
+                  Colors.transparent,
+                ],
               ),
             ),
           ),
@@ -104,7 +107,10 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.8),
+                ],
               ),
             ),
           ),
@@ -117,10 +123,19 @@ class _QrScannerScreenState extends State<QrScannerScreen>
     return CustomPaint(painter: AdvancedScannerPainter());
   }
 
+  double _getCutOutSize() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return (screenWidth * 0.7).clamp(200.0, 350.0);
+  }
+
+  double _getCornerOffset() {
+    return _getCutOutSize() / 2;
+  }
+
   Widget _buildScanningLine() {
     return Positioned(
-      top: MediaQuery.of(context).size.height * 0.42 - 140,
-      left: MediaQuery.of(context).size.width * 0.5 - 140,
+      top: MediaQuery.of(context).size.height * 0.42 - _getCornerOffset(),
+      left: MediaQuery.of(context).size.width * 0.5 - _getCornerOffset(),
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
@@ -128,7 +143,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             // 1. Opaklığı %30'dan %70'e çıkar
             opacity: 0.4,
             child: Container(
-              width: 280,
+              width: _getCutOutSize(),
               height: 200,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -171,8 +186,12 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           return Stack(
             children: [
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.42 - 140,
-                left: MediaQuery.of(context).size.width * 0.5 - 140,
+                top:
+                    MediaQuery.of(context).size.height * 0.42 -
+                    _getCornerOffset(),
+                left:
+                    MediaQuery.of(context).size.width * 0.5 -
+                    _getCornerOffset(),
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -201,8 +220,12 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.42 - 140,
-                right: MediaQuery.of(context).size.width * 0.5 - 140,
+                top:
+                    MediaQuery.of(context).size.height * 0.42 -
+                    _getCornerOffset(),
+                right:
+                    MediaQuery.of(context).size.width * 0.5 -
+                    _getCornerOffset(),
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -231,8 +254,12 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                 ),
               ),
               Positioned(
-                bottom: MediaQuery.of(context).size.height * 0.58 - 140,
-                left: MediaQuery.of(context).size.width * 0.5 - 140,
+                bottom:
+                    MediaQuery.of(context).size.height * 0.58 -
+                    _getCornerOffset(),
+                left:
+                    MediaQuery.of(context).size.width * 0.5 -
+                    _getCornerOffset(),
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -261,8 +288,12 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                 ),
               ),
               Positioned(
-                bottom: MediaQuery.of(context).size.height * 0.58 - 140,
-                right: MediaQuery.of(context).size.width * 0.5 - 140,
+                bottom:
+                    MediaQuery.of(context).size.height * 0.58 -
+                    _getCornerOffset(),
+                right:
+                    MediaQuery.of(context).size.width * 0.5 -
+                    _getCornerOffset(),
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -348,7 +379,7 @@ class AdvancedScannerPainter extends CustomPainter {
 
     final screenWidth = size.width;
     final screenHeight = size.height;
-    final cutOutSize = 280.0;
+    final cutOutSize = (screenWidth * 0.7).clamp(200.0, 350.0);
 
     final centerX = screenWidth / 2;
     final centerY = screenHeight * 0.42;

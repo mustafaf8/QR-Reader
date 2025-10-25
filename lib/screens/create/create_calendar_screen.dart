@@ -712,7 +712,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'vEvent Verisi',
+                                AppLocalizations.of(context)!.vEventData,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

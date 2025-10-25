@@ -649,7 +649,7 @@ abstract class AppLocalizations {
   /// No description provided for @copiedToClipboard.
   ///
   /// In tr, this message translates to:
-  /// **'Panoya kopyalandı!'**
+  /// **'Panoya kopyalandı'**
   String get copiedToClipboard;
 
   /// No description provided for @favoriteDetail.
@@ -1621,13 +1621,13 @@ abstract class AppLocalizations {
   /// No description provided for @myQrPage.
   ///
   /// In tr, this message translates to:
-  /// **'Benim QR\'ım Sayfası'**
+  /// **'QR Kodlarım'**
   String get myQrPage;
 
   /// No description provided for @featureComingSoon.
   ///
   /// In tr, this message translates to:
-  /// **'Bu özellik yakında eklenecek'**
+  /// **'Bu özellik yakında gelecek'**
   String get featureComingSoon;
 
   /// No description provided for @pleaseEnsureBrowser.
@@ -2319,6 +2319,90 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Tema Seçin'**
   String get selectTheme;
+
+  /// No description provided for @imageAnalyzing.
+  ///
+  /// In tr, this message translates to:
+  /// **'Resim analiz ediliyor...'**
+  String get imageAnalyzing;
+
+  /// No description provided for @wifiInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Wi-Fi Bilgileri'**
+  String get wifiInfo;
+
+  /// No description provided for @urlNotFound.
+  ///
+  /// In tr, this message translates to:
+  /// **'URL bulunamadı'**
+  String get urlNotFound;
+
+  /// No description provided for @close.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapat'**
+  String get close;
+
+  /// No description provided for @confirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Onayla'**
+  String get confirm;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir hata oluştu'**
+  String get errorOccurred;
+
+  /// No description provided for @operationCompleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşlem başarıyla tamamlandı'**
+  String get operationCompleted;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dün'**
+  String get yesterday;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In tr, this message translates to:
+  /// **'gün önce'**
+  String get daysAgo;
+
+  /// No description provided for @copyFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kopyalama başarısız'**
+  String get copyFailed;
+
+  /// No description provided for @savedToDownloads.
+  ///
+  /// In tr, this message translates to:
+  /// **'İndirilenler klasörüne kaydedildi'**
+  String get savedToDownloads;
+
+  /// No description provided for @saveFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydetme başarısız'**
+  String get saveFailed;
+
+  /// No description provided for @shareFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Paylaşma başarısız'**
+  String get shareFailed;
+
+  /// No description provided for @urlOpenFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'URL açılamadı'**
+  String get urlOpenFailed;
 }
 
 class _AppLocalizationsDelegate

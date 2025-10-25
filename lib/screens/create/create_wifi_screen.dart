@@ -84,7 +84,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
             IconButton(
               onPressed: _saveWifi,
               icon: const Icon(Icons.save),
-              tooltip: 'Kaydet',
+              tooltip: AppLocalizations.of(context)!.saveTooltip,
             ),
         ],
       ),
@@ -122,7 +122,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Wi-Fi Bilgileri',
+                                  AppLocalizations.of(context)!.wifiInfo,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -574,7 +574,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Ham Veri',
+                                AppLocalizations.of(context)!.rawData,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
