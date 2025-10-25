@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/qr_scan_model.dart';
 import '../services/hive_service.dart';
-import '../services/log_service.dart';
 
 class ScanHistoryScreen extends StatefulWidget {
   const ScanHistoryScreen({super.key});
@@ -48,7 +47,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
       setState(() {
         _isLoading = false;
       });
-      LogService().error('Tarama geçmişi yükleme hatası', error: e);
+      // Log removed
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -842,7 +841,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
   void _openUrl(String url) {
     // URL açma işlemi ana sayfadaki _launchUrl fonksiyonuna benzer
     // Burada sadece log yazıyoruz, gerçek açma işlemi ana sayfada yapılacak
-    LogService().info('Geçmişten URL açma isteği', extra: {'url': url});
+    // Log removed
     // TODO: URL açma işlemi burada da implement edilebilir
   }
 }

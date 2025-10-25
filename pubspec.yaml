@@ -41,6 +41,8 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   image_picker: ^1.0.8
+  barcode_widget: ^2.0.4
+  share_plus: ^10.0.2
 
 dev_dependencies:
   flutter_test:

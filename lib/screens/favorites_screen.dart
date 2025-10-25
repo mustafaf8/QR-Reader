@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/qr_scan_model.dart';
 import '../services/hive_service.dart';
-import '../services/log_service.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -37,7 +36,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       setState(() {
         _isLoading = false;
       });
-      LogService().error('Sık kullanılanları yükleme hatası', error: e);
+      // Sık kullanılanları yükleme hatası
     }
   }
 
@@ -292,7 +291,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   void _openUrl(String url) {
     // URL açma işlemi - main.dart'taki _launchUrl metodunu kullanabilirsiniz
-    LogService().info('URL açma isteği', extra: {'url': url});
+    // URL açma isteği
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('URL açma özelliği: $url'),
