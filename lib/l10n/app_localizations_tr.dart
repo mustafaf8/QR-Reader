@@ -286,7 +286,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get removeFromFavoritesTooltip => 'Sık kullanılanlardan çıkar';
 
   @override
-  String get copiedToClipboard => 'Panoya kopyalandı!';
+  String get copiedToClipboard => 'Panoya kopyalandı';
 
   @override
   String get favoriteDetail => 'Sık Kullanılan Detayı';
@@ -786,10 +786,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get removeAdsFeature => 'Reklamları kaldır özelliği yakında eklenecek';
 
   @override
-  String get myQrPage => 'Benim QR\'ım Sayfası';
+  String get myQrPage => 'QR Kodlarım';
 
   @override
-  String get featureComingSoon => 'Bu özellik yakında eklenecek';
+  String get featureComingSoon => 'Bu özellik yakında gelecek';
 
   @override
   String get pleaseEnsureBrowser =>
@@ -1137,4 +1137,46 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get selectTheme => 'Tema Seçin';
+
+  @override
+  String get imageAnalyzing => 'Resim analiz ediliyor...';
+
+  @override
+  String get wifiInfo => 'Wi-Fi Bilgileri';
+
+  @override
+  String get urlNotFound => 'URL bulunamadı';
+
+  @override
+  String get close => 'Kapat';
+
+  @override
+  String get confirm => 'Onayla';
+
+  @override
+  String get errorOccurred => 'Bir hata oluştu';
+
+  @override
+  String get operationCompleted => 'İşlem başarıyla tamamlandı';
+
+  @override
+  String get yesterday => 'Dün';
+
+  @override
+  String get daysAgo => 'gün önce';
+
+  @override
+  String get copyFailed => 'Kopyalama başarısız';
+
+  @override
+  String get savedToDownloads => 'İndirilenler klasörüne kaydedildi';
+
+  @override
+  String get saveFailed => 'Kaydetme başarısız';
+
+  @override
+  String get shareFailed => 'Paylaşma başarısız';
+
+  @override
+  String get urlOpenFailed => 'URL açılamadı';
 }

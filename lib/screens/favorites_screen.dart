@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../l10n/app_localizations.dart';
 import '../models/qr_scan_model.dart';
 import '../services/hive_service.dart';
+import '../services/common_helpers.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -340,9 +340,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     }
   }
 
-  void _copyToClipboard(QrScanModel favorite) {
+  void _copyToClipboard(QrScanModel favorite) async {
     String textToCopy = favorite.data;
-    String message = AppLocalizations.of(context)!.copiedToClipboard;
 
     // WiFi QR kodu ise sadece şifreyi kopyala
     if (favorite.type == 'WiFi' && favorite.description != null) {
@@ -352,29 +351,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         if (passwordLine.startsWith(
           '${AppLocalizations.of(context)!.password}: ',
         )) {
-          textToCopy = passwordLine.substring(
-            7,
-          ); // ${AppLocalizations.of(context)!.passwordPartRemoved}
-          message = AppLocalizations.of(context)!.wifiPassword;
+          textToCopy = passwordLine.substring(7);
         }
       }
     }
 
-    Clipboard.setData(ClipboardData(text: textToCopy));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
-    );
+    await CommonHelpers.copyToClipboard(textToCopy, context);
   }
 
-  void _openUrl(String url) {
-    // URL açma işlemi - main.dart'taki _launchUrl metodunu kullanabilirsiniz
-    // URL açma isteği
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${AppLocalizations.of(context)!.urlOpenFeature}: $url'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  void _openUrl(String url) async {
+    await CommonHelpers.openUrl(url, context);
   }
 
   void _showFavoriteDetails(QrScanModel favorite) {

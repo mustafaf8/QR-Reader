@@ -11,8 +11,7 @@ class MyQrScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.myQrCodes),
-        backgroundColor: Colors.purple.shade600,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
         child: Column(

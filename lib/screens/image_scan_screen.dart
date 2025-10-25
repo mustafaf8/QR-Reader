@@ -142,7 +142,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Resim analiz ediliyor...',
+                            l10n.imageAnalyzing,
                             style: Theme.of(context).textTheme.bodyLarge
                                 ?.copyWith(
                                   color: Theme.of(

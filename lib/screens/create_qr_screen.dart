@@ -14,7 +14,7 @@ class CreateQrScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.createQrCode),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -27,7 +27,7 @@ class CreateQrScreen extends StatelessWidget {
             context,
             l10n.qrCodeTypes,
             Icons.qr_code,
-            Colors.blue,
+            Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(height: 8),
 
@@ -173,7 +173,7 @@ class CreateQrScreen extends StatelessWidget {
             context,
             l10n.barcodeTypes,
             Icons.view_headline,
-            Colors.orange,
+            Theme.of(context).colorScheme.secondary,
           ),
           const SizedBox(height: 8),
 
@@ -346,24 +346,20 @@ class CreateQrScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
+          Icon(icon, color: color, size: 24),
           const SizedBox(width: 12),
           Text(
             title,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
+              color: color,
             ),
           ),
         ],
