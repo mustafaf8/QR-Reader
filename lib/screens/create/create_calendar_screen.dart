@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -122,20 +123,24 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Takvim QR Kodu'),
+        title: Text(AppLocalizations.of(context)!.calendarQrCodeTitle),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 1,
-        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shadowColor: Theme.of(
+          context,
+        ).colorScheme.shadow.withValues(alpha: 0.1),
         actions: [
           if (_titleController.text.isNotEmpty && !_hasError)
             IconButton(
               onPressed: _saveEvent,
               icon: const Icon(Icons.save),
-              tooltip: 'Kaydet',
+              tooltip: AppLocalizations.of(context)!.saveTooltip,
             ),
         ],
       ),
@@ -156,7 +161,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                       elevation: 8,
                       shadowColor: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.3),
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -170,7 +175,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 Icon(Icons.event, color: Colors.blue.shade300),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Etkinlik Bilgileri',
+                                  AppLocalizations.of(context)!.eventInfoLabel,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -190,13 +195,16 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Etkinlik Başlığı *',
+                                labelText:
+                                    '${AppLocalizations.of(context)!.eventTitle} *',
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'Etkinlik adını girin',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.enterEventName,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -205,7 +213,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -227,13 +235,17 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Açıklama',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.eventDescription,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'Etkinlik açıklaması',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.enterEventDescription,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -242,7 +254,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -263,13 +275,13 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Konum',
+                                labelText: l10n.location,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'Etkinlik konumu',
+                                hintText: l10n.enterLocation,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -278,7 +290,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -299,13 +311,17 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Organizatör',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.organizer,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'Organizatör bilgisi',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.organizerInfo,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -314,7 +330,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -330,7 +346,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
 
                             // Tarih ve saat seçimi
                             Text(
-                              'Tarih ve Saat',
+                              AppLocalizations.of(context)!.dateAndTimeLabel,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -346,14 +362,14 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                   child: Card(
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.surfaceVariant,
+                                    ).colorScheme.surfaceContainerHighest,
                                     child: ListTile(
                                       leading: Icon(
                                         Icons.play_arrow,
                                         color: Colors.green.shade300,
                                       ),
                                       title: Text(
-                                        'Başlangıç',
+                                        AppLocalizations.of(context)!.start,
                                         style: TextStyle(
                                           color: Theme.of(
                                             context,
@@ -382,7 +398,9 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                       context,
                                     ).colorScheme.primary,
                                   ),
-                                  tooltip: 'Başlangıç saati',
+                                  tooltip: AppLocalizations.of(
+                                    context,
+                                  )!.startTimeTooltip,
                                 ),
                               ],
                             ),
@@ -396,14 +414,14 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                   child: Card(
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.surfaceVariant,
+                                    ).colorScheme.surfaceContainerHighest,
                                     child: ListTile(
                                       leading: Icon(
                                         Icons.stop,
                                         color: Colors.red.shade300,
                                       ),
                                       title: Text(
-                                        'Bitiş',
+                                        AppLocalizations.of(context)!.end,
                                         style: TextStyle(
                                           color: Theme.of(
                                             context,
@@ -432,7 +450,9 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                       context,
                                     ).colorScheme.primary,
                                   ),
-                                  tooltip: 'Bitiş saati',
+                                  tooltip: AppLocalizations.of(
+                                    context,
+                                  )!.endTimeTooltip,
                                 ),
                               ],
                             ),
@@ -453,7 +473,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'QR Kod Önizlemesi',
+                              AppLocalizations.of(context)!.qrCodePreview,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -471,7 +491,9 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
@@ -487,7 +509,9 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
-                                            'Etkinlik başlığı girin',
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.enterEventTitle,
                                             style: TextStyle(
                                               color: Colors.grey.shade600,
                                               fontSize: 16,
@@ -525,7 +549,9 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                                 setState(() {
                                                   _hasError = true;
                                                   _errorMessage =
-                                                      'Geçersiz etkinlik bilgisi';
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.invalidEventInfo;
                                                 });
                                               });
                                           return Container(
@@ -573,7 +599,11 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                     child: ElevatedButton.icon(
                                       onPressed: _saveEvent,
                                       icon: const Icon(Icons.save),
-                                      label: const Text('Kaydet'),
+                                      label: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.saveAction,
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(
                                           context,
@@ -594,7 +624,9 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                     child: ElevatedButton.icon(
                                       onPressed: _shareEvent,
                                       icon: const Icon(Icons.share),
-                                      label: const Text('Paylaş'),
+                                      label: Text(
+                                        AppLocalizations.of(context)!.share,
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(
                                           context,
@@ -637,7 +669,9 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'vEvent QR Kodu Hakkında',
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.aboutEventQrCode,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -650,7 +684,9 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Bu QR kodu tarayan kişiler otomatik olarak etkinliği takvimlerine ekleyebilir. Etkinlik başlığı zorunludur.',
+                              AppLocalizations.of(
+                                context,
+                              )!.eventQrCodeDescription,
                               style: TextStyle(
                                 color: Theme.of(
                                   context,
@@ -692,7 +728,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                                 decoration: BoxDecoration(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.surfaceVariant,
+                                  ).colorScheme.surfaceContainerHighest,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -730,27 +766,31 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
       // Downloads klasörüne kaydet
       final directory = await getDownloadsDirectory();
       if (directory == null) {
-        _showErrorSnackBar('Downloads klasörü bulunamadı');
+        _showErrorSnackBar(
+          AppLocalizations.of(context)!.downloadsFolderNotFound,
+        );
         return;
       }
 
       final file = File('${directory.path}/$fileName');
       final content =
-          'Etkinlik QR Kodu (vEvent)\n'
-          'Oluşturulma Tarihi: ${DateTime.now().toString()}\n'
-          'Başlık: ${_titleController.text}\n'
-          'Açıklama: ${_descriptionController.text}\n'
-          'Konum: ${_locationController.text}\n'
-          'Organizatör: ${_organizerController.text}\n'
-          'Başlangıç: ${_startDate.day}/${_startDate.month}/${_startDate.year} ${_startTime.format(context)}\n'
-          'Bitiş: ${_endDate.day}/${_endDate.month}/${_endDate.year} ${_endTime.format(context)}\n'
-          'Ham Veri (vEvent): ${_getVEventString()}';
+          '${AppLocalizations.of(context)!.eventQrCodeVevent}\n'
+          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}\n'
+          '${AppLocalizations.of(context)!.titleLabel}: ${_titleController.text}\n'
+          '${AppLocalizations.of(context)!.descriptionLabel}: ${_descriptionController.text}\n'
+          '${AppLocalizations.of(context)!.location}: ${_locationController.text}\n'
+          '${AppLocalizations.of(context)!.organizerLabel}: ${_organizerController.text}\n'
+          '${AppLocalizations.of(context)!.startDateLabel}: ${_startDate.day}/${_startDate.month}/${_startDate.year} ${_startTime.format(context)}\n'
+          '${AppLocalizations.of(context)!.endDateLabel}: ${_endDate.day}/${_endDate.month}/${_endDate.year} ${_endTime.format(context)}\n'
+          '${AppLocalizations.of(context)!.vEventData}: ${_getVEventString()}';
 
       await file.writeAsString(content);
 
-      _showSuccessSnackBar('Etkinlik QR kodu kaydedildi: ${file.path}');
+      _showSuccessSnackBar(
+        '${AppLocalizations.of(context)!.eventQrCodeShared}: ${file.path}',
+      );
     } catch (e) {
-      _showErrorSnackBar('Kaydetme hatası: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.saveError}: $e');
     }
   }
 
@@ -759,23 +799,23 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
       // Etkinlik QR kod verisini paylaş
       final content =
           'Etkinlik QR Kodu (vEvent)\n\n'
-          'Başlık: ${_titleController.text}\n'
-          'Açıklama: ${_descriptionController.text}\n'
-          'Konum: ${_locationController.text}\n'
-          'Organizatör: ${_organizerController.text}\n'
-          'Başlangıç: ${_startDate.day}/${_startDate.month}/${_startDate.year} ${_startTime.format(context)}\n'
-          'Bitiş: ${_endDate.day}/${_endDate.month}/${_endDate.year} ${_endTime.format(context)}\n'
+          '${AppLocalizations.of(context)!.titleLabel}: ${_titleController.text}\n'
+          '${AppLocalizations.of(context)!.descriptionLabel}: ${_descriptionController.text}\n'
+          '${AppLocalizations.of(context)!.location}: ${_locationController.text}\n'
+          '${AppLocalizations.of(context)!.organizerLabel}: ${_organizerController.text}\n'
+          '${AppLocalizations.of(context)!.startDateLabel}: ${_startDate.day}/${_startDate.month}/${_startDate.year} ${_startTime.format(context)}\n'
+          '${AppLocalizations.of(context)!.endDateLabel}: ${_endDate.day}/${_endDate.month}/${_endDate.year} ${_endTime.format(context)}\n'
           'Ham Veri (vEvent): ${_getVEventString()}\n'
-          'Oluşturulma Tarihi: ${DateTime.now().toString()}';
+          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}';
 
       await Share.share(
         content,
         subject: 'Etkinlik QR Kodu - ${_titleController.text}',
       );
 
-      _showSuccessSnackBar('Etkinlik QR kodu paylaşıldı');
+      _showSuccessSnackBar(AppLocalizations.of(context)!.eventQrCodeShared);
     } catch (e) {
-      _showErrorSnackBar('Paylaşma hatası: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.shareError}: $e');
     }
   }
 
@@ -787,7 +827,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -822,7 +862,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(

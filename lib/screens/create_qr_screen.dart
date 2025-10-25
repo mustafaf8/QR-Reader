@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'create/create_generic_barcode_screen.dart';
 import 'create/create_wifi_screen.dart';
 import 'create/create_contact_screen.dart';
@@ -10,10 +11,12 @@ class CreateQrScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('QR & Barkod Oluştur'),
+        title: Text(l10n.createQrCode),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: ListView(
@@ -22,7 +25,7 @@ class CreateQrScreen extends StatelessWidget {
           // QR Kod Türleri Bölümü
           _buildSectionHeader(
             context,
-            'QR Kod Türleri',
+            l10n.qrCodeTypes,
             Icons.qr_code,
             Colors.blue,
           ),
@@ -31,11 +34,11 @@ class CreateQrScreen extends StatelessWidget {
           _buildQrItem(
             context: context,
             icon: Icons.content_copy,
-            title: 'Panodan İçerik',
-            subtitle: 'Panodaki metni QR koda dönüştür',
+            title: l10n.clipboardContent,
+            subtitle: l10n.clipboardContentSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'Panodan İçerik',
+              l10n.clipboardContent,
               Barcode.qrCode(),
               isClipboard: true,
             ),
@@ -45,12 +48,12 @@ class CreateQrScreen extends StatelessWidget {
             context: context,
             icon: Icons.link,
             title: 'URL',
-            subtitle: 'Web sitesi adresi oluştur',
+            subtitle: l10n.urlSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'URL Oluştur',
+              l10n.createUrl,
               Barcode.qrCode(),
-              hintText: 'https://example.com',
+              hintText: AppLocalizations.of(context)!.urlHint,
               prefix: 'https://',
             ),
           ),
@@ -58,13 +61,13 @@ class CreateQrScreen extends StatelessWidget {
           _buildQrItem(
             context: context,
             icon: Icons.text_fields,
-            title: 'Düz Metin',
-            subtitle: 'Herhangi bir metin oluştur',
+            title: l10n.plainText,
+            subtitle: l10n.plainTextSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'Metin Oluştur',
+              l10n.createText,
               Barcode.qrCode(),
-              hintText: 'Metninizi buraya yazın',
+              hintText: l10n.enterYourText,
             ),
           ),
 
@@ -72,7 +75,7 @@ class CreateQrScreen extends StatelessWidget {
             context: context,
             icon: Icons.wifi,
             title: 'Wi-Fi',
-            subtitle: 'Wi-Fi ağ bilgileri oluştur',
+            subtitle: l10n.wifiSubtitle,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const CreateWifiScreen()),
@@ -82,8 +85,8 @@ class CreateQrScreen extends StatelessWidget {
           _buildQrItem(
             context: context,
             icon: Icons.person,
-            title: 'Kişi (vCard)',
-            subtitle: 'İletişim bilgileri oluştur',
+            title: l10n.contactVcard,
+            subtitle: l10n.contactVcardSubtitle,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -95,13 +98,13 @@ class CreateQrScreen extends StatelessWidget {
           _buildQrItem(
             context: context,
             icon: Icons.email,
-            title: 'E-posta Adresi',
-            subtitle: 'E-posta adresi oluştur',
+            title: l10n.emailAddress,
+            subtitle: l10n.emailAddressSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'E-posta Oluştur',
+              l10n.createEmail,
               Barcode.qrCode(),
-              hintText: 'ornek@email.com',
+              hintText: AppLocalizations.of(context)!.emailAddressHint,
               prefix: 'mailto:',
             ),
           ),
@@ -109,28 +112,28 @@ class CreateQrScreen extends StatelessWidget {
           _buildQrItem(
             context: context,
             icon: Icons.sms,
-            title: 'SMS Adresi',
-            subtitle: 'SMS mesajı oluştur',
+            title: l10n.smsAddress,
+            subtitle: l10n.smsAddressSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'SMS Oluştur',
+              l10n.createSms,
               Barcode.qrCode(),
-              hintText: '+905551234567',
+              hintText: AppLocalizations.of(context)!.phoneNumberHint,
               prefix: 'sms:',
-              suffix: '?body=Mesajınız',
+              suffix: '?body=${l10n.messageBody}',
             ),
           ),
 
           _buildQrItem(
             context: context,
             icon: Icons.location_on,
-            title: 'Coğrafi Koordinatlar',
-            subtitle: 'Konum bilgisi oluştur',
+            title: l10n.geographicCoordinates,
+            subtitle: l10n.geographicCoordinatesSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'Konum Oluştur',
+              l10n.createLocation,
               Barcode.qrCode(),
-              hintText: '41.0082,28.9784',
+              hintText: AppLocalizations.of(context)!.locationHint,
               prefix: 'geo:',
             ),
           ),
@@ -138,13 +141,13 @@ class CreateQrScreen extends StatelessWidget {
           _buildQrItem(
             context: context,
             icon: Icons.phone,
-            title: 'Telefon Numarası',
-            subtitle: 'Telefon numarası oluştur',
+            title: l10n.phoneNumber,
+            subtitle: l10n.phoneNumberSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'Telefon Oluştur',
+              l10n.createPhone,
               Barcode.qrCode(),
-              hintText: '+905551234567',
+              hintText: AppLocalizations.of(context)!.phoneNumberHint,
               prefix: 'tel:',
               inputType: TextInputType.phone,
             ),
@@ -153,8 +156,8 @@ class CreateQrScreen extends StatelessWidget {
           _buildQrItem(
             context: context,
             icon: Icons.event,
-            title: 'Takvim (vEvent)',
-            subtitle: 'Etkinlik bilgileri oluştur',
+            title: l10n.calendarVevent,
+            subtitle: l10n.calendarVeventSubtitle,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -168,7 +171,7 @@ class CreateQrScreen extends StatelessWidget {
           // Barkod Türleri Bölümü
           _buildSectionHeader(
             context,
-            'Barkod Türleri',
+            l10n.barcodeTypes,
             Icons.view_headline,
             Colors.orange,
           ),
@@ -177,12 +180,12 @@ class CreateQrScreen extends StatelessWidget {
           _buildBarcodeItem(
             context: context,
             title: 'EAN-8',
-            subtitle: '8 haneli ürün kodu',
+            subtitle: l10n.ean8Subtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'EAN-8 Oluştur',
+              l10n.createEan8,
               Barcode.ean8(),
-              hintText: '1234567',
+              hintText: AppLocalizations.of(context)!.ean8Hint,
               inputType: TextInputType.number,
               maxLength: 7,
             ),
@@ -191,12 +194,12 @@ class CreateQrScreen extends StatelessWidget {
           _buildBarcodeItem(
             context: context,
             title: 'EAN-13',
-            subtitle: '13 haneli ürün kodu',
+            subtitle: l10n.ean13Subtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'EAN-13 Oluştur',
+              l10n.createEan13,
               Barcode.ean13(),
-              hintText: '123456789012',
+              hintText: AppLocalizations.of(context)!.ean13Hint,
               inputType: TextInputType.number,
               maxLength: 12,
             ),
@@ -205,12 +208,12 @@ class CreateQrScreen extends StatelessWidget {
           _buildBarcodeItem(
             context: context,
             title: 'UPC-E',
-            subtitle: '6 haneli UPC kodu',
+            subtitle: l10n.upcESubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'UPC-E Oluştur',
+              l10n.createUpcE,
               Barcode.upcE(),
-              hintText: '123456',
+              hintText: AppLocalizations.of(context)!.upcEHint,
               inputType: TextInputType.number,
               maxLength: 6,
             ),
@@ -219,12 +222,12 @@ class CreateQrScreen extends StatelessWidget {
           _buildBarcodeItem(
             context: context,
             title: 'UPC-A',
-            subtitle: '12 haneli UPC kodu',
+            subtitle: l10n.upcASubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'UPC-A Oluştur',
+              l10n.createUpcA,
               Barcode.upcA(),
-              hintText: '123456789012',
+              hintText: AppLocalizations.of(context)!.ean13Hint,
               inputType: TextInputType.number,
               maxLength: 11,
             ),
@@ -233,48 +236,48 @@ class CreateQrScreen extends StatelessWidget {
           _buildBarcodeItem(
             context: context,
             title: 'CODE-39',
-            subtitle: 'Alfanumerik kod',
+            subtitle: l10n.code39Subtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'CODE-39 Oluştur',
+              l10n.createCode39,
               Barcode.code39(),
-              hintText: 'ABC123',
+              hintText: AppLocalizations.of(context)!.code39Hint,
             ),
           ),
 
           _buildBarcodeItem(
             context: context,
             title: 'CODE-93',
-            subtitle: 'Gelişmiş alfanumerik kod',
+            subtitle: l10n.code93Subtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'CODE-93 Oluştur',
+              l10n.createCode93,
               Barcode.code93(),
-              hintText: 'ABC123',
+              hintText: AppLocalizations.of(context)!.code39Hint,
             ),
           ),
 
           _buildBarcodeItem(
             context: context,
             title: 'CODE-128',
-            subtitle: 'Yüksek yoğunluklu kod',
+            subtitle: l10n.code128Subtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'CODE-128 Oluştur',
+              l10n.createCode128,
               Barcode.code128(),
-              hintText: 'ABC123',
+              hintText: AppLocalizations.of(context)!.code39Hint,
             ),
           ),
 
           _buildBarcodeItem(
             context: context,
-            title: 'ITF (Interleaved 2 of 5)',
-            subtitle: 'Sayısal kod',
+            title: l10n.itfInterleaved,
+            subtitle: l10n.itfSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'ITF Oluştur',
+              l10n.createItf,
               Barcode.itf(),
-              hintText: '1234567890',
+              hintText: AppLocalizations.of(context)!.itfHint,
               inputType: TextInputType.number,
             ),
           ),
@@ -282,24 +285,24 @@ class CreateQrScreen extends StatelessWidget {
           _buildBarcodeItem(
             context: context,
             title: 'PDF-417',
-            subtitle: 'İki boyutlu barkod',
+            subtitle: l10n.pdf417Subtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'PDF-417 Oluştur',
+              l10n.createPdf417,
               Barcode.pdf417(),
-              hintText: 'PDF417 örneği',
+              hintText: l10n.pdf417Example,
             ),
           ),
 
           _buildBarcodeItem(
             context: context,
             title: 'Codabar',
-            subtitle: 'Sayısal kod',
+            subtitle: l10n.codabarSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'Codabar Oluştur',
+              l10n.createCodabar,
               Barcode.codabar(),
-              hintText: '1234567890',
+              hintText: AppLocalizations.of(context)!.itfHint,
               inputType: TextInputType.number,
             ),
           ),
@@ -307,24 +310,24 @@ class CreateQrScreen extends StatelessWidget {
           _buildBarcodeItem(
             context: context,
             title: 'Data Matrix',
-            subtitle: 'İki boyutlu barkod',
+            subtitle: l10n.dataMatrixSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'Data Matrix Oluştur',
+              l10n.createDataMatrix,
               Barcode.dataMatrix(),
-              hintText: 'Data Matrix örneği',
+              hintText: l10n.dataMatrixExample,
             ),
           ),
 
           _buildBarcodeItem(
             context: context,
             title: 'Aztec',
-            subtitle: 'İki boyutlu barkod',
+            subtitle: l10n.aztecSubtitle,
             onTap: () => _navigateToGeneric(
               context,
-              'Aztec Oluştur',
+              l10n.createAztec,
               Barcode.aztec(),
-              hintText: 'Aztec örneği',
+              hintText: l10n.aztecExample,
             ),
           ),
 
@@ -343,10 +346,12 @@ class CreateQrScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(

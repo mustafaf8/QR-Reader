@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../l10n/app_localizations.dart';
 import '../services/hive_service.dart';
 import '../models/qr_scan_model.dart';
 
@@ -30,14 +31,18 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Galeriden QR Tara'),
+        title: Text(l10n.galleryScan),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 1,
-        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shadowColor: Theme.of(
+          context,
+        ).colorScheme.shadow.withValues(alpha: 0.1),
       ),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
@@ -50,7 +55,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                 const SizedBox(height: 32),
                 // Modern Başlık
                 Text(
-                  'Galeriden QR Tara',
+                  l10n.scanFromGalleryTitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -59,7 +64,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Galeriden bir görüntü seçerek QR kod tarayın',
+                  l10n.scanFromGallerySubtitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -71,7 +76,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                   elevation: 8,
                   shadowColor: Theme.of(
                     context,
-                  ).colorScheme.primary.withOpacity(0.3),
+                  ).colorScheme.primary.withValues(alpha: 0.3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -88,8 +93,8 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                                 : () =>
                                       _pickImageFromSource(ImageSource.gallery),
                             icon: const Icon(Icons.photo_library, size: 24),
-                            label: const Text(
-                              'Galeriden Resim Seç',
+                            label: Text(
+                              l10n.selectImageFromGallery,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -105,7 +110,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                               elevation: 4,
                               shadowColor: Theme.of(
                                 context,
-                              ).colorScheme.primary.withOpacity(0.3),
+                              ).colorScheme.primary.withValues(alpha: 0.3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -124,7 +129,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                     elevation: 4,
                     shadowColor: Theme.of(
                       context,
-                    ).colorScheme.shadow.withOpacity(0.1),
+                    ).colorScheme.shadow.withValues(alpha: 0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -157,7 +162,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                     elevation: 6,
                     shadowColor: Theme.of(
                       context,
-                    ).colorScheme.shadow.withOpacity(0.1),
+                    ).colorScheme.shadow.withValues(alpha: 0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -189,9 +194,9 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                     elevation: 6,
                     shadowColor:
                         _scanResult!.contains('hata') ||
-                            _scanResult!.contains('bulunamadı')
-                        ? Colors.red.withOpacity(0.2)
-                        : Colors.green.withOpacity(0.2),
+                            _scanResult!.contains(l10n.notFound)
+                        ? Colors.red.withValues(alpha: 0.2)
+                        : Colors.green.withValues(alpha: 0.2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -203,14 +208,14 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                           end: Alignment.bottomRight,
                           colors:
                               _scanResult!.contains('hata') ||
-                                  _scanResult!.contains('bulunamadı')
+                                  _scanResult!.contains(l10n.notFound)
                               ? [
                                   Colors.red.shade50,
-                                  Colors.red.shade100.withOpacity(0.3),
+                                  Colors.red.shade100.withValues(alpha: 0.3),
                                 ]
                               : [
                                   Colors.green.shade50,
-                                  Colors.green.shade100.withOpacity(0.3),
+                                  Colors.green.shade100.withValues(alpha: 0.3),
                                 ],
                         ),
                       ),
@@ -225,19 +230,19 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                                 decoration: BoxDecoration(
                                   color:
                                       (_scanResult!.contains('hata') ||
-                                          _scanResult!.contains('bulunamadı')
+                                          _scanResult!.contains(l10n.notFound)
                                       ? Colors.red.shade100
                                       : Colors.green.shade100),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
                                   _scanResult!.contains('hata') ||
-                                          _scanResult!.contains('bulunamadı')
+                                          _scanResult!.contains(l10n.notFound)
                                       ? Icons.error_outline
                                       : Icons.check_circle,
                                   color:
                                       _scanResult!.contains('hata') ||
-                                          _scanResult!.contains('bulunamadı')
+                                          _scanResult!.contains(l10n.notFound)
                                       ? Colors.red.shade600
                                       : Colors.green.shade600,
                                   size: 24,
@@ -247,16 +252,16 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                               Expanded(
                                 child: Text(
                                   _scanResult!.contains('hata') ||
-                                          _scanResult!.contains('bulunamadı')
-                                      ? 'Tarama Sonucu'
-                                      : 'QR Kod Bulundu!',
+                                          _scanResult!.contains(l10n.notFound)
+                                      ? l10n.scanResult
+                                      : l10n.qrCodeFound,
                                   style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color:
                                             _scanResult!.contains('hata') ||
                                                 _scanResult!.contains(
-                                                  'bulunamadı',
+                                                  l10n.notFound,
                                                 )
                                             ? Colors.red.shade700
                                             : Colors.green.shade700,
@@ -274,7 +279,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                               border: Border.all(
                                 color:
                                     (_scanResult!.contains('hata') ||
-                                        _scanResult!.contains('bulunamadı')
+                                        _scanResult!.contains(l10n.notFound)
                                     ? Colors.red.shade200
                                     : Colors.green.shade200),
                               ),
@@ -286,7 +291,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                             ),
                           ),
                           if (!_scanResult!.contains('hata') &&
-                              !_scanResult!.contains('bulunamadı')) ...[
+                              !_scanResult!.contains(l10n.notFound)) ...[
                             const SizedBox(height: 16),
                             Row(
                               children: [
@@ -295,7 +300,9 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                                     onPressed: () =>
                                         _copyToClipboard(_scanResult!),
                                     icon: const Icon(Icons.copy),
-                                    label: const Text('Kopyala'),
+                                    label: Text(
+                                      AppLocalizations.of(context)!.copyAction,
+                                    ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Theme.of(
                                         context,
@@ -314,7 +321,9 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                                   child: ElevatedButton.icon(
                                     onPressed: () => _launchUrl(_scanResult!),
                                     icon: const Icon(Icons.open_in_new),
-                                    label: const Text('Aç'),
+                                    label: Text(
+                                      AppLocalizations.of(context)!.open,
+                                    ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Theme.of(
                                         context,
@@ -346,6 +355,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
 
   /// Galeriden resim seçer
   Future<void> _pickImageFromSource(ImageSource source) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       setState(() {
         _isLoading = true;
@@ -363,7 +373,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
       }
     } catch (e) {
       setState(() {
-        _scanResult = 'Hata: Resim seçilirken bir sorun oluştu';
+        _scanResult = l10n.errorSelectingImage;
       });
     } finally {
       setState(() {
@@ -374,6 +384,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
 
   /// Resimdeki QR kodu tarar
   Future<void> _scanImageForQrCode(File imageFile) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final BarcodeCapture? capture = await _scannerController.analyzeImage(
         imageFile.path,
@@ -390,12 +401,12 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
         await _saveQrData(qrData);
       } else {
         setState(() {
-          _scanResult = 'Bu resimde QR kod bulunamadı';
+          _scanResult = l10n.noQrCodeInImage;
         });
       }
     } catch (e) {
       setState(() {
-        _scanResult = 'Hata: QR kod taranırken bir sorun oluştu';
+        _scanResult = l10n.errorScanningQr;
       });
     }
   }
@@ -407,7 +418,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         data: data,
         timestamp: DateTime.now(),
-        type: _determineQrType(data),
+        type: _determineQrType(data, context),
       );
 
       await HiveService().saveQrScan(qrScan);
@@ -417,7 +428,8 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
   }
 
   /// QR kod tipini belirler
-  String _determineQrType(String data) {
+  String _determineQrType(String data, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (data.startsWith('http://') || data.startsWith('https://')) {
       return 'URL';
     } else if (data.startsWith('mailto:')) {
@@ -429,7 +441,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
     } else if (data.startsWith('WIFI:')) {
       return 'WiFi';
     } else if (data.startsWith('BEGIN:VCARD')) {
-      return 'Kişi';
+      return l10n.contact;
     } else if (data.startsWith('BEGIN:VEVENT')) {
       return 'Takvim';
     } else {
@@ -439,6 +451,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
 
   /// Panoya kopyalar
   Future<void> _copyToClipboard(String text) async {
+    final l10n = AppLocalizations.of(context)!;
     await Clipboard.setData(ClipboardData(text: text));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -448,16 +461,16 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(Icons.copy, color: Colors.white, size: 20),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Panoya kopyalandı!',
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                  l10n.copiedToClipboard,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
               ),
             ],
@@ -476,6 +489,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
 
   /// URL'yi açar
   Future<void> _launchUrl(String url) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       // URL'ye https:// ekle eğer yoksa
       String finalUrl = url;
@@ -495,7 +509,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
@@ -505,10 +519,10 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'URL açılamadı',
-                      style: TextStyle(fontWeight: FontWeight.w500),
+                      l10n.urlCannotBeOpenedError,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ),
                 ],
@@ -533,7 +547,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -543,10 +557,10 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'URL açılırken hata oluştu',
-                    style: TextStyle(fontWeight: FontWeight.w500),
+                    l10n.urlOpeningError,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
               ],

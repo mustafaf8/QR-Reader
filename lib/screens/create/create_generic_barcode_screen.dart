@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -101,7 +102,9 @@ class _CreateGenericBarcodeScreenState
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 1,
-        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shadowColor: Theme.of(
+          context,
+        ).colorScheme.shadow.withValues(alpha: 0.1),
         actions: [
           if (_currentData.isNotEmpty && !_hasError)
             IconButton(
@@ -128,7 +131,7 @@ class _CreateGenericBarcodeScreenState
                       elevation: 8,
                       shadowColor: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.3),
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -138,7 +141,7 @@ class _CreateGenericBarcodeScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Veri Girişi',
+                              AppLocalizations.of(context)!.dataInput,
                               style: Theme.of(context).textTheme.titleLarge
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -164,7 +167,9 @@ class _CreateGenericBarcodeScreenState
                                     ).colorScheme.onSurface,
                                   ),
                               decoration: InputDecoration(
-                                hintText: widget.hintText ?? 'Veri girin',
+                                hintText:
+                                    widget.hintText ??
+                                    AppLocalizations.of(context)!.enterDataHint,
                                 hintStyle: Theme.of(context).textTheme.bodyLarge
                                     ?.copyWith(
                                       color: Theme.of(
@@ -172,23 +177,22 @@ class _CreateGenericBarcodeScreenState
                                       ).colorScheme.onSurfaceVariant,
                                     ),
                                 filled: true,
-                                fillColor: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceVariant.withOpacity(0.3),
+                                fillColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest
+                                    .withValues(alpha: 0.3),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.outline.withOpacity(0.3),
+                                    color: Theme.of(context).colorScheme.outline
+                                        .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.outline.withOpacity(0.3),
+                                    color: Theme.of(context).colorScheme.outline
+                                        .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -231,11 +235,11 @@ class _CreateGenericBarcodeScreenState
                                   color: Theme.of(context)
                                       .colorScheme
                                       .primaryContainer
-                                      .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  'Önizleme: ${_getFormattedData()}',
+                                  '${AppLocalizations.of(context)!.preview}: ${_getFormattedData()}',
                                   style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
                                         color: Theme.of(
@@ -257,7 +261,7 @@ class _CreateGenericBarcodeScreenState
                       elevation: 8,
                       shadowColor: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.3),
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -267,7 +271,7 @@ class _CreateGenericBarcodeScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Önizleme',
+                              AppLocalizations.of(context)!.preview,
                               style: Theme.of(context).textTheme.titleLarge
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -287,7 +291,9 @@ class _CreateGenericBarcodeScreenState
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.1,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
@@ -341,7 +347,9 @@ class _CreateGenericBarcodeScreenState
                                                 setState(() {
                                                   _hasError = true;
                                                   _errorMessage =
-                                                      'Geçersiz veri formatı';
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.invalidDataFormat;
                                                 });
                                               });
                                           return Container(
@@ -388,7 +396,11 @@ class _CreateGenericBarcodeScreenState
                                     child: ElevatedButton.icon(
                                       onPressed: _saveBarcode,
                                       icon: const Icon(Icons.save),
-                                      label: const Text('Kaydet'),
+                                      label: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.saveAction,
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(
                                           context,
@@ -409,7 +421,9 @@ class _CreateGenericBarcodeScreenState
                                     child: ElevatedButton.icon(
                                       onPressed: _shareBarcode,
                                       icon: const Icon(Icons.share),
-                                      label: const Text('Paylaş'),
+                                      label: Text(
+                                        AppLocalizations.of(context)!.share,
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(
                                           context,
@@ -491,33 +505,33 @@ class _CreateGenericBarcodeScreenState
 
   String _getInfoText() {
     if (widget.barcode == Barcode.qrCode()) {
-      return 'QR kodlar herhangi bir metin, URL, telefon numarası veya diğer veri türlerini içerebilir.';
+      return AppLocalizations.of(context)!.qrCodeInfo;
     } else if (widget.barcode == Barcode.ean13()) {
-      return 'EAN-13 kodu tam olarak 12 haneli sayı olmalıdır. Son hane otomatik hesaplanır.';
+      return AppLocalizations.of(context)!.ean13Info;
     } else if (widget.barcode == Barcode.ean8()) {
-      return 'EAN-8 kodu tam olarak 7 haneli sayı olmalıdır. Son hane otomatik hesaplanır.';
+      return AppLocalizations.of(context)!.ean8Info;
     } else if (widget.barcode == Barcode.upcA()) {
-      return 'UPC-A kodu tam olarak 11 haneli sayı olmalıdır. Son hane otomatik hesaplanır.';
+      return AppLocalizations.of(context)!.upcAInfo;
     } else if (widget.barcode == Barcode.upcE()) {
-      return 'UPC-E kodu tam olarak 6 haneli sayı olmalıdır.';
+      return AppLocalizations.of(context)!.upcEInfo;
     } else if (widget.barcode == Barcode.code39()) {
-      return 'CODE-39 sadece büyük harfler, sayılar ve bazı özel karakterleri destekler.';
+      return AppLocalizations.of(context)!.code39Info;
     } else if (widget.barcode == Barcode.code93()) {
-      return 'CODE-93 gelişmiş alfanumerik karakter desteği sunar.';
+      return AppLocalizations.of(context)!.code93Info;
     } else if (widget.barcode == Barcode.code128()) {
-      return 'CODE-128 yüksek yoğunluklu veri depolama sağlar.';
+      return AppLocalizations.of(context)!.code128Info;
     } else if (widget.barcode == Barcode.itf()) {
-      return 'ITF sadece sayısal karakterleri destekler.';
+      return AppLocalizations.of(context)!.itfInfo;
     } else if (widget.barcode == Barcode.pdf417()) {
-      return 'PDF-417 iki boyutlu barkod formatıdır ve büyük miktarda veri saklayabilir.';
+      return AppLocalizations.of(context)!.pdf417Info;
     } else if (widget.barcode == Barcode.codabar()) {
-      return 'Codabar sadece sayısal karakterleri destekler.';
+      return AppLocalizations.of(context)!.codabarInfo;
     } else if (widget.barcode == Barcode.dataMatrix()) {
-      return 'Data Matrix iki boyutlu barkod formatıdır.';
+      return AppLocalizations.of(context)!.dataMatrixInfo;
     } else if (widget.barcode == Barcode.aztec()) {
-      return 'Aztec iki boyutlu barkod formatıdır.';
+      return AppLocalizations.of(context)!.aztecInfo;
     }
-    return 'Bu barkod formatı hakkında bilgi mevcut değil.';
+    return AppLocalizations.of(context)!.unknownBarcodeInfo;
   }
 
   Future<void> _saveBarcode() async {
@@ -529,22 +543,26 @@ class _CreateGenericBarcodeScreenState
       // Downloads klasörüne kaydet
       final directory = await getDownloadsDirectory();
       if (directory == null) {
-        _showErrorSnackBar('Downloads klasörü bulunamadı');
+        _showErrorSnackBar(
+          AppLocalizations.of(context)!.downloadsFolderNotFound,
+        );
         return;
       }
 
       final file = File('${directory.path}/$fileName');
       final content =
           '${widget.title} QR Kodu\n'
-          'Oluşturulma Tarihi: ${DateTime.now().toString()}\n'
+          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}\n'
           'Veri: ${_getFormattedData()}\n'
           'Format: ${widget.barcode.toString()}';
 
       await file.writeAsString(content);
 
-      _showSuccessSnackBar('QR kod verisi kaydedildi: ${file.path}');
+      _showSuccessSnackBar(
+        '${AppLocalizations.of(context)!.qrCodeDataSaved}: ${file.path}',
+      );
     } catch (e) {
-      _showErrorSnackBar('Kaydetme hatası: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.saveError}: $e');
     }
   }
 
@@ -555,13 +573,13 @@ class _CreateGenericBarcodeScreenState
           '${widget.title} QR Kodu\n\n'
           'Veri: ${_getFormattedData()}\n'
           'Format: ${widget.barcode.toString()}\n'
-          'Oluşturulma Tarihi: ${DateTime.now().toString()}';
+          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}';
 
       await Share.share(content, subject: '${widget.title} QR Kodu');
 
-      _showSuccessSnackBar('QR kod verisi paylaşıldı');
+      _showSuccessSnackBar(AppLocalizations.of(context)!.qrCodeDataShared);
     } catch (e) {
-      _showErrorSnackBar('Paylaşma hatası: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.shareError}: $e');
     }
   }
 
@@ -573,7 +591,7 @@ class _CreateGenericBarcodeScreenState
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -608,7 +626,7 @@ class _CreateGenericBarcodeScreenState
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(

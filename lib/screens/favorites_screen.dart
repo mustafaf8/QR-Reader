@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../l10n/app_localizations.dart';
 import '../models/qr_scan_model.dart';
 import '../services/hive_service.dart';
 
@@ -42,20 +43,24 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Sık Kullanılanlar'),
+        title: Text(l10n.favorites),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 1,
-        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shadowColor: Theme.of(
+          context,
+        ).colorScheme.shadow.withValues(alpha: 0.1),
         actions: [
           if (_favorites.isNotEmpty)
             IconButton(
               onPressed: _clearAllFavorites,
               icon: const Icon(Icons.clear_all),
-              tooltip: 'Tümünü Temizle',
+              tooltip: AppLocalizations.of(context)!.clearAll,
             ),
         ],
       ),
@@ -66,7 +71,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             end: Alignment.bottomCenter,
             colors: [
               Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+              Theme.of(
+                context,
+              ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             ],
           ),
         ),
@@ -82,7 +89,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       decoration: BoxDecoration(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primaryContainer.withOpacity(0.3),
+                        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Icon(
@@ -93,7 +100,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Henüz sık kullanılan yok',
+                      AppLocalizations.of(context)!.noFavoritesYet,
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
@@ -106,7 +113,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32),
                       child: Text(
-                        'Tarama geçmişinden yıldız ikonuna tıklayarak\nsık kullanılanlara ekleyebilirsiniz',
+                        AppLocalizations.of(context)!.addFavoritesHint,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -133,14 +140,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       child: Card(
         elevation: 3,
-        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shadowColor: Theme.of(
+          context,
+        ).colorScheme.shadow.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: ListTile(
           contentPadding: const EdgeInsets.all(16),
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: _getTypeColor(favorite.type).withOpacity(0.1),
+              color: _getTypeColor(favorite.type).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -164,7 +173,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getTypeColor(favorite.type).withOpacity(0.1),
+                  color: _getTypeColor(favorite.type).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -178,7 +187,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               ),
               if (favorite.type == 'WiFi' && favorite.description != null)
                 Text(
-                  'Şifre: ${_maskPassword(favorite.description!)}',
+                  '${AppLocalizations.of(context)!.password}: ${_maskPassword(favorite.description!)}',
                   style: TextStyle(
                     fontSize: 11,
                     color: Colors.grey.shade700,
@@ -198,7 +207,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               IconButton(
                 onPressed: () => _removeFromFavorites(favorite),
                 icon: const Icon(Icons.star, color: Colors.amber, size: 20),
-                tooltip: 'Sık kullanılanlardan çıkar',
+                tooltip: AppLocalizations.of(
+                  context,
+                )!.removeFromFavoritesTooltip,
               ),
               // Popup menü
               PopupMenuButton<String>(
@@ -218,34 +229,37 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'copy',
                     child: Row(
                       children: [
-                        Icon(Icons.copy, size: 16),
-                        SizedBox(width: 8),
-                        Text('Kopyala'),
+                        const Icon(Icons.copy, size: 16),
+                        const SizedBox(width: 8),
+                        Text(AppLocalizations.of(context)!.copyAction),
                       ],
                     ),
                   ),
                   if (favorite.isUrl)
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'open',
                       child: Row(
                         children: [
                           Icon(Icons.open_in_browser, size: 16),
                           SizedBox(width: 8),
-                          Text('Aç'),
+                          Text(AppLocalizations.of(context)!.open),
                         ],
                       ),
                     ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'remove',
                     child: Row(
                       children: [
-                        Icon(Icons.delete, size: 16, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text('Sil', style: TextStyle(color: Colors.red)),
+                        const Icon(Icons.delete, size: 16, color: Colors.red),
+                        const SizedBox(width: 8),
+                        Text(
+                          AppLocalizations.of(context)!.deleteAction,
+                          style: const TextStyle(color: Colors.red),
+                        ),
                       ],
                     ),
                   ),
@@ -264,15 +278,20 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       await _hiveService.removeFromFavorites(favorite.id);
       await _loadFavorites(); // Listeyi yenile
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Sık kullanılanlardan çıkarıldı'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.removeFromFavoritesConfirm,
+          ),
           backgroundColor: Colors.orange,
           duration: Duration(seconds: 2),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('${AppLocalizations.of(context)!.errorPrefix}: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -281,14 +300,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Tüm Sık Kullanılanları Sil'),
-        content: const Text(
-          'Tüm sık kullanılanları silmek istediğinizden emin misiniz?',
-        ),
+        title: Text(AppLocalizations.of(context)!.deleteAllFavorites),
+        content: Text(AppLocalizations.of(context)!.deleteAllFavoritesConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('İptal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -296,7 +313,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Sil'),
+            child: Text(AppLocalizations.of(context)!.deleteAction),
           ),
         ],
       ),
@@ -307,15 +324,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         await _hiveService.clearAllFavorites();
         await _loadFavorites();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tüm sık kullanılanlar silindi'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.allFavoritesDeleted),
             backgroundColor: Colors.green,
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Silme hatası: $e'),
+            content: Text('${AppLocalizations.of(context)!.deleteError}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -325,16 +342,20 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   void _copyToClipboard(QrScanModel favorite) {
     String textToCopy = favorite.data;
-    String message = 'Panoya kopyalandı';
+    String message = AppLocalizations.of(context)!.copiedToClipboard;
 
     // WiFi QR kodu ise sadece şifreyi kopyala
     if (favorite.type == 'WiFi' && favorite.description != null) {
       final lines = favorite.description!.split('\n');
       if (lines.length >= 2) {
         final passwordLine = lines[1];
-        if (passwordLine.startsWith('Şifre: ')) {
-          textToCopy = passwordLine.substring(7); // "Şifre: " kısmını çıkar
-          message = 'WiFi şifresi panoya kopyalandı';
+        if (passwordLine.startsWith(
+          '${AppLocalizations.of(context)!.password}: ',
+        )) {
+          textToCopy = passwordLine.substring(
+            7,
+          ); // ${AppLocalizations.of(context)!.passwordPartRemoved}
+          message = AppLocalizations.of(context)!.wifiPassword;
         }
       }
     }
@@ -350,7 +371,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     // URL açma isteği
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('URL açma özelliği: $url'),
+        content: Text('${AppLocalizations.of(context)!.urlOpenFeature}: $url'),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -373,7 +394,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   gradient: LinearGradient(
                     colors: [
                       _getTypeColor(favorite.type),
-                      _getTypeColor(favorite.type).withOpacity(0.8),
+                      _getTypeColor(favorite.type).withValues(alpha: 0.8),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -388,7 +409,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -403,7 +424,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            favorite.title ?? 'Sık Kullanılan Detayı',
+                            favorite.title ??
+                                AppLocalizations.of(context)!.favoriteDetail,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -419,7 +441,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -438,7 +460,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close, color: Colors.white),
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.2),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
                       ),
                     ),
                   ],
@@ -454,7 +476,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     children: [
                       // Veri bölümü - Modern Card Design
                       _buildModernDetailCard(
-                        'Veri İçeriği',
+                        AppLocalizations.of(context)!.dataContent,
                         Icons.data_object,
                         favorite.data,
                         _getTypeColor(favorite.type),
@@ -465,7 +487,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       // Açıklama bölümü (varsa)
                       if (favorite.description != null)
                         _buildModernDetailCard(
-                          'Açıklama',
+                          AppLocalizations.of(context)!.description,
                           Icons.description,
                           favorite.description!,
                           Colors.green,
@@ -484,9 +506,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       // Tarih bölümü - Bottom positioned
                       Card(
                         elevation: 0,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.surfaceVariant.withOpacity(0.5),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest
+                            .withValues(alpha: 0.5),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -525,7 +548,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 decoration: BoxDecoration(
                   color: Theme.of(
                     context,
-                  ).colorScheme.surfaceVariant.withOpacity(0.3),
+                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(24),
                     bottomRight: Radius.circular(24),
@@ -542,8 +565,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             _openUrl(favorite.data);
                           },
                           icon: const Icon(Icons.open_in_browser, size: 20),
-                          label: const Text(
-                            'Web Sayfasını Aç',
+                          label: Text(
+                            AppLocalizations.of(context)!.openWebPage,
                             style: TextStyle(fontSize: 15),
                           ),
                           style: ElevatedButton.styleFrom(
@@ -557,7 +580,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             elevation: 2,
                             shadowColor: Theme.of(
                               context,
-                            ).colorScheme.primary.withOpacity(0.3),
+                            ).colorScheme.primary.withValues(alpha: 0.3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -574,7 +597,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               _copyToClipboard(favorite);
                             },
                             icon: const Icon(Icons.copy, size: 18),
-                            label: const Text('Kopyala'),
+                            label: Text(
+                              AppLocalizations.of(context)!.copyAction,
+                            ),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -591,13 +616,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               await _removeFromFavorites(favorite);
                             },
                             icon: const Icon(Icons.delete, size: 18),
-                            label: const Text('Sil'),
+                            label: Text(
+                              AppLocalizations.of(context)!.deleteAction,
+                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red.shade600,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               elevation: 2,
-                              shadowColor: Colors.red.withOpacity(0.3),
+                              shadowColor: Colors.red.withValues(alpha: 0.3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -616,43 +643,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  Widget _buildDetailCard(
-    String title,
-    IconData icon,
-    String content,
-    Color color,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SelectableText(content, style: const TextStyle(fontSize: 14)),
-        ],
-      ),
-    );
-  }
-
   Widget _buildModernDetailCard(
     String title,
     IconData icon,
@@ -661,14 +651,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   ) {
     return Card(
       elevation: 2,
-      shadowColor: color.withOpacity(0.2),
+      shadowColor: color.withValues(alpha: 0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [color.withOpacity(0.08), color.withOpacity(0.03)],
+            colors: [
+              color.withValues(alpha: 0.08),
+              color.withValues(alpha: 0.03),
+            ],
           ),
           borderRadius: BorderRadius.circular(16),
         ),
@@ -681,7 +674,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
+                    color: color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: color, size: 20),
@@ -692,7 +685,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: color,
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],
@@ -701,9 +694,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: color.withOpacity(0.2)),
+                border: Border.all(color: color.withValues(alpha: 0.2)),
               ),
               child: SelectableText(
                 content,
@@ -716,52 +709,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildWiFiDetails(String description) {
-    final lines = description.split('\n');
-    String ssid = 'Bilinmiyor';
-    String password = 'Bilinmiyor';
-
-    for (final line in lines) {
-      if (line.startsWith('WiFi Ağı: ')) {
-        ssid = line.substring(10);
-      } else if (line.startsWith('Şifre: ')) {
-        password = line.substring(7);
-      }
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.cyan.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.cyan.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.wifi, color: Colors.cyan, size: 20),
-              const SizedBox(width: 8),
-              const Text(
-                'WiFi Bilgileri',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.cyan,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _buildWiFiInfoRow('Ağ Adı (SSID)', ssid),
-          const SizedBox(height: 8),
-          _buildWiFiInfoRow('Şifre', password),
-        ],
       ),
     );
   }
@@ -781,7 +728,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     return Card(
       elevation: 2,
-      shadowColor: Colors.cyan.withOpacity(0.2),
+      shadowColor: Colors.cyan.withValues(alpha: 0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         decoration: BoxDecoration(
@@ -789,8 +736,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.cyan.withOpacity(0.08),
-              Colors.cyan.withOpacity(0.03),
+              Colors.cyan.withValues(alpha: 0.08),
+              Colors.cyan.withValues(alpha: 0.03),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -804,7 +751,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.cyan.withOpacity(0.15),
+                    color: Colors.cyan.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.wifi, color: Colors.cyan, size: 20),
@@ -815,7 +762,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.cyan,
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],
@@ -849,16 +796,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.5),
+        color: Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(icon, color: color, size: 16),
@@ -893,36 +840,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  Widget _buildWiFiInfoRow(String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 80,
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 12,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: SelectableText(
-            value,
-            style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
-          ),
-        ),
-      ],
-    );
-  }
-
   Color _getTypeColor(String type) {
+    final theme = Theme.of(context);
     switch (type) {
       case 'URL':
-        return Colors.blue;
+        return theme.colorScheme.primary;
       case 'E-posta':
         return Colors.green;
       case 'Telefon':
@@ -942,7 +864,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       case 'Kripto Para':
         return Colors.deepOrange;
       default:
-        return Colors.grey;
+        return theme.colorScheme.primary;
     }
   }
 

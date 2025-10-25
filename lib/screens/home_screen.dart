@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import '../l10n/app_localizations.dart';
 import '../services/hive_service.dart';
 import '../models/qr_scan_model.dart';
 import 'scan_history_screen.dart';
@@ -24,10 +25,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       drawer: _buildDrawer(context),
       appBar: AppBar(
-        title: const Text('QR Okuyucu'),
+        title: Text(l10n.homeScreenTitle),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
@@ -40,7 +43,7 @@ class _HomePageState extends State<HomePage> {
               );
             },
             icon: const Icon(Icons.history),
-            tooltip: 'Tarama Geçmişi',
+            tooltip: l10n.scanHistory,
           ),
         ],
       ),
@@ -61,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 32),
                     // Ana başlık
                     Text(
-                      'QR Okuyucu',
+                      l10n.homeScreenTitle,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(
@@ -71,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'QR kodları ve barkodları kolayca tarayın',
+                      l10n.homeScreenSubtitle,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -86,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                           elevation: 8,
                           shadowColor: Theme.of(
                             context,
-                          ).colorScheme.primary.withOpacity(0.3),
+                          ).colorScheme.primary.withValues(alpha: 0.3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -136,7 +139,9 @@ class _HomePageState extends State<HomePage> {
                                                             ),
                                                         decoration: BoxDecoration(
                                                           color: Colors.white
-                                                              .withOpacity(0.2),
+                                                              .withValues(
+                                                                alpha: 0.2,
+                                                              ),
                                                           borderRadius:
                                                               BorderRadius.circular(
                                                                 8,
@@ -149,13 +154,15 @@ class _HomePageState extends State<HomePage> {
                                                         ),
                                                       ),
                                                       const SizedBox(width: 12),
-                                                      const Expanded(
+                                                      Expanded(
                                                         child: Text(
-                                                          'QR kod tarandı ve kaydedildi!',
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
+                                                          l10n.qrCodeScannedAndSaved,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
                                                         ),
                                                       ),
                                                     ],
@@ -192,7 +199,9 @@ class _HomePageState extends State<HomePage> {
                                                             ),
                                                         decoration: BoxDecoration(
                                                           color: Colors.white
-                                                              .withOpacity(0.2),
+                                                              .withValues(
+                                                                alpha: 0.2,
+                                                              ),
                                                           borderRadius:
                                                               BorderRadius.circular(
                                                                 8,
@@ -205,13 +214,15 @@ class _HomePageState extends State<HomePage> {
                                                         ),
                                                       ),
                                                       const SizedBox(width: 12),
-                                                      const Expanded(
+                                                      Expanded(
                                                         child: Text(
-                                                          'Bu QR kod daha önce taranmış!',
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
+                                                          l10n.qrCodeAlreadyScanned,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
                                                         ),
                                                       ),
                                                     ],
@@ -241,7 +252,10 @@ class _HomePageState extends State<HomePage> {
 
                                           setState(() {
                                             _scannedData = result;
-                                            _scannedType = _getDataType(result);
+                                            _scannedType = _getDataType(
+                                              result,
+                                              context,
+                                            );
                                           });
 
                                           if (_isUrl(result) && mounted) {
@@ -259,9 +273,9 @@ class _HomePageState extends State<HomePage> {
                                       Icons.qr_code_scanner,
                                       size: 24,
                                     ),
-                                    label: const Text(
-                                      'QR Kod Tara',
-                                      style: TextStyle(
+                                    label: Text(
+                                      l10n.scanQrCode,
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -274,9 +288,10 @@ class _HomePageState extends State<HomePage> {
                                         context,
                                       ).colorScheme.onPrimary,
                                       elevation: 4,
-                                      shadowColor: Theme.of(
-                                        context,
-                                      ).colorScheme.primary.withOpacity(0.3),
+                                      shadowColor: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withValues(alpha: 0.3),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -306,9 +321,9 @@ class _HomePageState extends State<HomePage> {
                                       Icons.photo_library,
                                       size: 24,
                                     ),
-                                    label: const Text(
-                                      'Galeriden Seç',
-                                      style: TextStyle(
+                                    label: Text(
+                                      l10n.scanFromGallery,
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -321,9 +336,10 @@ class _HomePageState extends State<HomePage> {
                                         context,
                                       ).colorScheme.onSecondary,
                                       elevation: 4,
-                                      shadowColor: Theme.of(
-                                        context,
-                                      ).colorScheme.secondary.withOpacity(0.3),
+                                      shadowColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withValues(alpha: 0.3),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -340,7 +356,7 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 32),
                       Card(
                         elevation: 6,
-                        shadowColor: Colors.green.withOpacity(0.2),
+                        shadowColor: Colors.green.withValues(alpha: 0.2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -352,7 +368,7 @@ class _HomePageState extends State<HomePage> {
                               end: Alignment.bottomRight,
                               colors: [
                                 Colors.green.shade50,
-                                Colors.green.shade100.withOpacity(0.3),
+                                Colors.green.shade100.withValues(alpha: 0.3),
                               ],
                             ),
                           ),
@@ -377,7 +393,7 @@ class _HomePageState extends State<HomePage> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      'Son Tarama Sonucu',
+                                      l10n.lastScanResult,
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium
@@ -423,7 +439,7 @@ class _HomePageState extends State<HomePage> {
                                 child:
                                     _scannedType == 'WiFi' &&
                                         _scannedData != null
-                                    ? _buildWiFiResult(_scannedData!)
+                                    ? _buildWiFiResult(_scannedData!, context)
                                     : Text(
                                         _scannedData!,
                                         style: Theme.of(context)
@@ -447,29 +463,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  String _getDataType(String data) {
+  String _getDataType(String data, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (data.startsWith('http://') || data.startsWith('https://')) {
-      return 'URL';
+      return l10n.urlType;
     } else if (data.startsWith('mailto:')) {
-      return 'E-posta';
+      return l10n.emailType;
     } else if (data.startsWith('tel:')) {
-      return 'Telefon';
+      return l10n.phoneType;
     } else if (data.startsWith('sms:')) {
-      return 'SMS';
+      return l10n.smsType;
     } else if (data.startsWith('geo:')) {
-      return 'Konum';
+      return l10n.locationType;
     } else if (data.startsWith('WIFI:') || data.startsWith('wifi:')) {
-      return 'WiFi';
+      return l10n.wifiType;
     } else if (data.startsWith('vcard:') || data.startsWith('BEGIN:VCARD')) {
-      return 'vCard';
+      return l10n.vcardType;
     } else if (data.startsWith('mecard:')) {
-      return 'MeCard';
+      return l10n.mecardType;
     } else if (data.startsWith('otpauth:')) {
-      return 'OTP';
+      return l10n.otpType;
     } else if (data.startsWith('bitcoin:') || data.startsWith('ethereum:')) {
-      return 'Kripto Para';
+      return l10n.cryptoType;
     } else {
-      return 'Metin';
+      return l10n.textType;
     }
   }
 
@@ -477,10 +494,7 @@ class _HomePageState extends State<HomePage> {
     return data.startsWith('http://') || data.startsWith('https://');
   }
 
-  Widget _buildWiFiResult(String data) {
-    final ssid = _extractWiFiSSID(data);
-    final password = _extractWiFiPassword(data);
-
+  Widget _buildWiFiResult(String data, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -489,7 +503,7 @@ class _HomePageState extends State<HomePage> {
             Icon(Icons.wifi, color: Colors.blue.shade600, size: 16),
             const SizedBox(width: 8),
             Text(
-              'Ağ Adı: $ssid',
+              '${AppLocalizations.of(context)!.networkName}: ${_extractWiFiSSID(data, context)}',
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ],
@@ -501,7 +515,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Şifre: $password',
+                '${AppLocalizations.of(context)!.password}: ${_extractWiFiPassword(data, context)}',
                 style: const TextStyle(fontFamily: 'monospace'),
               ),
             ),
@@ -511,34 +525,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  String _extractWiFiSSID(String data) {
+  String _extractWiFiSSID(String data, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     try {
-      if (!data.startsWith('WIFI:')) return 'WiFi Ağı';
+      if (!data.startsWith('WIFI:')) return l10n.wifiNetwork;
       final ssidIndex = data.indexOf('S:');
-      if (ssidIndex == -1) return 'WiFi Ağı';
+      if (ssidIndex == -1) return l10n.wifiNetwork;
       final afterSSID = data.substring(ssidIndex + 2);
       final semicolonIndex = afterSSID.indexOf(';');
       if (semicolonIndex == -1) return afterSSID;
       return afterSSID.substring(0, semicolonIndex);
     } catch (e) {
-      return 'WiFi Ağı';
+      return l10n.wifiNetwork;
     }
   }
 
-  String _extractWiFiPassword(String data) {
+  String _extractWiFiPassword(String data, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     try {
-      if (!data.startsWith('WIFI:')) return 'WiFi ağ bilgileri';
+      if (!data.startsWith('WIFI:')) return l10n.wifiNetworkInfo;
       final passwordIndex = data.indexOf('P:');
-      if (passwordIndex == -1) return 'WiFi ağ bilgileri';
+      if (passwordIndex == -1) return l10n.wifiNetworkInfo;
       final afterPassword = data.substring(passwordIndex + 2);
       final semicolonIndex = afterPassword.indexOf(';');
       if (semicolonIndex == -1) return afterPassword;
       final password = afterPassword.substring(0, semicolonIndex);
-      if (password.isEmpty) return 'Şifre yok';
-      if (password == 'HIDDEN') return 'Gizli şifre';
+      if (password.isEmpty) return l10n.noPassword;
+      if (password == l10n.hiddenPassword) return l10n.hiddenPassword;
       return password;
     } catch (e) {
-      return 'WiFi ağ bilgileri';
+      return l10n.wifiNetworkInfo;
     }
   }
 
@@ -548,19 +564,19 @@ class _HomePageState extends State<HomePage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.link, color: Colors.blue),
-              SizedBox(width: 8),
-              Text('URL Bulundu'),
+              Icon(Icons.link, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.urlFound),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'QR kodda bir web adresi bulundu. Bu sayfayı açmak istiyor musunuz?',
+              Text(
+                AppLocalizations.of(context)!.openWebPageQuestion,
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 12),
@@ -573,7 +589,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.link, size: 16, color: Colors.blue),
+                    Icon(
+                      Icons.link,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -593,7 +613,7 @@ class _HomePageState extends State<HomePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('İptal'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton.icon(
               onPressed: () async {
@@ -601,7 +621,7 @@ class _HomePageState extends State<HomePage> {
                 await _launchUrl(url);
               },
               icon: const Icon(Icons.open_in_browser),
-              label: const Text('Aç'),
+              label: Text(AppLocalizations.of(context)!.open),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -614,6 +634,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _launchUrl(String url) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       String cleanUrl = url.trim();
       if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
@@ -648,7 +669,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -663,15 +684,15 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'URL açılamadı',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      Text(
+                        l10n.urlCannotBeOpened,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        'Lütfen cihazınızda bir web tarayıcısı olduğundan emin olun.',
+                        l10n.pleaseEnsureBrowser,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -687,7 +708,7 @@ class _HomePageState extends State<HomePage> {
             margin: const EdgeInsets.all(16),
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
-              label: 'Kopyala',
+              label: l10n.copyAction,
               textColor: Colors.white,
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: cleanUrl));
@@ -698,7 +719,7 @@ class _HomePageState extends State<HomePage> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
@@ -708,9 +729,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
-                          'URL panoya kopyalandı',
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                        Text(
+                          l10n.urlCopiedToClipboard,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -737,7 +758,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -749,7 +770,7 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'URL açma hatası: $e',
+                    '${l10n.urlOpenError}: $e',
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -769,13 +790,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _shareQrData() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
-      String shareText = 'QR Okuyucu uygulamasını kullanıyorum! 📱\n\n';
-      shareText += 'QR kodları ve barkodları kolayca tarayabilir, ';
-      shareText += 'yeni QR kodlar oluşturabilirsiniz.\n\n';
+      String shareText = l10n.shareAppText;
       shareText += 'Siz de deneyin! 🚀';
 
-      await Share.share(shareText, subject: 'QR Okuyucu Uygulaması');
+      await Share.share(shareText, subject: l10n.shareAppSubject);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -784,7 +804,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -796,7 +816,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Paylaşım hatası: $e',
+                  '${l10n.shareError}: $e',
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
               ),
@@ -815,6 +835,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildDrawer(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Drawer(
       child: Container(
         decoration: BoxDecoration(
@@ -823,7 +845,9 @@ class _HomePageState extends State<HomePage> {
             end: Alignment.bottomCenter,
             colors: [
               Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+              Theme.of(
+                context,
+              ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             ],
           ),
         ),
@@ -857,7 +881,7 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(
@@ -868,7 +892,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'QR Okuyucu',
+                        l10n.qrReaderTitle,
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: Colors.white,
@@ -877,9 +901,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Güçlü QR kod okuyucu',
+                        l10n.powerfulQrReader,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -890,13 +914,13 @@ class _HomePageState extends State<HomePage> {
             _buildDrawerItem(
               context: context,
               icon: Icons.qr_code_scanner,
-              title: 'Tara',
+              title: l10n.scanQrCode,
               onTap: () => Navigator.pop(context),
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.star,
-              title: 'Sık Kullanılanlar',
+              title: l10n.favorites,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -910,7 +934,7 @@ class _HomePageState extends State<HomePage> {
             _buildDrawerItem(
               context: context,
               icon: Icons.history,
-              title: 'Geçmiş',
+              title: l10n.scanHistory,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -924,7 +948,7 @@ class _HomePageState extends State<HomePage> {
             _buildDrawerItem(
               context: context,
               icon: Icons.add_box,
-              title: 'QR Oluştur',
+              title: l10n.createQrCode,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -939,7 +963,7 @@ class _HomePageState extends State<HomePage> {
             _buildDrawerItem(
               context: context,
               icon: Icons.settings,
-              title: 'Ayarlar',
+              title: l10n.settingsTitle,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -953,7 +977,7 @@ class _HomePageState extends State<HomePage> {
             _buildDrawerItem(
               context: context,
               icon: Icons.share,
-              title: 'Paylaş',
+              title: l10n.share,
               onTap: () {
                 Navigator.pop(context);
                 _shareQrData();
@@ -962,7 +986,7 @@ class _HomePageState extends State<HomePage> {
             _buildDrawerItem(
               context: context,
               icon: Icons.block,
-              title: 'Reklamları Kaldır',
+              title: l10n.removeAds,
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -972,7 +996,7 @@ class _HomePageState extends State<HomePage> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
@@ -982,10 +1006,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Reklamları kaldır özelliği yakında eklenecek',
-                            style: TextStyle(fontWeight: FontWeight.w500),
+                            l10n.removeAdsFeature,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
                           ),
                         ),
                       ],
@@ -1025,7 +1049,7 @@ class _HomePageState extends State<HomePage> {
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.primaryContainer.withOpacity(0.3),
+            ).colorScheme.primaryContainer.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -1045,10 +1069,10 @@ class _HomePageState extends State<HomePage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         hoverColor: Theme.of(
           context,
-        ).colorScheme.primaryContainer.withOpacity(0.1),
+        ).colorScheme.primaryContainer.withValues(alpha: 0.1),
         splashColor: Theme.of(
           context,
-        ).colorScheme.primaryContainer.withOpacity(0.2),
+        ).colorScheme.primaryContainer.withValues(alpha: 0.2),
       ),
     );
   }

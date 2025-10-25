@@ -9,11 +9,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:qr_okuyucu/main.dart';
+import 'package:qr_okuyucu/services/theme_service.dart';
+import 'package:qr_okuyucu/providers/locale_provider.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Create a mock theme service for testing
+    final themeService = ThemeService();
+    await themeService.initialize();
+
+    // Create a mock locale provider for testing
+    final localeProvider = LocaleProvider();
+    await localeProvider.initialize();
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const QRReaderApp());
+    await tester.pumpWidget(
+      QRReaderApp(themeService: themeService, localeProvider: localeProvider),
+    );
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

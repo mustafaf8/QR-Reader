@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -121,14 +122,18 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Kişi QR Kodu'),
+        title: Text(AppLocalizations.of(context)!.contactQrCode),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 1,
-        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shadowColor: Theme.of(
+          context,
+        ).colorScheme.shadow.withValues(alpha: 0.1),
         actions: [
           if ((_firstNameController.text.isNotEmpty ||
                   _lastNameController.text.isNotEmpty) &&
@@ -136,7 +141,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
             IconButton(
               onPressed: _saveContact,
               icon: const Icon(Icons.save),
-              tooltip: 'Kaydet',
+              tooltip: AppLocalizations.of(context)!.saveTooltip,
             ),
         ],
       ),
@@ -157,7 +162,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                       elevation: 8,
                       shadowColor: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.3),
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -174,7 +179,9 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Kişi Bilgileri',
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.contactInformation,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -199,18 +206,22 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                       ).colorScheme.onSurface,
                                     ),
                                     decoration: InputDecoration(
-                                      labelText: 'Ad',
+                                      labelText: AppLocalizations.of(
+                                        context,
+                                      )!.firstNameLabel,
                                       labelStyle: TextStyle(
                                         color: Colors.grey.shade300,
                                       ),
-                                      hintText: 'Adınız',
+                                      hintText: AppLocalizations.of(
+                                        context,
+                                      )!.firstNameHint,
                                       hintStyle: TextStyle(
                                         color: Colors.grey.shade400,
                                       ),
                                       filled: true,
                                       fillColor: Theme.of(
                                         context,
-                                      ).colorScheme.surfaceVariant,
+                                      ).colorScheme.surfaceContainerHighest,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
                                         borderSide: BorderSide.none,
@@ -234,18 +245,22 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                       ).colorScheme.onSurface,
                                     ),
                                     decoration: InputDecoration(
-                                      labelText: 'Soyad',
+                                      labelText: AppLocalizations.of(
+                                        context,
+                                      )!.lastNameLabel,
                                       labelStyle: TextStyle(
                                         color: Colors.grey.shade300,
                                       ),
-                                      hintText: 'Soyadınız',
+                                      hintText: AppLocalizations.of(
+                                        context,
+                                      )!.lastNameHint,
                                       hintStyle: TextStyle(
                                         color: Colors.grey.shade400,
                                       ),
                                       filled: true,
                                       fillColor: Theme.of(
                                         context,
-                                      ).colorScheme.surfaceVariant,
+                                      ).colorScheme.surfaceContainerHighest,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
                                         borderSide: BorderSide.none,
@@ -272,13 +287,17 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Telefon',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.phoneLabel,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: '+90 555 123 45 67',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.phoneHint,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -287,7 +306,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -309,13 +328,17 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'E-posta',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.emailLabel,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'ornek@email.com',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.emailHint,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -324,7 +347,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -345,13 +368,17 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Organizasyon',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.organizationLabel,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'Şirket adı',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.companyNameHint,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -360,7 +387,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -381,13 +408,17 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Unvan',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.titleLabel,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'Pozisyonunuz',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.positionHint,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -396,7 +427,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -418,13 +449,17 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Website',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.websiteLabel,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'www.ornek.com',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.websiteHint,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -433,7 +468,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -455,13 +490,13 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Adres',
+                                labelText: l10n.address,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'Adres bilginiz',
+                                hintText: l10n.addressInfoHint,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -470,7 +505,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -498,7 +533,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'QR Kod Önizlemesi',
+                              AppLocalizations.of(context)!.qrCodePreview,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -514,7 +549,9 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
@@ -532,7 +569,9 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
-                                            'Ad veya soyad girin',
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.enterFirstNameOrLastName,
                                             style: TextStyle(
                                               color: Colors.grey.shade600,
                                               fontSize: 16,
@@ -570,7 +609,9 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                                 setState(() {
                                                   _hasError = true;
                                                   _errorMessage =
-                                                      'Geçersiz kişi bilgisi';
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.invalidContactInfo;
                                                 });
                                               });
                                           return Container(
@@ -595,7 +636,9 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                                 ),
                                                 const SizedBox(height: 8),
                                                 Text(
-                                                  'Hata',
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  )!.errorLabel,
                                                   style: TextStyle(
                                                     color: Colors.red.shade600,
                                                     fontWeight: FontWeight.bold,
@@ -619,7 +662,11 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                     child: ElevatedButton.icon(
                                       onPressed: _saveContact,
                                       icon: const Icon(Icons.save),
-                                      label: const Text('Kaydet'),
+                                      label: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.saveAction,
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(
                                           context,
@@ -640,7 +687,9 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                     child: ElevatedButton.icon(
                                       onPressed: _shareContact,
                                       icon: const Icon(Icons.share),
-                                      label: const Text('Paylaş'),
+                                      label: Text(
+                                        AppLocalizations.of(context)!.share,
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(
                                           context,
@@ -685,7 +734,9 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'vCard QR Kodu Hakkında',
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.aboutContactQrCode,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -698,7 +749,9 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Bu QR kodu tarayan kişiler otomatik olarak kişi bilgilerinizi telefonlarına kaydedebilir. Ad veya soyad en az birinin girilmesi gereklidir.',
+                              AppLocalizations.of(
+                                context,
+                              )!.contactQrCodeDescription,
                               style: TextStyle(
                                 color: Theme.of(
                                   context,
@@ -725,7 +778,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'vCard Verisi',
+                                AppLocalizations.of(context)!.vCardDataLabel,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -741,7 +794,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                 decoration: BoxDecoration(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.surfaceVariant,
+                                  ).colorScheme.surfaceContainerHighest,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -780,29 +833,33 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
       // Downloads klasörüne kaydet
       final directory = await getDownloadsDirectory();
       if (directory == null) {
-        _showErrorSnackBar('Downloads klasörü bulunamadı');
+        _showErrorSnackBar(
+          AppLocalizations.of(context)!.downloadsFolderNotFound,
+        );
         return;
       }
 
       final file = File('${directory.path}/$fileName');
       final content =
-          'Kişi QR Kodu (vCard)\n'
-          'Oluşturulma Tarihi: ${DateTime.now().toString()}\n'
-          'Ad: ${_firstNameController.text}\n'
-          'Soyad: ${_lastNameController.text}\n'
-          'Telefon: ${_phoneController.text}\n'
-          'E-posta: ${_emailController.text}\n'
-          'Organizasyon: ${_organizationController.text}\n'
-          'Unvan: ${_titleController.text}\n'
-          'Website: ${_websiteController.text}\n'
-          'Adres: ${_addressController.text}\n'
-          'Ham Veri (vCard): ${_getVCardString()}';
+          '${AppLocalizations.of(context)!.contactQrCodeVcard}\n'
+          '${AppLocalizations.of(context)!.creationDate}: ${DateTime.now().toString()}\n'
+          '${AppLocalizations.of(context)!.firstName}: ${_firstNameController.text}\n'
+          '${AppLocalizations.of(context)!.lastName}: ${_lastNameController.text}\n'
+          '${AppLocalizations.of(context)!.phone}: ${_phoneController.text}\n'
+          '${AppLocalizations.of(context)!.email}: ${_emailController.text}\n'
+          '${AppLocalizations.of(context)!.organization}: ${_organizationController.text}\n'
+          '${AppLocalizations.of(context)!.title}: ${_titleController.text}\n'
+          '${AppLocalizations.of(context)!.website}: ${_websiteController.text}\n'
+          '${AppLocalizations.of(context)!.address}: ${_addressController.text}\n'
+          '${AppLocalizations.of(context)!.vCardData}: ${_getVCardString()}';
 
       await file.writeAsString(content);
 
-      _showSuccessSnackBar('Kişi QR kodu kaydedildi: ${file.path}');
+      _showSuccessSnackBar(
+        '${AppLocalizations.of(context)!.contactQrCodeSaved}: ${file.path}',
+      );
     } catch (e) {
-      _showErrorSnackBar('Kaydetme hatası: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.saveError}: $e');
     }
   }
 
@@ -810,27 +867,27 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
     try {
       // Kişi QR kod verisini paylaş
       final content =
-          'Kişi QR Kodu (vCard)\n\n'
-          'Ad: ${_firstNameController.text}\n'
-          'Soyad: ${_lastNameController.text}\n'
-          'Telefon: ${_phoneController.text}\n'
-          'E-posta: ${_emailController.text}\n'
-          'Organizasyon: ${_organizationController.text}\n'
-          'Unvan: ${_titleController.text}\n'
-          'Website: ${_websiteController.text}\n'
-          'Adres: ${_addressController.text}\n'
-          'Ham Veri (vCard): ${_getVCardString()}\n'
-          'Oluşturulma Tarihi: ${DateTime.now().toString()}';
+          '${AppLocalizations.of(context)!.contactQrCodeVcard}\n\n'
+          '${AppLocalizations.of(context)!.firstName}: ${_firstNameController.text}\n'
+          '${AppLocalizations.of(context)!.lastName}: ${_lastNameController.text}\n'
+          '${AppLocalizations.of(context)!.phone}: ${_phoneController.text}\n'
+          '${AppLocalizations.of(context)!.email}: ${_emailController.text}\n'
+          '${AppLocalizations.of(context)!.organization}: ${_organizationController.text}\n'
+          '${AppLocalizations.of(context)!.title}: ${_titleController.text}\n'
+          '${AppLocalizations.of(context)!.website}: ${_websiteController.text}\n'
+          '${AppLocalizations.of(context)!.address}: ${_addressController.text}\n'
+          '${AppLocalizations.of(context)!.vCardData}: ${_getVCardString()}\n'
+          '${AppLocalizations.of(context)!.creationDate}: ${DateTime.now().toString()}';
 
       await Share.share(
         content,
         subject:
-            'Kişi QR Kodu - ${_firstNameController.text} ${_lastNameController.text}',
+            '${AppLocalizations.of(context)!.contactQrCodeTitle} - ${_firstNameController.text} ${_lastNameController.text}',
       );
 
-      _showSuccessSnackBar('Kişi QR kodu paylaşıldı');
+      _showSuccessSnackBar(AppLocalizations.of(context)!.contactQrCodeShared);
     } catch (e) {
-      _showErrorSnackBar('Paylaşma hatası: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.shareError}: $e');
     }
   }
 
@@ -842,7 +899,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -877,7 +934,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(

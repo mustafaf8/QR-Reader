@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import '../l10n/app_localizations.dart';
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
@@ -37,10 +38,12 @@ class _QrScannerScreenState extends State<QrScannerScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('QR Kod Tara'),
+        title: Text(l10n.scanQrCode),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
@@ -86,7 +89,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
               ),
             ),
           ),
@@ -101,7 +104,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
               ),
             ),
           ),
@@ -298,10 +301,10 @@ class _QrScannerScreenState extends State<QrScannerScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Text(
-        'QR kodu kare alan içine hizalayın',
+        AppLocalizations.of(context)!.alignQrCode,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           fontSize: 15,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.5,
@@ -309,7 +312,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             Shadow(
               offset: const Offset(0, 1),
               blurRadius: 10,
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
             ),
           ],
         ),
@@ -340,7 +343,7 @@ class AdvancedScannerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withOpacity(0.75)
+      ..color = Colors.black.withValues(alpha: 0.75)
       ..style = PaintingStyle.fill;
 
     final screenWidth = size.width;
