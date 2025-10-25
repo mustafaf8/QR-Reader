@@ -1,168 +1,261 @@
-# 📱 QR Reader
+# 📱 QR Okuyucu (QR Reader)
 
-A powerful and feature-rich Flutter QR code scanner application with advanced parsing capabilities, logging system, and scan history management.
+Gelişmiş QR kod tarama yetenekleri, çok dilli destek, tema yönetimi ve kapsamlı geçmiş takibi ile güçlü bir Flutter QR kod okuyucu uygulaması.
 
-## ✨ Features
+## ✨ Özellikler
 
-### 🔍 **QR Code Scanning**
+### 🔍 **QR Kod Tarama**
 
-- **Real-time scanning** with camera integration
-- **Multiple QR code types** support (URL, WiFi, Contact, SMS, etc.)
-- **Smart parsing** for different data formats
-- **One-time scan** with automatic camera stop
+- **Gerçek zamanlı tarama** kamera entegrasyonu ile
+- **Çoklu QR kod türleri** desteği (URL, WiFi, İletişim, SMS, vb.)
+- **Akıllı ayrıştırma** farklı veri formatları için
+- **Tek seferlik tarama** otomatik kamera durdurma ile
+- **Responsive tarama alanı** tüm cihaz boyutlarında optimize
 
-### 📶 **WiFi QR Code Support**
+### 📶 **WiFi QR Kod Desteği**
 
-- **Automatic WiFi detection** from QR codes
-- **SSID extraction** and display
-- **Password parsing** with secure masking
-- **Easy WiFi connection** information
+- **Otomatik WiFi algılama** QR kodlardan
+- **SSID çıkarma** ve görüntüleme
+- **Şifre ayrıştırma** güvenli maskeleme ile
+- **Çoklu kopyalama seçenekleri** (şifre, ham veri, WiFi bilgileri)
+- **Kolay WiFi bağlantı** bilgileri
 
-### 📊 **Scan History**
+### 📊 **Tarama Geçmişi**
 
-- **Local storage** with Hive database
-- **Search and filter** functionality
-- **Export capabilities** for scan data
-- **Detailed scan information** with timestamps
+- **Yerel depolama** Hive veritabanı ile
+- **Arama ve filtreleme** işlevselliği
+- **Dışa aktarma yetenekleri** tarama verileri için
+- **Detaylı tarama bilgileri** zaman damgaları ile
+- **Favoriler sistemi** önemli taramaları kaydetme
 
-### 🔧 **Advanced Logging**
+### 🎨 **Tema Yönetimi**
 
-- **Comprehensive error tracking** with file logging
-- **Real-time log viewer** with filtering
-- **Debug information** for development
-- **Export logs** for troubleshooting
+- **Çoklu renk temaları** (Mavi, Yeşil, Mor, Turuncu, Kırmızı)
+- **Tema modları** (Açık, Koyu, Sistem)
+- **Dinamik renk uyumu** tüm UI bileşenlerinde
+- **Kullanıcı tercihleri** kalıcı kaydetme
 
-### 🌐 **URL Handling**
+### 🌐 **Çok Dilli Destek**
 
-- **Smart URL detection** and validation
-- **User confirmation** before opening URLs
-- **Multiple launch modes** (browser, in-app, etc.)
-- **Copy to clipboard** functionality
+- **3 dil desteği** (Türkçe, İngilizce, İspanyolca)
+- **Tam yerelleştirme** tüm UI metinleri
+- **Dinamik dil değiştirme** uygulama içinde
+- **Responsive metin boyutları** farklı dillerde
 
-## 🚀 Getting Started
+### 📱 **QR Kod Oluşturma**
 
-### Prerequisites
+- **İletişim kartları** (vCard formatında)
+- **Takvim etkinlikleri** (vEvent formatında)
+- **WiFi ağları** (otomatik QR kod oluşturma)
+- **Genel barkodlar** (özel veri girişi)
+- **Canlı önizleme** oluşturma sırasında
 
-- Flutter SDK (3.0.0 or higher)
-- Dart SDK (2.17.0 or higher)
+### 🔧 **Gelişmiş Özellikler**
+
+- **Responsive tasarım** tüm cihaz boyutlarında
+- **Akıllı metin taşma önleme** uzun içeriklerde
+- **Merkezi hata yönetimi** tutarlı kullanıcı deneyimi
+- **Ortak yardımcı fonksiyonlar** kod tekrarını önleme
+- **Performans optimizasyonu** hızlı ve akıcı kullanım
+
+## 🚀 Kurulum
+
+### Gereksinimler
+
+- Flutter SDK (3.0.0 veya üzeri)
+- Dart SDK (2.17.0 veya üzeri)
 - Android Studio / VS Code
-- Android/iOS device or emulator
+- Android/iOS cihaz veya emülatör
 
-### Installation
+### Kurulum Adımları
 
-1. **Clone the repository**
+1. **Depoyu klonlayın**
 
    ```bash
-   git clone https://github.com/yourusername/qr-reader.git
-   cd qr-reader
+   git clone https://github.com/yourusername/qr-okuyucu.git
+   cd qr-okuyucu
    ```
 
-2. **Install dependencies**
+2. **Bağımlılıkları yükleyin**
 
    ```bash
    flutter pub get
    ```
 
-3. **Generate Hive adapters**
+3. **Hive adaptörlerini oluşturun**
 
    ```bash
-   flutter packages pub run build_runner build
+   flutter packages pub run build_runner build --delete-conflicting-outputs
    ```
 
-4. **Run the application**
+4. **Yerelleştirme dosyalarını oluşturun**
+
+   ```bash
+   flutter gen-l10n
+   ```
+
+5. **Uygulamayı çalıştırın**
    ```bash
    flutter run
    ```
 
-## 📱 Supported QR Code Types
+## 📱 Desteklenen QR Kod Türleri
 
-| Type         | Format                                   | Description               |
-| ------------ | ---------------------------------------- | ------------------------- |
-| **URL**      | `https://example.com`                    | Web addresses             |
-| **WiFi**     | `WIFI:S:SSID;T:WPA;P:password;H:false;;` | WiFi network credentials  |
-| **Email**    | `mailto:user@example.com`                | Email addresses           |
-| **Phone**    | `tel:+1234567890`                        | Phone numbers             |
-| **SMS**      | `sms:+1234567890:message`                | SMS messages              |
-| **Location** | `geo:lat,lng`                            | GPS coordinates           |
-| **Contact**  | `BEGIN:VCARD...`                         | vCard contact information |
-| **OTP**      | `otpauth://totp/...`                     | Two-factor authentication |
+| Tür          | Format                                   | Açıklama                      |
+| ------------ | ---------------------------------------- | ----------------------------- |
+| **URL**      | `https://example.com`                    | Web adresleri                 |
+| **WiFi**     | `WIFI:S:SSID;T:WPA;P:password;H:false;;` | WiFi ağ kimlik bilgileri      |
+| **E-posta**  | `mailto:user@example.com`                | E-posta adresleri             |
+| **Telefon**  | `tel:+1234567890`                        | Telefon numaraları            |
+| **SMS**      | `sms:+1234567890:message`                | SMS mesajları                 |
+| **Konum**    | `geo:lat,lng`                            | GPS koordinatları             |
+| **İletişim** | `BEGIN:VCARD...`                         | vCard iletişim bilgileri      |
+| **OTP**      | `otpauth://totp/...`                     | İki faktörlü kimlik doğrulama |
+| **Kripto**   | `bitcoin:address`                        | Kripto para adresleri         |
 
-## 🛠️ Technical Details
+## 🛠️ Teknik Detaylar
 
-### **Architecture**
+### **Mimari**
 
-- **Flutter Framework** with Material Design
-- **State Management** with StatefulWidget
-- **Local Storage** with Hive database
-- **Camera Integration** with mobile_scanner package
+- **Flutter Framework** Material Design ile
+- **Durum Yönetimi** StatefulWidget ile
+- **Yerel Depolama** Hive veritabanı ile
+- **Kamera Entegrasyonu** mobile_scanner paketi ile
+- **Tema Yönetimi** SharedPreferences ile
+- **Yerelleştirme** flutter_localizations ile
 
-### **Key Packages**
+### **Ana Paketler**
 
-- `mobile_scanner: ^7.1.3` - QR code scanning
-- `hive: ^2.2.3` - Local database
-- `url_launcher: ^6.3.1` - URL handling
-- `logger: ^2.4.0` - Logging system
-- `path_provider: ^2.1.4` - File system access
+- `mobile_scanner: ^7.1.3` - QR kod tarama
+- `hive: ^2.2.3` - Yerel veritabanı
+- `url_launcher: ^6.3.1` - URL işleme
+- `share_plus: ^10.0.2` - İçerik paylaşma
+- `path_provider: ^2.1.4` - Dosya sistemi erişimi
+- `barcode_widget: ^2.2.0` - QR kod oluşturma
+- `image_picker: ^1.1.2` - Resim seçme
+- `intl: ^0.19.0` - Tarih/saat formatlama
 
-### **Project Structure**
+### **Proje Yapısı**
 
 ```
 lib/
-├── main.dart                 # Main application entry point
+├── main.dart                    # Ana uygulama giriş noktası
 ├── models/
-│   └── qr_scan_model.dart   # QR scan data model
+│   └── qr_scan_model.dart      # QR tarama veri modeli
 ├── screens/
-│   ├── log_viewer_screen.dart    # Log viewing interface
-│   └── scan_history_screen.dart  # Scan history management
-└── services/
-    ├── hive_service.dart     # Database operations
-    └── log_service.dart      # Logging functionality
+│   ├── home_screen.dart         # Ana ekran
+│   ├── qr_scanner_screen.dart   # QR tarama ekranı
+│   ├── scan_history_screen.dart # Tarama geçmişi
+│   ├── favorites_screen.dart    # Favoriler
+│   ├── settings_screen.dart     # Ayarlar
+│   ├── image_scan_screen.dart   # Resim tarama
+│   └── create/                  # QR kod oluşturma ekranları
+│       ├── create_qr_screen.dart
+│       ├── create_contact_screen.dart
+│       ├── create_calendar_screen.dart
+│       ├── create_wifi_screen.dart
+│       └── create_generic_barcode_screen.dart
+├── services/
+│   ├── hive_service.dart        # Veritabanı işlemleri
+│   ├── theme_service.dart       # Tema yönetimi
+│   ├── common_helpers.dart      # Ortak yardımcı fonksiyonlar
+│   └── error_service.dart       # Hata yönetimi
+├── providers/
+│   └── locale_provider.dart     # Dil yönetimi
+└── l10n/                        # Yerelleştirme dosyaları
+    ├── app_en.arb
+    ├── app_tr.arb
+    ├── app_es.arb
+    └── app_localizations.dart
 ```
 
-## 🔒 Permissions
+## 🎨 Tema Sistemi
+
+### **Renk Temaları**
+
+- **Mavi** - Varsayılan profesyonel tema
+- **Yeşil** - Doğa dostu tema
+- **Mor** - Yaratıcı ve modern tema
+- **Turuncu** - Enerjik ve canlı tema
+- **Kırmızı** - Dikkat çekici tema
+
+### **Tema Modları**
+
+- **Açık Tema** - Klasik açık renkler
+- **Koyu Tema** - Göz yormayan koyu renkler
+- **Sistem Tema** - Cihaz ayarlarına uyum
+
+## 🌍 Dil Desteği
+
+### **Desteklenen Diller**
+
+- **Türkçe** (TR) - Ana dil
+- **İngilizce** (EN) - Uluslararası kullanım
+- **İspanyolca** (ES) - Genişletilmiş erişim
+
+### **Yerelleştirilmiş Özellikler**
+
+- Tüm UI metinleri
+- Hata mesajları
+- Bildirimler
+- Tarih/saat formatları
+- QR kod türleri
+
+## 🔒 İzinler
 
 ### Android
 
-- `CAMERA` - For QR code scanning
-- `INTERNET` - For URL launching
-- `QUERY_ALL_PACKAGES` - For URL handling
+- `CAMERA` - QR kod tarama için
+- `INTERNET` - URL açma için
+- `READ_EXTERNAL_STORAGE` - Resim seçme için
+- `WRITE_EXTERNAL_STORAGE` - Dosya kaydetme için
 
 ### iOS
 
-- Camera access permission
-- Network access for URL launching
+- Kamera erişim izni
+- Resim galerisi erişim izni
+- Ağ erişimi URL açma için
 
-## 📸 Screenshots
+## 📸 Ekran Görüntüleri
 
-_Screenshots will be added here_
+_Ekran görüntüleri buraya eklenecek_
 
-## 🤝 Contributing
+## 🚀 Gelecek Özellikler
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- [ ] **Toplu QR kod oluşturma** - Çoklu veri girişi
+- [ ] **QR kod şablonları** - Hızlı oluşturma
+- [ ] **Bulut senkronizasyonu** - Veri yedekleme
+- [ ] **QR kod analizi** - Detaylı istatistikler
+- [ ] **Widget desteği** - Ana ekran widget'ı
+- [ ] **Otomatik yedekleme** - Zamanlanmış yedekleme
 
-## 📄 License
+## 🤝 Katkıda Bulunma
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+1. Depoyu fork edin
+2. Özellik dalınızı oluşturun (`git checkout -b feature/AmazingFeature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'Add some AmazingFeature'`)
+4. Dalınıza push edin (`git push origin feature/AmazingFeature`)
+5. Pull Request açın
 
-## 🙏 Acknowledgments
+## 📄 Lisans
 
-- Flutter team for the amazing framework
-- mobile_scanner package developers
-- Hive database team
-- All contributors and testers
+Bu proje MIT Lisansı altında lisanslanmıştır - detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
-## 📞 Support
+## 🙏 Teşekkürler
 
-If you encounter any issues or have questions:
+- Flutter ekibi harika framework için
+- mobile_scanner paketi geliştiricileri
+- Hive veritabanı ekibi
+- Tüm katkıda bulunanlar ve test edenler
 
-1. Check the [Issues](https://github.com/yourusername/qr-reader/issues) page
-2. Create a new issue with detailed information
-3. Include device information and error logs
+## 📞 Destek
+
+Herhangi bir sorunla karşılaştığınızda veya sorularınız olduğunda:
+
+1. [Issues](https://github.com/yourusername/qr-okuyucu/issues) sayfasını kontrol edin
+2. Detaylı bilgi ile yeni bir issue oluşturun
+3. Cihaz bilgileri ve hata loglarını ekleyin
 
 ---
 
-**Made with ❤️ using Flutter**
+**Flutter ile ❤️ ile yapıldı**
