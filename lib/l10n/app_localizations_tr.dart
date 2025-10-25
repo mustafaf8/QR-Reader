@@ -69,9 +69,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get spanish => 'Español';
 
   @override
-  String get myQrCodes => 'QR Kodlarım';
-
-  @override
   String get imageScan => 'Resim Tara';
 
   @override
@@ -784,9 +781,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get removeAdsFeature => 'Reklamları kaldır özelliği yakında eklenecek';
-
-  @override
-  String get myQrPage => 'QR Kodlarım';
 
   @override
   String get featureComingSoon => 'Bu özellik yakında gelecek';

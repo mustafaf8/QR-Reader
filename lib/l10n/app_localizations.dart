@@ -220,12 +220,6 @@ abstract class AppLocalizations {
   /// **'Español'**
   String get spanish;
 
-  /// No description provided for @myQrCodes.
-  ///
-  /// In tr, this message translates to:
-  /// **'QR Kodlarım'**
-  String get myQrCodes;
-
   /// No description provided for @imageScan.
   ///
   /// In tr, this message translates to:
@@ -1617,12 +1611,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Reklamları kaldır özelliği yakında eklenecek'**
   String get removeAdsFeature;
-
-  /// No description provided for @myQrPage.
-  ///
-  /// In tr, this message translates to:
-  /// **'QR Kodlarım'**
-  String get myQrPage;
 
   /// No description provided for @featureComingSoon.
   ///

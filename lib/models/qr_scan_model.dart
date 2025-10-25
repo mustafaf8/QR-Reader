@@ -98,51 +98,46 @@ class QrScanModel extends HiveObject {
     return data.startsWith('http://') || data.startsWith('https://');
   }
 
-  /// WiFi QR kodundan SSID'i çıkarır
+  /// WiFi QR kodundan SSID'i çıkarır - Regex ile iyileştirildi
   static String _extractWiFiSSID(String data) {
     try {
       if (!data.startsWith('WIFI:')) return 'WiFi Ağı';
 
-      // S: etiketini ara
-      final ssidIndex = data.indexOf('S:');
-      if (ssidIndex == -1) return 'WiFi Ağı';
+      // Regex ile S: etiketini ve değerini çıkar
+      final ssidRegex = RegExp(r'S:([^;]+)');
+      final match = ssidRegex.firstMatch(data);
 
-      // S: etiketinden sonraki kısmı al
-      final afterSSID = data.substring(ssidIndex + 2);
+      if (match != null && match.group(1) != null) {
+        final ssid = match.group(1)!.trim();
+        return ssid.isNotEmpty ? ssid : 'WiFi Ağı';
+      }
 
-      // İlk noktalı virgülü bul
-      final semicolonIndex = afterSSID.indexOf(';');
-      if (semicolonIndex == -1) return afterSSID;
-
-      return afterSSID.substring(0, semicolonIndex);
+      return 'WiFi Ağı';
     } catch (e) {
       return 'WiFi Ağı';
     }
   }
 
-  /// WiFi QR kodundan şifreyi çıkarır
+  /// WiFi QR kodundan şifreyi çıkarır - Regex ile iyileştirildi
   static String _extractWiFiPassword(String data) {
     try {
       if (!data.startsWith('WIFI:')) return 'WiFi ağ bilgileri';
 
-      // P: etiketini ara
-      final passwordIndex = data.indexOf('P:');
-      if (passwordIndex == -1) return 'WiFi ağ bilgileri';
+      // Regex ile P: etiketini ve değerini çıkar
+      final passwordRegex = RegExp(r'P:([^;]*)');
+      final match = passwordRegex.firstMatch(data);
 
-      // P: etiketinden sonraki kısmı al
-      final afterPassword = data.substring(passwordIndex + 2);
+      if (match != null && match.group(1) != null) {
+        final password = match.group(1)!.trim();
 
-      // İlk noktalı virgülü bul
-      final semicolonIndex = afterPassword.indexOf(';');
-      if (semicolonIndex == -1) return afterPassword;
+        // Şifre boşsa veya gizliyse uygun mesaj döndür
+        if (password.isEmpty) return 'Şifre yok';
+        if (password == 'HIDDEN') return 'Gizli şifre';
 
-      final password = afterPassword.substring(0, semicolonIndex);
+        return password;
+      }
 
-      // Şifre boşsa veya gizliyse uygun mesaj döndür
-      if (password.isEmpty) return 'Şifre yok';
-      if (password == 'HIDDEN') return 'Gizli şifre';
-
-      return password;
+      return 'WiFi ağ bilgileri';
     } catch (e) {
       return 'WiFi ağ bilgileri';
     }

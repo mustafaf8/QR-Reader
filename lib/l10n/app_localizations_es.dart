@@ -70,9 +70,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get spanish => 'Español';
 
   @override
-  String get myQrCodes => 'Mis Códigos QR';
-
-  @override
   String get imageScan => 'Escanear Imagen';
 
   @override
@@ -794,9 +791,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get removeAdsFeature => 'Función de eliminar anuncios próximamente';
 
   @override
-  String get myQrPage => 'Mis Códigos QR';
-
-  @override
   String get featureComingSoon => 'Esta función llegará pronto';
 
   @override
@@ -883,7 +877,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get qrCodeDataSaved => 'Datos del código QR guardados';
 
   @override
-  String get enterData => 'Ingresa datos';
+  String get enterData => 'Ingrese datos';
 
   @override
   String get information => 'Información';

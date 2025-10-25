@@ -20,7 +20,6 @@
   "turkish": "Türkçe",
   "english": "English",
   "spanish": "Español",
-  "myQrCodes": "My QR Codes",
   "imageScan": "Image Scan",
   "scanFromImage": "Scan from Image",
   "createWifi": "Create WiFi QR",
@@ -281,7 +280,6 @@
       "powerfulQrReader": "Powerful QR code reader",
       "removeAds": "Remove Ads",
       "removeAdsFeature": "Remove ads feature coming soon",
-      "myQrPage": "My QR Page",
       "featureComingSoon": "This feature is coming soon",
       "qrCodeScannedAndSaved": "QR code scanned and saved!",
       "qrCodeAlreadyScanned": "This QR code has been scanned before!",
@@ -454,7 +452,6 @@
       "themeSelection": "Theme Selection",
       "selectTheme": "Select Theme",
       "imageAnalyzing": "Analyzing image...",
-      "myQrPage": "My QR Page",
       "featureComingSoon": "This feature is coming soon",
       "wifiInfo": "Wi-Fi Information",
       "vEventData": "vEvent Data",
@@ -474,5 +471,6 @@
       "savedToDownloads": "Saved to Downloads",
       "saveFailed": "Save failed",
       "shareFailed": "Share failed",
-      "urlOpenFailed": "Failed to open URL"
+      "urlOpenFailed": "Failed to open URL",
+  "enterData": "Enter data"
     }
