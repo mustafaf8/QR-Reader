@@ -1,6 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'l10n/app_localizations.dart';
 import 'services/hive_service.dart';
+import 'services/theme_service.dart';
+import 'providers/locale_provider.dart';
 import 'screens/home_screen.dart';
 
 void main() async {
@@ -13,6 +18,14 @@ void main() async {
     // Hive başlatma hatası
   }
 
+  // Tema servisini başlat
+  final themeService = ThemeService();
+  await themeService.initialize();
+
+  // Dil servisini başlat
+  final localeProvider = LocaleProvider();
+  await localeProvider.initialize();
+
   // Global hata yakalama
   FlutterError.onError = (FlutterErrorDetails details) {
     // Hata yakalama
@@ -24,21 +37,47 @@ void main() async {
     return true;
   };
 
-  runApp(const QRReaderApp());
+  runApp(
+    QRReaderApp(themeService: themeService, localeProvider: localeProvider),
+  );
 }
 
 class QRReaderApp extends StatelessWidget {
-  const QRReaderApp({super.key});
+  final ThemeService themeService;
+  final LocaleProvider localeProvider;
+
+  const QRReaderApp({
+    super.key,
+    required this.themeService,
+    required this.localeProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'QR Okuyucu',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: themeService),
+        ChangeNotifierProvider.value(value: localeProvider),
+      ],
+      child: Consumer2<ThemeService, LocaleProvider>(
+        builder: (context, themeService, localeProvider, child) {
+          return MaterialApp(
+            title: 'QR Okuyucu',
+            theme: themeService.getThemeData(false),
+            darkTheme: themeService.getThemeData(true),
+            themeMode: ThemeMode.system,
+            locale: localeProvider.locale,
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: LocaleProvider.supportedLocales,
+            home: const HomePage(),
+          );
+        },
       ),
-      home: const HomePage(),
     );
   }
 }

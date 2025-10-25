@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -71,11 +72,13 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Wi-Fi QR Kodu'),
+        title: Text(AppLocalizations.of(context)!.wifiQrCodeTitle),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         scrolledUnderElevation: 1,
-        shadowColor: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+        shadowColor: Theme.of(
+          context,
+        ).colorScheme.shadow.withValues(alpha: 0.1),
         actions: [
           if (_ssidController.text.isNotEmpty && !_hasError)
             IconButton(
@@ -102,7 +105,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                       elevation: 8,
                       shadowColor: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.3),
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -139,13 +142,16 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Ağ Adı (SSID) *',
+                                labelText:
+                                    '${AppLocalizations.of(context)!.networkNameLabel} *',
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurfaceVariant,
                                 ),
-                                hintText: 'Wi-Fi ağ adınız',
+                                hintText: AppLocalizations.of(
+                                  context,
+                                )!.networkNameHint,
                                 hintStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -154,7 +160,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -170,15 +176,17 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
 
                             // Güvenlik türü
                             DropdownButtonFormField<String>(
-                              value: _securityType,
+                              initialValue: _securityType,
                               dropdownColor: Theme.of(
                                 context,
-                              ).colorScheme.surfaceVariant,
+                              ).colorScheme.surfaceContainerHighest,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               decoration: InputDecoration(
-                                labelText: 'Güvenlik Türü',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                )!.securityTypeLabel,
                                 labelStyle: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -187,7 +195,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                 filled: true,
                                 fillColor: Theme.of(
                                   context,
-                                ).colorScheme.surfaceVariant,
+                                ).colorScheme.surfaceContainerHighest,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
@@ -197,18 +205,28 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
-                              items: const [
+                              items: [
                                 DropdownMenuItem(
                                   value: 'WPA',
-                                  child: Text('WPA/WPA2'),
+                                  child: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.wpaSecurityType,
+                                  ),
                                 ),
                                 DropdownMenuItem(
                                   value: 'WEP',
-                                  child: Text('WEP'),
+                                  child: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.wepSecurityType,
+                                  ),
                                 ),
                                 DropdownMenuItem(
                                   value: 'nopass',
-                                  child: Text('Şifresiz'),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.noPassword,
+                                  ),
                                 ),
                               ],
                               onChanged: (value) {
@@ -231,13 +249,17 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                   ).colorScheme.onSurface,
                                 ),
                                 decoration: InputDecoration(
-                                  labelText: 'Şifre',
+                                  labelText: AppLocalizations.of(
+                                    context,
+                                  )!.passwordLabel,
                                   labelStyle: TextStyle(
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onSurfaceVariant,
                                   ),
-                                  hintText: 'Wi-Fi şifreniz',
+                                  hintText: AppLocalizations.of(
+                                    context,
+                                  )!.passwordHint,
                                   hintStyle: TextStyle(
                                     color: Theme.of(
                                       context,
@@ -246,7 +268,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                   filled: true,
                                   fillColor: Theme.of(
                                     context,
-                                  ).colorScheme.surfaceVariant,
+                                  ).colorScheme.surfaceContainerHighest,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                     borderSide: BorderSide.none,
@@ -265,7 +287,9 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                             // Gizli ağ
                             SwitchListTile(
                               title: Text(
-                                'Gizli Ağ',
+                                AppLocalizations.of(
+                                  context,
+                                )!.hiddenNetworkLabel,
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -273,7 +297,9 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                'Bu ağ SSID yayınlamıyor',
+                                AppLocalizations.of(
+                                  context,
+                                )!.hiddenNetworkDescription,
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -287,7 +313,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                   _isHidden = value;
                                 });
                               },
-                              activeColor: Theme.of(
+                              activeThumbColor: Theme.of(
                                 context,
                               ).colorScheme.primary,
                               inactiveThumbColor: Theme.of(
@@ -311,7 +337,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'QR Kod Önizlemesi',
+                              AppLocalizations.of(context)!.qrCodePreview,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -327,7 +353,9 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
@@ -343,7 +371,9 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
-                                            'Ağ adını girin',
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.enterNetworkName,
                                             style: TextStyle(
                                               color: Colors.grey.shade600,
                                               fontSize: 16,
@@ -381,7 +411,9 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                                 setState(() {
                                                   _hasError = true;
                                                   _errorMessage =
-                                                      'Geçersiz Wi-Fi bilgisi';
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.invalidWifiInfo;
                                                 });
                                               });
                                           return Container(
@@ -429,7 +461,11 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                     child: ElevatedButton.icon(
                                       onPressed: _saveWifi,
                                       icon: const Icon(Icons.save),
-                                      label: const Text('Kaydet'),
+                                      label: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.saveAction,
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(
                                           context,
@@ -450,7 +486,9 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                     child: ElevatedButton.icon(
                                       onPressed: _shareWifi,
                                       icon: const Icon(Icons.share),
-                                      label: const Text('Paylaş'),
+                                      label: Text(
+                                        AppLocalizations.of(context)!.share,
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(
                                           context,
@@ -495,7 +533,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Wi-Fi QR Kodu Hakkında',
+                                  AppLocalizations.of(context)!.aboutWifiQrCode,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -508,7 +546,9 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Bu QR kodu tarayan kişiler otomatik olarak Wi-Fi ağınıza bağlanabilir. Ağ adı (SSID) zorunludur. Şifreli ağlar için şifre de gereklidir.',
+                              AppLocalizations.of(
+                                context,
+                              )!.wifiQrCodeDescription,
                               style: TextStyle(
                                 color: Theme.of(
                                   context,
@@ -550,7 +590,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                 decoration: BoxDecoration(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.surfaceVariant,
+                                  ).colorScheme.surfaceContainerHighest,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -588,25 +628,29 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
       // Downloads klasörüne kaydet
       final directory = await getDownloadsDirectory();
       if (directory == null) {
-        _showErrorSnackBar('Downloads klasörü bulunamadı');
+        _showErrorSnackBar(
+          AppLocalizations.of(context)!.downloadsFolderNotFound,
+        );
         return;
       }
 
       final file = File('${directory.path}/$fileName');
       final content =
-          'Wi-Fi QR Kodu\n'
-          'Oluşturulma Tarihi: ${DateTime.now().toString()}\n'
-          'Ağ Adı (SSID): ${_ssidController.text}\n'
-          'Güvenlik Türü: $_securityType\n'
-          'Şifre: ${_passwordController.text.isNotEmpty ? _passwordController.text : 'Yok'}\n'
-          'Gizli Ağ: ${_isHidden ? 'Evet' : 'Hayır'}\n'
-          'Ham Veri: ${_getWifiString()}';
+          '${AppLocalizations.of(context)!.wifiQrCode}\n'
+          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}\n'
+          '${AppLocalizations.of(context)!.networkNameSSID}: ${_ssidController.text}\n'
+          '${AppLocalizations.of(context)!.securityType}: $_securityType\n'
+          '${AppLocalizations.of(context)!.passwordLabel}: ${_passwordController.text.isNotEmpty ? _passwordController.text : AppLocalizations.of(context)!.none}\n'
+          '${AppLocalizations.of(context)!.hiddenNetwork}: ${_isHidden ? AppLocalizations.of(context)!.yes : AppLocalizations.of(context)!.no}\n'
+          '${AppLocalizations.of(context)!.rawData}: ${_getWifiString()}';
 
       await file.writeAsString(content);
 
-      _showSuccessSnackBar('Wi-Fi QR kodu kaydedildi: ${file.path}');
+      _showSuccessSnackBar(
+        '${AppLocalizations.of(context)!.wifiQrCodeShared}: ${file.path}',
+      );
     } catch (e) {
-      _showErrorSnackBar('Kaydetme hatası: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.saveError}: $e');
     }
   }
 
@@ -614,22 +658,23 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
     try {
       // Wi-Fi QR kod verisini paylaş
       final content =
-          'Wi-Fi QR Kodu\n\n'
-          'Ağ Adı (SSID): ${_ssidController.text}\n'
-          'Güvenlik Türü: $_securityType\n'
-          'Şifre: ${_passwordController.text.isNotEmpty ? _passwordController.text : 'Yok'}\n'
-          'Gizli Ağ: ${_isHidden ? 'Evet' : 'Hayır'}\n'
-          'Ham Veri: ${_getWifiString()}\n'
-          'Oluşturulma Tarihi: ${DateTime.now().toString()}';
+          '${AppLocalizations.of(context)!.wifiQrCode}\n\n'
+          '${AppLocalizations.of(context)!.networkNameSSID}: ${_ssidController.text}\n'
+          '${AppLocalizations.of(context)!.securityType}: $_securityType\n'
+          '${AppLocalizations.of(context)!.passwordLabel}: ${_passwordController.text.isNotEmpty ? _passwordController.text : AppLocalizations.of(context)!.none}\n'
+          '${AppLocalizations.of(context)!.hiddenNetwork}: ${_isHidden ? AppLocalizations.of(context)!.yes : AppLocalizations.of(context)!.no}\n'
+          '${AppLocalizations.of(context)!.rawData}: ${_getWifiString()}\n'
+          '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}';
 
       await Share.share(
         content,
-        subject: 'Wi-Fi QR Kodu - ${_ssidController.text}',
+        subject:
+            '${AppLocalizations.of(context)!.wifiQrCode} - ${_ssidController.text}',
       );
 
-      _showSuccessSnackBar('Wi-Fi QR kodu paylaşıldı');
+      _showSuccessSnackBar(AppLocalizations.of(context)!.wifiQrCodeShared);
     } catch (e) {
-      _showErrorSnackBar('Paylaşma hatası: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.shareError}: $e');
     }
   }
 
@@ -641,7 +686,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -676,7 +721,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
