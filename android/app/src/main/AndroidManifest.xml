@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.qr_okuyucu">
+    package="com.zenbitstudio.qrbarcode">
     <!-- Internet izni -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Kamera izni -->
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     
     <application
-        android:label="QR Scaner"
+        android:label="QR &amp; Barcode"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

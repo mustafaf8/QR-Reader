@@ -39,7 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanFromGallery => 'Scan from Gallery';
 
   @override
-  String get homeScreenTitle => 'QR Reader';
+  String get homeScreenTitle => 'QR & Barcode';
 
   @override
   String get homeScreenSubtitle => 'Scan QR codes and barcodes easily';
@@ -782,7 +782,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qrCodeFound => 'QR Code Found!';
 
   @override
-  String get powerfulQrReader => 'Powerful QR code reader';
+  String get powerfulQrReader => 'Powerful QR & Barcode scanner';
 
   @override
   String get removeAds => 'Remove Ads';
@@ -1093,7 +1093,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateAndTimeLabel => 'Date and Time';
 
   @override
-  String get qrReaderTitle => 'QR Reader';
+  String get qrReaderTitle => 'QR & Barcode';
 
   @override
   String get blueTheme => 'Blue';

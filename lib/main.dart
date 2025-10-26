@@ -62,7 +62,7 @@ class QRReaderApp extends StatelessWidget {
       child: Consumer2<ThemeService, LocaleProvider>(
         builder: (context, themeService, localeProvider, child) {
           return MaterialApp(
-            title: 'QR Okuyucu',
+            title: 'QR & Barcode',
             theme: themeService.getThemeData(false),
             darkTheme: themeService.getThemeData(true),
             themeMode: themeService.currentThemeMode == AppThemeMode.light

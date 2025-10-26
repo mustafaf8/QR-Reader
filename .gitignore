@@ -163,6 +163,7 @@ yarn-error.log*
 **/android/key.properties
 **/android/app/upload-keystore.jks
 **/android/app/keystore.jks
+**/android/app/qrbarcode.jks
 
 # Gradle
 **/android/.gradle/
