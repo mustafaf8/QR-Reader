@@ -39,7 +39,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get scanFromGallery => 'Galeriden Seç';
 
   @override
-  String get homeScreenTitle => 'QR Okuyucu';
+  String get homeScreenTitle => 'QR & Barcode';
 
   @override
   String get homeScreenSubtitle => 'QR kodları ve barkodları kolayca tarayın';
@@ -780,7 +780,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get qrCodeFound => 'QR Kod Bulundu!';
 
   @override
-  String get powerfulQrReader => 'Güçlü QR kod okuyucu';
+  String get powerfulQrReader => 'Güçlü QR & Barcode tarayıcı';
 
   @override
   String get removeAds => 'Reklamları Kaldır';
@@ -1091,7 +1091,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dateAndTimeLabel => 'Tarih ve Saat';
 
   @override
-  String get qrReaderTitle => 'QR Okuyucu';
+  String get qrReaderTitle => 'QR & Barcode';
 
   @override
   String get blueTheme => 'Mavi';

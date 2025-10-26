@@ -354,102 +354,104 @@ class _HomePageState extends State<HomePage> {
                     ),
                     if (_scannedData != null) ...[
                       const SizedBox(height: 32),
-                      Card(
-                        elevation: 6,
-                        shadowColor: Colors.green.withValues(alpha: 0.2),
-                        shape: RoundedRectangleBorder(
+                      Container(
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: _getGradientColors(context),
+                          ),
                         ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.green.shade50,
-                                Colors.green.shade100.withValues(alpha: 0.3),
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: _getIconBackgroundColor(context),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: _getIconColor(context),
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    l10n.lastScanResult,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: _getTitleColor(context),
+                                        ),
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green.shade100,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green.shade600,
-                                      size: 24,
-                                    ),
+                            const SizedBox(height: 16),
+                            if (_scannedType != null) ...[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _getIconBackgroundColor(context),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  _scannedType!,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: _getTitleColor(context),
+                                    fontSize: 12,
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      l10n.lastScanResult,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                            ],
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.grey.shade900
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: _getBorderColor(context),
+                                ),
+                              ),
+                              child:
+                                  _scannedType == 'WiFi' && _scannedData != null
+                                  ? _buildWiFiResult(_scannedData!, context)
+                                  : SelectableText(
+                                      _scannedData!,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .titleMedium
+                                          .bodyMedium
                                           ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green.shade700,
+                                            fontFamily: 'monospace',
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white
+                                                : Theme.of(
+                                                    context,
+                                                  ).colorScheme.onSurface,
                                           ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              if (_scannedType != null) ...[
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.green.shade100,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    _scannedType!,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.green.shade700,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: Colors.green.shade200,
-                                  ),
-                                ),
-                                child:
-                                    _scannedType == 'WiFi' &&
-                                        _scannedData != null
-                                    ? _buildWiFiResult(_scannedData!, context)
-                                    : Text(
-                                        _scannedData!,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(fontFamily: 'monospace'),
-                                      ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -495,28 +497,51 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildWiFiResult(String data, BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.wifi, color: Colors.blue.shade600, size: 16),
+            Icon(
+              Icons.wifi,
+              color: isDark
+                  ? colorScheme.primary
+                  : colorScheme.primaryContainer,
+              size: 16,
+            ),
             const SizedBox(width: 8),
-            Text(
-              '${AppLocalizations.of(context)!.networkName}: ${_extractWiFiSSID(data, context)}',
-              style: const TextStyle(fontWeight: FontWeight.w500),
+            Expanded(
+              child: Text(
+                '${AppLocalizations.of(context)!.networkName}: ${_extractWiFiSSID(data, context)}',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : colorScheme.onSurface,
+                ),
+              ),
             ),
           ],
         ),
         const SizedBox(height: 8),
         Row(
           children: [
-            Icon(Icons.lock, color: Colors.orange.shade600, size: 16),
+            Icon(
+              Icons.lock,
+              color: isDark
+                  ? colorScheme.secondary
+                  : colorScheme.secondaryContainer,
+              size: 16,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 '${AppLocalizations.of(context)!.password}: ${_extractWiFiPassword(data, context)}',
-                style: const TextStyle(fontFamily: 'monospace'),
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  color: isDark ? Colors.white : colorScheme.onSurface,
+                ),
               ),
             ),
           ],
@@ -851,179 +876,160 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
-            // Modern Drawer Header
-            Container(
-              height: 220,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.primaryContainer,
-                  ],
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.qr_code_scanner,
-                          size: 32,
-                          color: Colors.white,
-                        ),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  // Modern Drawer Header
+                  Container(
+                    height: 220,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.primaryContainer,
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.qrReaderTitle,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.qr_code_scanner,
+                                size: 32,
+                                color: Colors.white,
+                              ),
                             ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.powerfulQrReader,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.8),
+                            const SizedBox(height: 16),
+                            Text(
+                              l10n.qrReaderTitle,
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              l10n.powerfulQrReader,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                  ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
+                  ),
+                  _buildDrawerItem(
+                    context: context,
+                    icon: Icons.qr_code_scanner,
+                    title: l10n.scanQrCode,
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  _buildDrawerItem(
+                    context: context,
+                    icon: Icons.star,
+                    title: l10n.favorites,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FavoritesScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context: context,
+                    icon: Icons.history,
+                    title: l10n.scanHistory,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ScanHistoryScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context: context,
+                    icon: Icons.add_box,
+                    title: l10n.createQrCode,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CreateQrScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  _buildDrawerItem(
+                    context: context,
+                    icon: Icons.settings,
+                    title: l10n.settingsTitle,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context: context,
+                    icon: Icons.share,
+                    title: l10n.share,
+                    onTap: () {
+                      Navigator.pop(context);
+                      _shareQrData();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            // Watermark - Fixed at bottom
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: Text(
+                  'Powered by Zenbit Studio',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.qr_code_scanner,
-              title: l10n.scanQrCode,
-              onTap: () => Navigator.pop(context),
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.star,
-              title: l10n.favorites,
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FavoritesScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.history,
-              title: l10n.scanHistory,
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ScanHistoryScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.add_box,
-              title: l10n.createQrCode,
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CreateQrScreen(),
-                  ),
-                );
-              },
-            ),
-            const Divider(),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.settings,
-              title: l10n.settingsTitle,
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SettingsScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.share,
-              title: l10n.share,
-              onTap: () {
-                Navigator.pop(context);
-                _shareQrData();
-              },
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.block,
-              title: l10n.removeAds,
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.info_outline,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            l10n.removeAdsFeature,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ],
-                    ),
-                    backgroundColor: Colors.blue.shade600,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    margin: const EdgeInsets.all(16),
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              },
             ),
           ],
         ),
@@ -1075,5 +1081,41 @@ class _HomePageState extends State<HomePage> {
         ).colorScheme.primaryContainer.withValues(alpha: 0.2),
       ),
     );
+  }
+
+  /// Gradient renklerini tema bazlı döndürür
+  List<Color> _getGradientColors(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return isDark
+        ? [
+            colorScheme.primary.withValues(alpha: 0.5),
+            colorScheme.primary.withValues(alpha: 0.3),
+          ]
+        : [
+            colorScheme.primaryContainer.withValues(alpha: 0.3),
+            colorScheme.primaryContainer.withValues(alpha: 0.2),
+          ];
+  }
+
+  /// Icon arka plan rengini tema bazlı döndürür
+  Color _getIconBackgroundColor(BuildContext context) {
+    return Theme.of(context).colorScheme.primaryContainer;
+  }
+
+  /// Icon rengini tema bazlı döndürür
+  Color _getIconColor(BuildContext context) {
+    return Theme.of(context).colorScheme.onPrimaryContainer;
+  }
+
+  /// Başlık rengini tema bazlı döndürür
+  Color _getTitleColor(BuildContext context) {
+    return Theme.of(context).colorScheme.onPrimaryContainer;
+  }
+
+  /// Border rengini tema bazlı döndürür
+  Color _getBorderColor(BuildContext context) {
+    return Theme.of(context).colorScheme.primary.withValues(alpha: 0.5);
   }
 }

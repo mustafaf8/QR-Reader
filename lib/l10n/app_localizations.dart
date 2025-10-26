@@ -163,7 +163,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeScreenTitle.
   ///
   /// In tr, this message translates to:
-  /// **'QR Okuyucu'**
+  /// **'QR & Barcode'**
   String get homeScreenTitle;
 
   /// No description provided for @homeScreenSubtitle.
@@ -1609,7 +1609,7 @@ abstract class AppLocalizations {
   /// No description provided for @powerfulQrReader.
   ///
   /// In tr, this message translates to:
-  /// **'Güçlü QR kod okuyucu'**
+  /// **'Güçlü QR & Barcode tarayıcı'**
   String get powerfulQrReader;
 
   /// No description provided for @removeAds.
@@ -2227,7 +2227,7 @@ abstract class AppLocalizations {
   /// No description provided for @qrReaderTitle.
   ///
   /// In tr, this message translates to:
-  /// **'QR Okuyucu'**
+  /// **'QR & Barcode'**
   String get qrReaderTitle;
 
   /// No description provided for @blueTheme.

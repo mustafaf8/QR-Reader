@@ -39,7 +39,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get scanFromGallery => 'Escanear desde Galería';
 
   @override
-  String get homeScreenTitle => 'Lector QR';
+  String get homeScreenTitle => 'QR & Barcode';
 
   @override
   String get homeScreenSubtitle =>
@@ -788,7 +788,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get qrCodeFound => '¡Código QR Encontrado!';
 
   @override
-  String get powerfulQrReader => 'Lector de códigos QR potente';
+  String get powerfulQrReader => 'Potente escáner QR & Barcode';
 
   @override
   String get removeAds => 'Eliminar Anuncios';
@@ -1099,7 +1099,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dateAndTimeLabel => 'Fecha y Hora';
 
   @override
-  String get qrReaderTitle => 'Lector QR';
+  String get qrReaderTitle => 'QR & Barcode';
 
   @override
   String get blueTheme => 'Azul';
