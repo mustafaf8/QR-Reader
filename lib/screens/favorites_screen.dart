@@ -172,22 +172,37 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: _getTypeColor(favorite.type).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  favorite.type,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: _getTypeColor(favorite.type),
-                    fontWeight: FontWeight.w600,
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _getTypeColor(
+                        favorite.type,
+                      ).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      favorite.type,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: _getTypeColor(favorite.type),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _formatTimestamp(favorite.timestamp),
+                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  ),
+                ],
               ),
-              if (favorite.type == 'WiFi' && favorite.description != null)
+              if (favorite.type == 'WiFi' && favorite.description != null) ...[
+                const SizedBox(height: 4),
                 Text(
                   '${AppLocalizations.of(context)!.password}: ${_maskPassword(favorite.description!)}',
                   style: TextStyle(
@@ -196,10 +211,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     fontFamily: 'monospace',
                   ),
                 ),
-              Text(
-                _formatTimestamp(favorite.timestamp),
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-              ),
+              ],
             ],
           ),
           trailing: Row(
@@ -386,15 +398,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(24),
                       ),
                       child: Icon(
                         _getTypeIcon(favorite.type),
                         color: Colors.white,
-                        size: 28,
+                        size: 16,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -407,7 +419,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                 AppLocalizations.of(context)!.favoriteDetail,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),
                             maxLines: 2,
@@ -416,8 +428,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
+                              horizontal: 8,
+                              vertical: 2,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.2),
@@ -427,7 +439,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               favorite.type,
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 13,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -439,7 +451,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close, color: Colors.white),
                       style: IconButton.styleFrom(
+                        iconSize: 12,
                         backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        minimumSize: const Size(24, 24),
+                        padding: EdgeInsets.all(12),
                       ),
                     ),
                   ],
@@ -449,9 +464,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               // Content with Better Spacing
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: 10,
+                    bottom: 0,
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       // Veri bölümü - Modern Card Design
                       _buildModernDetailCard(
@@ -461,7 +481,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         _getTypeColor(favorite.type),
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
                       // Açıklama bölümü (varsa)
                       if (favorite.description != null)
@@ -473,14 +493,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
 
                       if (favorite.description != null)
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
 
                       // WiFi özel bilgileri
                       if (favorite.type == 'WiFi' &&
                           favorite.description != null)
                         _buildModernWiFiDetails(favorite.description!),
 
-                      const SizedBox(height: 16),
+                      if (favorite.type == 'WiFi' &&
+                          favorite.description != null)
+                        const SizedBox(height: 8),
 
                       // Tarih bölümü - Bottom positioned
                       Card(
@@ -503,9 +525,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                'Tarih: ${_formatTimestamp(favorite.timestamp)}',
+                                '${AppLocalizations.of(context)!.dateLabel} ${_formatTimestamp(favorite.timestamp)}',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurface,
@@ -516,6 +538,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           ),
                         ),
                       ),
+                      // Bottom padding for action buttons
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),
@@ -644,34 +668,34 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
           borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(icon, color: color, size: 20),
+                  child: Icon(icon, color: color, size: 18),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Text(
                   title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: color,
-                    fontSize: 18,
+                    fontSize: 13,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
@@ -721,39 +745,39 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
           borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: Colors.cyan.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.wifi, color: Colors.cyan, size: 20),
+                  child: const Icon(Icons.wifi, color: Colors.cyan, size: 18),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 const Text(
                   'WiFi Bilgileri',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.cyan,
-                    fontSize: 18,
+                    fontSize: 13,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             _buildModernWiFiInfoRow(
               'Ağ Adı (SSID)',
               ssid,
               Icons.router,
               Colors.blue,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             _buildModernWiFiInfoRow(
               'Şifre',
               password,
@@ -773,7 +797,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(10),
@@ -782,14 +806,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(icon, color: color, size: 16),
+            child: Icon(icon, color: color, size: 14),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -798,7 +822,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   label,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 11,
+                    fontSize: 10,
                     color: Colors.grey.shade600,
                   ),
                 ),
@@ -806,7 +830,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 SelectableText(
                   value,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     fontFamily: 'monospace',
                     fontWeight: FontWeight.w500,
                   ),

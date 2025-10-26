@@ -386,22 +386,35 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: _getTypeColor(scan.type).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  scan.type,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: _getTypeColor(scan.type),
-                    fontWeight: FontWeight.w600,
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _getTypeColor(scan.type).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      scan.type,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: _getTypeColor(scan.type),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _formatTimestamp(scan.timestamp),
+                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  ),
+                ],
               ),
-              if (scan.type == 'WiFi' && scan.description != null)
+              if (scan.type == 'WiFi' && scan.description != null) ...[
+                const SizedBox(height: 4),
                 Text(
                   '${AppLocalizations.of(context)!.password}: ${_maskPassword(scan.description!)}',
                   style: TextStyle(
@@ -410,10 +423,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                     fontFamily: 'monospace',
                   ),
                 ),
-              Text(
-                _formatTimestamp(scan.timestamp),
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-              ),
+              ],
             ],
           ),
           trailing: Row(
@@ -610,15 +620,15 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(24),
                       ),
                       child: Icon(
                         _getTypeIcon(scan.type),
                         color: Colors.white,
-                        size: 28,
+                        size: 16,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -630,16 +640,29 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                             scan.title ?? _getTranslatedType(scan.type),
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            _getTranslatedType(scan.type),
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.8),
-                              fontSize: 14,
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              _getTranslatedType(scan.type),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -649,7 +672,10 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close, color: Colors.white),
                       style: IconButton.styleFrom(
+                        iconSize: 12,
                         backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        minimumSize: const Size(24, 24),
+                        padding: EdgeInsets.all(12),
                       ),
                     ),
                   ],
@@ -659,9 +685,14 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
               // Content with Better Spacing
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: 10,
+                    bottom: 0,
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       // Veri bölümü - Modern Card Design
                       _buildModernDetailCard(
@@ -671,7 +702,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                         _getTypeColor(scan.type),
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
                       // Açıklama bölümü (varsa)
                       if (scan.description != null)
@@ -682,24 +713,52 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                           Colors.green,
                         ),
 
-                      if (scan.description != null) const SizedBox(height: 16),
+                      if (scan.description != null) const SizedBox(height: 8),
 
                       // WiFi özel bilgileri
                       if (scan.type == 'WiFi' && scan.description != null)
                         _buildModernWiFiDetails(scan.description!),
 
-                      const SizedBox(height: 16),
+                      if (scan.type == 'WiFi' && scan.description != null)
+                        const SizedBox(height: 8),
 
                       // Tarih bölümü - Bottom positioned
-                      _buildModernDetailCard(
-                        AppLocalizations.of(context)!.timeLabel,
-                        Icons.access_time,
-                        _formatTimestamp(scan.timestamp),
-                        Colors.orange,
+                      Card(
+                        elevation: 0,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest
+                            .withValues(alpha: 0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.access_time,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                '${AppLocalizations.of(context)!.dateLabel} ${_formatTimestamp(scan.timestamp)}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
 
                       if (scan.format != null) ...[
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
                         _buildModernDetailCard(
                           AppLocalizations.of(context)!.formatLabel,
                           Icons.format_align_left,
@@ -707,6 +766,8 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                           Colors.purple,
                         ),
                       ],
+                      // Bottom padding for action buttons
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),
@@ -737,7 +798,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                           icon: const Icon(Icons.open_in_browser, size: 20),
                           label: Text(
                             AppLocalizations.of(context)!.openWebPage,
-                            style: const TextStyle(fontSize: 15),
+                            style: TextStyle(fontSize: 15),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(
@@ -746,7 +807,11 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                             foregroundColor: Theme.of(
                               context,
                             ).colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            elevation: 2,
+                            shadowColor: Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -765,7 +830,6 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                             icon: const Icon(Icons.copy, size: 18),
                             label: Text(
                               AppLocalizations.of(context)!.copyAction,
-                              style: const TextStyle(fontSize: 14),
                             ),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -782,7 +846,6 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                             icon: const Icon(Icons.close, size: 18),
                             label: Text(
                               AppLocalizations.of(context)!.closeAction,
-                              style: const TextStyle(fontSize: 14),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey.shade600,
@@ -819,23 +882,137 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
   Future<void> _deleteScan(QrScanModel scan) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.deleteScanTitle),
-        content: Text(AppLocalizations.of(context)!.deleteScanConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(AppLocalizations.of(context)!.cancel),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Container(
+          constraints: BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.8),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.deleteScanTitle,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      style: IconButton.styleFrom(
+                        iconSize: 12,
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        minimumSize: const Size(24, 24),
+                        padding: EdgeInsets.all(12),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  AppLocalizations.of(context)!.deleteScanConfirm,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              // Actions
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text(AppLocalizations.of(context)!.cancel),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(AppLocalizations.of(context)!.deleteAction),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 2,
+                          shadowColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.3),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: Text(AppLocalizations.of(context)!.deleteAction),
-          ),
-        ],
+        ),
       ),
     );
 
@@ -924,23 +1101,137 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
   Future<void> _clearAllScans() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.deleteAllScans),
-        content: Text(AppLocalizations.of(context)!.deleteAllScansConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(AppLocalizations.of(context)!.cancel),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Container(
+          constraints: BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.8),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: const Icon(
+                        Icons.clear_all,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.deleteAllScans,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      style: IconButton.styleFrom(
+                        iconSize: 12,
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        minimumSize: const Size(24, 24),
+                        padding: EdgeInsets.all(12),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  AppLocalizations.of(context)!.deleteAllScansConfirm,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              // Actions
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text(AppLocalizations.of(context)!.cancel),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(AppLocalizations.of(context)!.deleteAction),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 2,
+                          shadowColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.3),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: Text(AppLocalizations.of(context)!.deleteAction),
-          ),
-        ],
+        ),
       ),
     );
 
@@ -1001,57 +1292,292 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.statisticsTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildStatRow(
-              '${AppLocalizations.of(context)!.totalScansLabel} ',
-              '${stats['totalScans']}',
-            ),
-            _buildStatRow(
-              '${AppLocalizations.of(context)!.urlScan}:',
-              '${stats['urlScans']}',
-            ),
-            if (stats['lastScan'] != null)
-              _buildStatRow('Son Tarama:', _formatTimestamp(stats['lastScan'])),
-            if (stats['firstScan'] != null)
-              _buildStatRow(
-                '${AppLocalizations.of(context)!.firstScan}:',
-                _formatTimestamp(stats['firstScan']),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Container(
+          constraints: CommonHelpers.getResponsiveDialogConstraints(context),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Modern Header with Gradient
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.8),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: const Icon(
+                        Icons.analytics,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.statisticsTitle,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      style: IconButton.styleFrom(
+                        iconSize: 12,
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        minimumSize: const Size(24, 24),
+                        padding: EdgeInsets.all(12),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            const SizedBox(height: 12),
-            Text(
-              '${AppLocalizations.of(context)!.typeDistribution}:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            ...(stats['typeCounts'] as Map<String, int>).entries.map(
-              (entry) => _buildStatRow('${entry.key}:', '${entry.value}'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppLocalizations.of(context)!.closeAction),
+
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Toplam Tarama
+                      _buildModernStatCard(
+                        Icons.qr_code_scanner,
+                        AppLocalizations.of(context)!.totalScansLabel,
+                        '${stats['totalScans']}',
+                        Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // URL Taramaları
+                      _buildModernStatCard(
+                        Icons.link,
+                        AppLocalizations.of(context)!.urlScan,
+                        '${stats['urlScans']}',
+                        Colors.blue,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Son Tarama
+                      if (stats['lastScan'] != null)
+                        _buildModernStatCard(
+                          Icons.access_time,
+                          AppLocalizations.of(context)!.lastScan,
+                          _formatTimestamp(stats['lastScan']),
+                          Colors.orange,
+                        ),
+                      if (stats['lastScan'] != null) const SizedBox(height: 12),
+
+                      // İlk Tarama
+                      if (stats['firstScan'] != null)
+                        _buildModernStatCard(
+                          Icons.event,
+                          AppLocalizations.of(context)!.firstScan,
+                          _formatTimestamp(stats['firstScan']),
+                          Colors.green,
+                        ),
+                      if (stats['firstScan'] != null)
+                        const SizedBox(height: 12),
+
+                      // Tip Dağılımı Başlığı
+                      Text(
+                        '${AppLocalizations.of(context)!.typeDistribution}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Tip Kartları
+                      ...(stats['typeCounts'] as Map<String, int>).entries.map(
+                        (entry) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: _buildTypeStatCard(entry.key, entry.value),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Action Button
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close, size: 18),
+                    label: Text(AppLocalizations.of(context)!.closeAction),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      elevation: 2,
+                      shadowColor: Colors.grey.withValues(alpha: 0.3),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
-        ],
+  Widget _buildModernStatCard(
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+  ) {
+    return Card(
+      elevation: 2,
+      shadowColor: color.withValues(alpha: 0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withValues(alpha: 0.08),
+              color.withValues(alpha: 0.03),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTypeStatCard(String type, int count) {
+    final color = _getTypeColor(type);
+    return Card(
+      elevation: 1,
+      shadowColor: color.withValues(alpha: 0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(_getTypeIcon(type), color: color, size: 16),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                type,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1082,34 +1608,34 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
           ),
           borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(icon, color: color, size: 20),
+                  child: Icon(icon, color: color, size: 18),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Text(
                   title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: color,
-                    fontSize: 18,
+                    fontSize: 13,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
@@ -1159,39 +1685,39 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
           ),
           borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: Colors.cyan.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.wifi, color: Colors.cyan, size: 20),
+                  child: const Icon(Icons.wifi, color: Colors.cyan, size: 18),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 const Text(
                   'WiFi Bilgileri',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.cyan,
-                    fontSize: 18,
+                    fontSize: 13,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             _buildModernWiFiInfoRow(
               'Ağ Adı (SSID)',
               ssid,
               Icons.router,
               Colors.blue,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             _buildModernWiFiInfoRow(
               'Şifre',
               password,
@@ -1211,34 +1737,45 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: Colors.white.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 18),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: color,
-              fontSize: 14,
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
             ),
+            child: Icon(icon, color: color, size: 14),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurface,
-                fontFamily: 'monospace',
-              ),
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 10,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                SelectableText(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'monospace',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -184,6 +184,12 @@ abstract class AppLocalizations {
   /// **'Uygulama Bilgisi'**
   String get appInfo;
 
+  /// No description provided for @info.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bilgi'**
+  String get info;
+
   /// No description provided for @version.
   ///
   /// In tr, this message translates to:
@@ -609,6 +615,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'İlk Tarama'**
   String get firstScan;
+
+  /// No description provided for @lastScan.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son Tarama'**
+  String get lastScan;
 
   /// No description provided for @typeDistribution.
   ///
@@ -2007,6 +2019,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Zaman:'**
   String get timeLabel;
+
+  /// No description provided for @dateLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarih:'**
+  String get dateLabel;
 
   /// No description provided for @formatLabel.
   ///
