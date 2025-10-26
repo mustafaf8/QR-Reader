@@ -79,6 +79,7 @@ class QRReaderApp extends StatelessWidget {
             ],
             supportedLocales: LocaleProvider.supportedLocales,
             home: const HomePage(),
+            debugShowCheckedModeBanner: false,
           );
         },
       ),

@@ -172,7 +172,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             opacity: 0.4,
             child: Container(
               width: cutOutSize,
-              height: 200,
+              height: 300,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -203,15 +203,20 @@ class _QrScannerScreenState extends State<QrScannerScreen>
 
   Widget _buildAnimatedCorners(BoxConstraints constraints) {
     final cornerWidth = 5.0;
-    final cornerLength = 40.0;
+    final cornerLength = 35.0;
     final screenWidth = constraints.maxWidth;
     final screenHeight = constraints.maxHeight;
-    final cutOutSize = _getCutOutSize(constraints);
     final cornerOffset = _getCornerOffset(constraints);
 
     // Merkez pozisyonunu hesapla
     final centerX = screenWidth / 2;
     final centerY = screenHeight * 0.5;
+
+    // Köşelerin konumlarını hesapla (merkezden yarı size uzaklıkta)
+    final topPosition = centerY - cornerOffset;
+    final bottomPosition = screenHeight - (centerY + cornerOffset);
+    final leftPosition = centerX - cornerOffset;
+    final rightPosition = centerX + cornerOffset;
 
     return Positioned.fill(
       child: AnimatedBuilder(
@@ -221,8 +226,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             children: [
               // Sol üst köşe
               Positioned(
-                top: centerY - cornerOffset,
-                left: centerX - cornerOffset,
+                top: topPosition,
+                left: leftPosition,
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -252,8 +257,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               ),
               // Sağ üst köşe
               Positioned(
-                top: centerY - cornerOffset,
-                right: screenWidth - centerX - cornerOffset,
+                top: topPosition,
+                right: screenWidth - rightPosition,
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -283,8 +288,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               ),
               // Sol alt köşe
               Positioned(
-                bottom: screenHeight - centerY - cornerOffset,
-                left: centerX - cornerOffset,
+                bottom: bottomPosition,
+                left: leftPosition,
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(
@@ -314,8 +319,8 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               ),
               // Sağ alt köşe
               Positioned(
-                bottom: screenHeight - centerY - cornerOffset,
-                right: screenWidth - centerX - cornerOffset,
+                bottom: bottomPosition,
+                right: screenWidth - rightPosition,
                 child: Opacity(
                   opacity: 0.7 + (_animation.value * 0.1),
                   child: Container(

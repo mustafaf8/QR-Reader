@@ -51,6 +51,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get appInfo => 'Uygulama Bilgisi';
 
   @override
+  String get info => 'Bilgi';
+
+  @override
   String get version => 'Versiyon';
 
   @override
@@ -265,6 +268,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get firstScan => 'İlk Tarama';
+
+  @override
+  String get lastScan => 'Son Tarama';
 
   @override
   String get typeDistribution => 'Tip Dağılımı';
@@ -981,6 +987,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get timeLabel => 'Zaman:';
+
+  @override
+  String get dateLabel => 'Tarih:';
 
   @override
   String get formatLabel => 'Format:';

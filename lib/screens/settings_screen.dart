@@ -79,10 +79,17 @@ class SettingsScreen extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.indigo.withValues(alpha: 0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.secondaryContainer.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.dark_mode, color: Colors.indigo),
+                      child: Icon(
+                        Icons.dark_mode,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSecondaryContainer,
+                      ),
                     ),
                     title: Text(l10n.themeSelection),
                     subtitle: Text(
@@ -99,10 +106,17 @@ class SettingsScreen extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.tertiaryContainer.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.language, color: Colors.blue),
+                      child: Icon(
+                        Icons.language,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onTertiaryContainer,
+                      ),
                     ),
                     title: Text(l10n.language),
                     subtitle: Text(
@@ -133,10 +147,15 @@ class SettingsScreen extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.info, color: Colors.blue),
+                      child: Icon(
+                        Icons.info,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                     ),
                     title: Text(l10n.version),
                     subtitle: Text(AppLocalizations.of(context)!.versionNumber),
@@ -146,10 +165,17 @@ class SettingsScreen extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.secondaryContainer.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.description, color: Colors.green),
+                      child: Icon(
+                        Icons.description,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSecondaryContainer,
+                      ),
                     ),
                     title: Text(l10n.license),
                     subtitle: Text(AppLocalizations.of(context)!.licenseType),
@@ -285,59 +311,105 @@ class SettingsScreen extends StatelessWidget {
     final themeService = Provider.of<ThemeService>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.selectTheme),
-          content: Column(
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: AppThemeMode.values.map((themeMode) {
-              final isSelected = themeService.currentThemeMode == themeMode;
-              return ListTile(
-                leading: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.grey.shade300,
-                    shape: BoxShape.circle,
-                    border: Border.all(
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Başlık
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.dark_mode,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      l10n.selectTheme,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Tema modu seçenekleri
+              ...AppThemeMode.values.map((themeMode) {
+                final isSelected = themeService.currentThemeMode == themeMode;
+                return ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
                       color: isSelected
                           ? Theme.of(context).colorScheme.primary
-                          : Colors.transparent,
-                      width: 3,
+                          : Colors.grey.shade300,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
+                        width: 3,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.4),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              ),
+                            ]
+                          : null,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primary.withValues(alpha: 0.4),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                          ]
+                    child: isSelected
+                        ? Icon(Icons.check, color: Colors.white, size: 24)
                         : null,
                   ),
-                  child: isSelected
-                      ? Icon(Icons.check, color: Colors.white, size: 24)
+                  title: Text(themeMode.getDisplayName(context)),
+                  trailing: isSelected
+                      ? Icon(
+                          Icons.check_circle,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
                       : null,
-                ),
-                title: Text(themeMode.getDisplayName(context)),
-                trailing: isSelected
-                    ? Icon(
-                        Icons.check_circle,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-                onTap: () {
-                  themeService.setThemeMode(themeMode);
-                  Navigator.pop(context);
-                },
-              );
-            }).toList(),
+                  onTap: () {
+                    themeService.setThemeMode(themeMode);
+                    Navigator.pop(context);
+                  },
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
           ),
         );
       },
@@ -348,33 +420,106 @@ class SettingsScreen extends StatelessWidget {
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.selectLanguage),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: LocaleProvider.supportedLocales.map((locale) {
-              return RadioListTile<Locale>(
-                title: Text(localeProvider.getLanguageName(locale)),
-                value: locale,
-                groupValue: localeProvider.locale,
-                onChanged: (Locale? value) {
-                  if (value != null) {
-                    localeProvider.setLocale(value);
-                    Navigator.pop(context);
-                  }
-                },
-              );
-            }).toList(),
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel),
-            ),
-          ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Başlık
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.language,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      l10n.selectLanguage,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Dil seçenekleri
+              ...LocaleProvider.supportedLocales.map((locale) {
+                final isSelected = localeProvider.locale == locale;
+                return ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.blue.shade300,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
+                        width: 3,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.4),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: isSelected
+                        ? Icon(Icons.check, color: Colors.white, size: 24)
+                        : Icon(Icons.translate, color: Colors.white, size: 20),
+                  ),
+                  title: Text(localeProvider.getLanguageName(locale)),
+                  trailing: isSelected
+                      ? Icon(
+                          Icons.check_circle,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
+                      : null,
+                  onTap: () {
+                    localeProvider.setLocale(locale);
+                    Navigator.pop(context);
+                  },
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
+          ),
         );
       },
     );

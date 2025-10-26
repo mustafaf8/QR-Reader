@@ -52,6 +52,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appInfo => 'Información de la App';
 
   @override
+  String get info => 'Información';
+
+  @override
   String get version => 'Versión';
 
   @override
@@ -267,6 +270,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get firstScan => 'Primer Escaneo';
+
+  @override
+  String get lastScan => 'Último Escaneo';
 
   @override
   String get typeDistribution => 'Distribución de Tipos';
@@ -989,6 +995,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get timeLabel => 'Tiempo:';
+
+  @override
+  String get dateLabel => 'Fecha:';
 
   @override
   String get formatLabel => 'Formato:';

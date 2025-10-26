@@ -200,11 +200,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                   const SizedBox(height: 20),
                   Card(
                     elevation: 6,
-                    shadowColor:
-                        _scanResult!.contains('hata') ||
-                            _scanResult!.contains(l10n.notFound)
-                        ? Colors.red.withValues(alpha: 0.2)
-                        : Colors.green.withValues(alpha: 0.2),
+                    shadowColor: _getShadowColor(context),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -214,17 +210,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors:
-                              _scanResult!.contains('hata') ||
-                                  _scanResult!.contains(l10n.notFound)
-                              ? [
-                                  Colors.red.shade50,
-                                  Colors.red.shade100.withValues(alpha: 0.3),
-                                ]
-                              : [
-                                  Colors.green.shade50,
-                                  Colors.green.shade100.withValues(alpha: 0.3),
-                                ],
+                          colors: _getGradientColors(context),
                         ),
                       ),
                       padding: const EdgeInsets.all(20),
@@ -236,11 +222,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color:
-                                      (_scanResult!.contains('hata') ||
-                                          _scanResult!.contains(l10n.notFound)
-                                      ? Colors.red.shade100
-                                      : Colors.green.shade100),
+                                  color: _getIconBackgroundColor(context),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -248,11 +230,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                                           _scanResult!.contains(l10n.notFound)
                                       ? Icons.error_outline
                                       : Icons.check_circle,
-                                  color:
-                                      _scanResult!.contains('hata') ||
-                                          _scanResult!.contains(l10n.notFound)
-                                      ? Colors.red.shade600
-                                      : Colors.green.shade600,
+                                  color: _getIconColor(context),
                                   size: 24,
                                 ),
                               ),
@@ -266,13 +244,7 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                                   style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color:
-                                            _scanResult!.contains('hata') ||
-                                                _scanResult!.contains(
-                                                  l10n.notFound,
-                                                )
-                                            ? Colors.red.shade700
-                                            : Colors.green.shade700,
+                                        color: _getTitleColor(context),
                                       ),
                                 ),
                               ),
@@ -282,20 +254,29 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.grey.shade900
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color:
-                                    (_scanResult!.contains('hata') ||
-                                        _scanResult!.contains(l10n.notFound)
-                                    ? Colors.red.shade200
-                                    : Colors.green.shade200),
+                                color: _getBorderColor(context),
                               ),
                             ),
                             child: SelectableText(
                               _scanResult!,
                               style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(fontFamily: 'monospace'),
+                                  ?.copyWith(
+                                    fontFamily: 'monospace',
+                                    color:
+                                        Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                  ),
                             ),
                           ),
                           if (!_scanResult!.contains('hata') &&
@@ -623,6 +604,107 @@ class _ImageScanScreenState extends State<ImageScanScreen> {
           ),
         );
       }
+    }
+  }
+
+  /// Gradient renklerini tema bazlı döndürür
+  List<Color> _getGradientColors(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isError =
+        _scanResult!.contains('hata') ||
+        _scanResult!.contains(AppLocalizations.of(context)!.notFound);
+
+    if (isError) {
+      return isDark
+          ? [
+              colorScheme.error.withValues(alpha: 0.5),
+              colorScheme.error.withValues(alpha: 0.3),
+            ]
+          : [
+              colorScheme.errorContainer.withValues(alpha: 0.3),
+              colorScheme.errorContainer.withValues(alpha: 0.2),
+            ];
+    } else {
+      return isDark
+          ? [
+              colorScheme.primary.withValues(alpha: 0.5),
+              colorScheme.primary.withValues(alpha: 0.3),
+            ]
+          : [
+              colorScheme.primaryContainer.withValues(alpha: 0.3),
+              colorScheme.primaryContainer.withValues(alpha: 0.2),
+            ];
+    }
+  }
+
+  /// Icon arka plan rengini tema bazlı döndürür
+  Color _getIconBackgroundColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isError =
+        _scanResult!.contains('hata') ||
+        _scanResult!.contains(AppLocalizations.of(context)!.notFound);
+
+    if (isError) {
+      return colorScheme.errorContainer;
+    } else {
+      return colorScheme.primaryContainer;
+    }
+  }
+
+  /// Icon rengini tema bazlı döndürür
+  Color _getIconColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isError =
+        _scanResult!.contains('hata') ||
+        _scanResult!.contains(AppLocalizations.of(context)!.notFound);
+
+    if (isError) {
+      return colorScheme.onErrorContainer;
+    } else {
+      return colorScheme.onPrimaryContainer;
+    }
+  }
+
+  /// Başlık rengini tema bazlı döndürür
+  Color _getTitleColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isError =
+        _scanResult!.contains('hata') ||
+        _scanResult!.contains(AppLocalizations.of(context)!.notFound);
+
+    if (isError) {
+      return colorScheme.onErrorContainer;
+    } else {
+      return colorScheme.onPrimaryContainer;
+    }
+  }
+
+  /// Border rengini tema bazlı döndürür
+  Color _getBorderColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isError =
+        _scanResult!.contains('hata') ||
+        _scanResult!.contains(AppLocalizations.of(context)!.notFound);
+
+    if (isError) {
+      return colorScheme.error.withValues(alpha: 0.5);
+    } else {
+      return colorScheme.primary.withValues(alpha: 0.5);
+    }
+  }
+
+  /// Shadow rengini tema bazlı döndürür
+  Color _getShadowColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isError =
+        _scanResult!.contains('hata') ||
+        _scanResult!.contains(AppLocalizations.of(context)!.notFound);
+
+    if (isError) {
+      return colorScheme.error.withValues(alpha: 0.2);
+    } else {
+      return colorScheme.primary.withValues(alpha: 0.2);
     }
   }
 }
