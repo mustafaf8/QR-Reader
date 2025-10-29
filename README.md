@@ -252,7 +252,7 @@ Bu proje MIT Lisansı altında lisanslanmıştır.
 
 Herhangi bir sorunla karşılaştığınızda veya sorularınız olduğunda:
 
-1. [Issues](https://github.com/mustafaf8/qr-okuyucu/issues) sayfasını kontrol edin
+1. [Issues](https://github.com/mustafaf8/QR-Reader/issues) sayfasını kontrol edin
 2. Detaylı bilgi ile yeni bir issue oluşturun
 3. Cihaz bilgileri ve hata loglarını ekleyin
 
