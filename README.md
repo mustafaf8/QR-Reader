@@ -239,7 +239,7 @@ _Ekran görüntüleri buraya eklenecek_
 
 ## 📄 Lisans
 
-Bu proje MIT Lisansı altında lisanslanmıştır - detaylar için [LICENSE](LICENSE) dosyasına bakın.
+Bu proje MIT Lisansı altında lisanslanmıştır.
 
 ## 🙏 Teşekkürler
 
@@ -252,7 +252,7 @@ Bu proje MIT Lisansı altında lisanslanmıştır - detaylar için [LICENSE](LIC
 
 Herhangi bir sorunla karşılaştığınızda veya sorularınız olduğunda:
 
-1. [Issues](https://github.com/yourusername/qr-okuyucu/issues) sayfasını kontrol edin
+1. [Issues](https://github.com/mustafaf8/qr-okuyucu/issues) sayfasını kontrol edin
 2. Detaylı bilgi ile yeni bir issue oluşturun
 3. Cihaz bilgileri ve hata loglarını ekleyin
 
