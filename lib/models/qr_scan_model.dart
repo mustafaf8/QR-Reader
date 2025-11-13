@@ -52,8 +52,9 @@ class QrScanModel extends HiveObject {
   /// Ham veriden QrScanModel oluşturur
   factory QrScanModel.fromData(String data) {
     final now = DateTime.now();
-    final type = _getDataType(data);
-    final format = 'QR_CODE';
+    final normalizedFormat = _normalizeFormat('QR_CODE');
+    final type = _getDataType(data, normalizedFormat);
+    final formatDisplay = _formatDisplayName(normalizedFormat);
     final isUrl = _isUrl(data);
 
     return QrScanModel(
@@ -61,7 +62,7 @@ class QrScanModel extends HiveObject {
       data: data,
       type: type,
       timestamp: now,
-      format: format,
+      format: formatDisplay,
       isUrl: isUrl,
       title: _generateTitle(data, type),
       description: _generateDescription(data, type),
@@ -82,22 +83,24 @@ class QrScanModel extends HiveObject {
 
   factory QrScanModel.fromScan({required String data, String? format}) {
     final now = DateTime.now();
-    final type = _getDataType(data);
+    final normalizedFormat = _normalizeFormat(format);
+    final type = _getDataType(data, normalizedFormat);
     final isUrl = _isUrl(data);
+    final formatDisplay = _formatDisplayName(normalizedFormat);
 
     return QrScanModel(
       id: '${now.millisecondsSinceEpoch}_${data.hashCode}',
       data: data,
       type: type,
       timestamp: now,
-      format: format,
+      format: formatDisplay,
       isUrl: isUrl,
       title: _generateTitle(data, type),
       description: _generateDescription(data, type),
     );
   }
 
-  static String _getDataType(String data) {
+  static String _getDataType(String data, [String normalizedFormat = '']) {
     if (data.startsWith('http://') || data.startsWith('https://')) {
       return 'URL';
     } else if (data.startsWith('mailto:')) {
@@ -119,7 +122,87 @@ class QrScanModel extends HiveObject {
     } else if (data.startsWith('bitcoin:') || data.startsWith('ethereum:')) {
       return 'CRYPTO';
     } else {
+      final mapped = _formatTypeFromNormalized(normalizedFormat);
+      if (mapped != null) return mapped;
       return 'TEXT';
+    }
+  }
+
+  static String _normalizeFormat(String? format) {
+    if (format == null || format.isEmpty) return '';
+    final upper = format.toUpperCase();
+    return upper.replaceAll(RegExp(r'[^A-Z0-9]'), '');
+  }
+
+  static String? _formatDisplayName(String normalizedFormat) {
+    if (normalizedFormat.isEmpty) return null;
+    switch (normalizedFormat) {
+      case 'QRCODE':
+        return 'QR';
+      case 'EAN13':
+        return 'EAN-13';
+      case 'EAN8':
+        return 'EAN-8';
+      case 'UPCA':
+        return 'UPC-A';
+      case 'UPCE':
+        return 'UPC-E';
+      case 'CODE128':
+        return 'CODE-128';
+      case 'CODE39':
+        return 'CODE-39';
+      case 'CODE93':
+        return 'CODE-93';
+      case 'ITF':
+        return 'ITF';
+      case 'PDF417':
+        return 'PDF417';
+      case 'DATAMATRIX':
+        return 'DATA MATRIX';
+      case 'AZTEC':
+        return 'AZTEC';
+      case 'CODEBAR':
+        return 'CODABAR';
+      case 'CODABAR':
+        return 'CODABAR';
+      default:
+        return normalizedFormat;
+    }
+  }
+
+  static String? _formatTypeFromNormalized(String normalizedFormat) {
+    if (normalizedFormat.isEmpty) return null;
+    switch (normalizedFormat) {
+      case 'QRCODE':
+        return 'QR';
+      case 'EAN13':
+        return 'EAN-13';
+      case 'EAN8':
+        return 'EAN-8';
+      case 'UPCA':
+        return 'UPC-A';
+      case 'UPCE':
+        return 'UPC-E';
+      case 'CODE128':
+        return 'CODE-128';
+      case 'CODE39':
+        return 'CODE-39';
+      case 'CODE93':
+        return 'CODE-93';
+      case 'ITF':
+        return 'ITF';
+      case 'PDF417':
+        return 'PDF417';
+      case 'DATAMATRIX':
+        return 'DATA MATRIX';
+      case 'AZTEC':
+        return 'AZTEC';
+      case 'CODEBAR':
+        return 'CODABAR';
+      case 'CODABAR':
+        return 'CODABAR';
+      default:
+        return normalizedFormat;
     }
   }
 

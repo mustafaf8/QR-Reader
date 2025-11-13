@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/barcode_constraints.dart';
 import '../../services/barcode_image_service.dart';
 import '../../services/error_service.dart';
 
@@ -22,6 +23,7 @@ class CreateGenericBarcodeScreen extends StatefulWidget {
   final TextInputType? secondaryInputType;
   final int? secondaryMaxLength;
   final String Function(String primary, String secondary)? customFormatter;
+  final BarcodeConstraint? constraint;
 
   const CreateGenericBarcodeScreen({
     super.key,
@@ -41,6 +43,7 @@ class CreateGenericBarcodeScreen extends StatefulWidget {
     this.secondaryInputType,
     this.secondaryMaxLength,
     this.customFormatter,
+    this.constraint,
   });
 
   @override
@@ -57,14 +60,17 @@ class _CreateGenericBarcodeScreenState
   String _secondaryData = '';
   bool _hasError = false;
   String _errorMessage = '';
+  late BarcodeConstraint _constraint;
 
   @override
   void initState() {
     super.initState();
+    _constraint = widget.constraint ?? BarcodeConstraints.qr;
     if (widget.isClipboard) {
       _loadFromClipboard();
     }
     _controller.addListener(_onTextChanged);
+    _controller.value = _controller.value;
     if (widget.enableSecondaryField) {
       _secondaryController = TextEditingController();
       _secondaryController!.addListener(_onSecondaryChanged);
@@ -91,11 +97,40 @@ class _CreateGenericBarcodeScreenState
   }
 
   void _onTextChanged() {
+    var text = _controller.text;
+    if (_constraint.forceUppercase) {
+      final uppercase = text.toUpperCase();
+      if (uppercase != text) {
+        text = uppercase;
+        _controller.value = _controller.value.copyWith(
+          text: uppercase,
+          selection: TextSelection.collapsed(offset: uppercase.length),
+        );
+      }
+    }
+
     setState(() {
-      _currentData = _controller.text;
+      _currentData = text;
+      _validatePrimary();
+    });
+  }
+
+  void _validatePrimary() {
+    final formatted = _currentData;
+    if (formatted.isEmpty) {
       _hasError = false;
       _errorMessage = '';
-    });
+      return;
+    }
+    if (!_constraint.validate(formatted)) {
+      _hasError = true;
+      _errorMessage =
+          _constraint.description ??
+          AppLocalizations.of(context)!.invalidDataFormat;
+    } else if (widget.customFormatter == null) {
+      _hasError = false;
+      _errorMessage = '';
+    }
   }
 
   void _onSecondaryChanged() {
@@ -192,12 +227,18 @@ class _CreateGenericBarcodeScreenState
                             TextField(
                               controller: _controller,
                               keyboardType:
-                                  widget.inputType ?? TextInputType.text,
-                              maxLength: widget.maxLength,
-                              inputFormatters:
-                                  widget.inputType == TextInputType.number
-                                  ? [FilteringTextInputFormatter.digitsOnly]
-                                  : null,
+                                  widget.inputType ??
+                                  (_constraint.digitsOnly
+                                      ? TextInputType.number
+                                      : TextInputType.text),
+                              maxLength:
+                                  widget.maxLength ?? _constraint.maxLength,
+                              inputFormatters: [
+                                ..._constraint.buildInputFormatters(),
+                                if (widget.inputType == TextInputType.number &&
+                                    !_constraint.digitsOnly)
+                                  FilteringTextInputFormatter.digitsOnly,
+                              ],
                               style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(
                                     color: Theme.of(

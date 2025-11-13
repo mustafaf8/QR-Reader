@@ -5,6 +5,7 @@ import 'create/create_wifi_screen.dart';
 import 'create/create_contact_screen.dart';
 import 'create/create_calendar_screen.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import '../models/barcode_constraints.dart';
 
 class CreateQrScreen extends StatelessWidget {
   const CreateQrScreen({super.key});
@@ -44,6 +45,7 @@ class CreateQrScreen extends StatelessWidget {
               primaryLabel: l10n.clipboardContent,
               hintText: l10n.enterYourText,
               infoText: l10n.qrCodeInfo,
+              constraint: BarcodeConstraints.qr,
             ),
           ),
 
@@ -60,6 +62,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: l10n.urlHint,
               prefix: 'https://',
               infoText: l10n.qrCodeInfo,
+              constraint: BarcodeConstraints.qr,
             ),
           ),
 
@@ -75,6 +78,7 @@ class CreateQrScreen extends StatelessWidget {
               primaryLabel: l10n.enterYourText,
               hintText: l10n.enterYourText,
               infoText: l10n.qrCodeInfo,
+              constraint: BarcodeConstraints.qr,
             ),
           ),
 
@@ -115,6 +119,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: l10n.emailAddressHint,
               prefix: 'mailto:',
               infoText: l10n.qrCodeInfo,
+              constraint: BarcodeConstraints.qr,
             ),
           ),
 
@@ -144,6 +149,7 @@ class CreateQrScreen extends StatelessWidget {
                 return 'sms:$trimmedNumber$encodedMessage';
               },
               infoText: l10n.qrCodeInfo,
+              constraint: BarcodeConstraints.qr,
             ),
           ),
 
@@ -160,6 +166,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: l10n.locationHint,
               prefix: 'geo:',
               infoText: l10n.qrCodeInfo,
+              constraint: BarcodeConstraints.qr,
             ),
           ),
 
@@ -177,6 +184,7 @@ class CreateQrScreen extends StatelessWidget {
               prefix: 'tel:',
               inputType: TextInputType.phone,
               infoText: l10n.qrCodeInfo,
+              constraint: BarcodeConstraints.qr,
             ),
           ),
 
@@ -217,6 +225,7 @@ class CreateQrScreen extends StatelessWidget {
               inputType: TextInputType.number,
               maxLength: 7,
               infoText: l10n.ean8Info,
+              constraint: BarcodeConstraints.ean8,
             ),
           ),
 
@@ -233,6 +242,7 @@ class CreateQrScreen extends StatelessWidget {
               inputType: TextInputType.number,
               maxLength: 12,
               infoText: l10n.ean13Info,
+              constraint: BarcodeConstraints.ean13,
             ),
           ),
 
@@ -249,6 +259,7 @@ class CreateQrScreen extends StatelessWidget {
               inputType: TextInputType.number,
               maxLength: 6,
               infoText: l10n.upcEInfo,
+              constraint: BarcodeConstraints.upcE,
             ),
           ),
 
@@ -265,6 +276,7 @@ class CreateQrScreen extends StatelessWidget {
               inputType: TextInputType.number,
               maxLength: 11,
               infoText: l10n.upcAInfo,
+              constraint: BarcodeConstraints.upcA,
             ),
           ),
 
@@ -279,6 +291,7 @@ class CreateQrScreen extends StatelessWidget {
               primaryLabel: l10n.code39Hint,
               hintText: l10n.code39Hint,
               infoText: l10n.code39Info,
+              constraint: BarcodeConstraints.code39,
             ),
           ),
 
@@ -293,6 +306,7 @@ class CreateQrScreen extends StatelessWidget {
               primaryLabel: l10n.code93Hint,
               hintText: l10n.code93Hint,
               infoText: l10n.code93Info,
+              constraint: BarcodeConstraints.code93,
             ),
           ),
 
@@ -307,6 +321,7 @@ class CreateQrScreen extends StatelessWidget {
               primaryLabel: l10n.code128Hint,
               hintText: l10n.code128Hint,
               infoText: l10n.code128Info,
+              constraint: BarcodeConstraints.code128,
             ),
           ),
 
@@ -322,6 +337,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: l10n.itfHint,
               inputType: TextInputType.number,
               infoText: l10n.itfInfo,
+              constraint: BarcodeConstraints.itf,
             ),
           ),
 
@@ -336,6 +352,7 @@ class CreateQrScreen extends StatelessWidget {
               primaryLabel: l10n.pdf417Example,
               hintText: l10n.pdf417Example,
               infoText: l10n.pdf417Info,
+              constraint: BarcodeConstraints.pdf417,
             ),
           ),
 
@@ -351,6 +368,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: l10n.itfHint,
               inputType: TextInputType.number,
               infoText: l10n.codabarInfo,
+              constraint: BarcodeConstraints.codabar,
             ),
           ),
 
@@ -365,6 +383,7 @@ class CreateQrScreen extends StatelessWidget {
               primaryLabel: l10n.dataMatrixExample,
               hintText: l10n.dataMatrixExample,
               infoText: l10n.dataMatrixInfo,
+              constraint: BarcodeConstraints.dataMatrix,
             ),
           ),
 
@@ -379,6 +398,7 @@ class CreateQrScreen extends StatelessWidget {
               primaryLabel: l10n.aztecExample,
               hintText: l10n.aztecExample,
               infoText: l10n.aztecInfo,
+              constraint: BarcodeConstraints.aztec,
             ),
           ),
 
@@ -518,6 +538,7 @@ class CreateQrScreen extends StatelessWidget {
     TextInputType? secondaryInputType,
     int? secondaryMaxLength,
     String Function(String primary, String secondary)? customFormatter,
+    BarcodeConstraint? constraint,
   }) {
     Navigator.push(
       context,
@@ -539,6 +560,7 @@ class CreateQrScreen extends StatelessWidget {
           secondaryInputType: secondaryInputType,
           secondaryMaxLength: secondaryMaxLength,
           customFormatter: customFormatter,
+          constraint: constraint,
         ),
       ),
     );

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../l10n/app_localizations.dart';
-import '../services/hive_service.dart';
 import '../models/qr_scan_model.dart';
 import '../services/common_helpers.dart';
-import 'scan_history_screen.dart';
-import 'image_scan_screen.dart';
-import 'favorites_screen.dart';
+import '../services/hive_service.dart';
 import 'create_qr_screen.dart';
-import 'settings_screen.dart';
+import 'favorites_screen.dart';
 import 'qr_scanner_screen.dart';
+import 'scan_history_screen.dart';
+import 'settings_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +24,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? _scannedData;
   String? _scannedType;
+  final ImagePicker _imagePicker = ImagePicker();
+  final MobileScannerController _imageScannerController =
+      MobileScannerController();
+  bool _isGalleryProcessing = false;
+
+  @override
+  void dispose() {
+    _imageScannerController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,171 +115,27 @@ class _HomePageState extends State<HomePage> {
                                   height: 56,
                                   child: ElevatedButton.icon(
                                     onPressed: () async {
-                                      final currentContext = context;
-                                      final isMounted = mounted;
+                                      final result =
+                                          await Navigator.push<
+                                            Map<String, String?>
+                                          >(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const QrScannerScreen(),
+                                            ),
+                                          );
 
-                                      try {
-                                        final result =
-                                            await Navigator.push<String>(
-                                              currentContext,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const QrScannerScreen(),
-                                              ),
-                                            );
-
-                                        if (result != null && isMounted) {
-                                          try {
-                                            final scanModel =
-                                                QrScanModel.fromScan(
-                                                  data: result,
-                                                );
-                                            final wasSaved = await HiveService()
-                                                .saveQrScan(scanModel);
-
-                                            if (wasSaved) {
-                                              ScaffoldMessenger.of(
-                                                currentContext,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: Row(
-                                                    children: [
-                                                      Container(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                              8,
-                                                            ),
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.white
-                                                              .withValues(
-                                                                alpha: 0.2,
-                                                              ),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                8,
-                                                              ),
-                                                        ),
-                                                        child: const Icon(
-                                                          Icons.check_circle,
-                                                          color: Colors.white,
-                                                          size: 20,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 12),
-                                                      Expanded(
-                                                        child: Text(
-                                                          l10n.qrCodeScannedAndSaved,
-                                                          style:
-                                                              const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  backgroundColor:
-                                                      Colors.green.shade600,
-                                                  behavior:
-                                                      SnackBarBehavior.floating,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                  ),
-                                                  margin: const EdgeInsets.all(
-                                                    16,
-                                                  ),
-                                                  duration: const Duration(
-                                                    seconds: 2,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(
-                                                currentContext,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: Row(
-                                                    children: [
-                                                      Container(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                              8,
-                                                            ),
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.white
-                                                              .withValues(
-                                                                alpha: 0.2,
-                                                              ),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                8,
-                                                              ),
-                                                        ),
-                                                        child: const Icon(
-                                                          Icons.info_outline,
-                                                          color: Colors.white,
-                                                          size: 20,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 12),
-                                                      Expanded(
-                                                        child: Text(
-                                                          l10n.qrCodeAlreadyScanned,
-                                                          style:
-                                                              const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  backgroundColor:
-                                                      Colors.orange.shade600,
-                                                  behavior:
-                                                      SnackBarBehavior.floating,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                  ),
-                                                  margin: const EdgeInsets.all(
-                                                    16,
-                                                  ),
-                                                  duration: const Duration(
-                                                    seconds: 2,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          } catch (e) {
-                                            // Hata yakalama
-                                          }
-
-                                          setState(() {
-                                            _scannedData = result;
-                                            _scannedType = _getDataType(
-                                              result,
-                                              context,
-                                            );
-                                          });
-
-                                          if (_isUrl(result) && mounted) {
-                                            await _showUrlDialog(
-                                              currentContext,
-                                              result,
-                                            );
-                                          }
-                                        }
-                                      } catch (e) {
-                                        // Hata yakalama
+                                      if (result == null ||
+                                          result['data'] == null) {
+                                        return;
                                       }
+
+                                      await _processScanResult(
+                                        result['data']!,
+                                        result['format'],
+                                        context,
+                                      );
                                     },
                                     icon: const Icon(
                                       Icons.qr_code_scanner,
@@ -305,19 +172,7 @@ class _HomePageState extends State<HomePage> {
                                   width: double.infinity,
                                   height: 56,
                                   child: ElevatedButton.icon(
-                                    onPressed: () async {
-                                      try {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ImageScanScreen(),
-                                          ),
-                                        );
-                                      } catch (e) {
-                                        // Hata yakalama
-                                      }
-                                    },
+                                    onPressed: _scanFromGallery,
                                     icon: const Icon(
                                       Icons.photo_library,
                                       size: 24,
@@ -875,6 +730,154 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
+  }
+
+  Future<void> _scanFromGallery() async {
+    if (_isGalleryProcessing) return;
+
+    setState(() {
+      _isGalleryProcessing = true;
+    });
+
+    final l10n = AppLocalizations.of(context)!;
+
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+      );
+      if (!mounted) return;
+
+      if (image == null) {
+        return;
+      }
+
+      final capture = await _imageScannerController.analyzeImage(image.path);
+      final barcodes = capture?.barcodes ?? [];
+      Barcode? matched;
+      for (final barcode in barcodes) {
+        final raw = barcode.rawValue;
+        if (raw != null && raw.isNotEmpty) {
+          matched = barcode;
+          break;
+        }
+      }
+
+      if (matched == null) {
+        _showScanSnackBar(
+          context,
+          l10n.noQrCodeInImage,
+          Colors.red.shade600,
+          Icons.error_outline,
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      await _processScanResult(matched.rawValue!, matched.format.name, context);
+    } catch (e) {
+      if (!mounted) return;
+      _showScanSnackBar(
+        context,
+        l10n.errorScanningQr,
+        Colors.red.shade600,
+        Icons.error_outline,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isGalleryProcessing = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _processScanResult(
+    String data,
+    String? format,
+    BuildContext snackContext,
+  ) async {
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(snackContext)!;
+
+    try {
+      final scanModel = QrScanModel.fromScan(data: data, format: format);
+      final wasSaved = await HiveService().saveQrScan(scanModel);
+
+      if (!mounted) return;
+
+      if (wasSaved) {
+        _showScanSnackBar(
+          snackContext,
+          l10n.qrCodeScannedAndSaved,
+          Colors.green.shade600,
+          Icons.check_circle,
+        );
+      } else {
+        _showScanSnackBar(
+          snackContext,
+          l10n.qrCodeAlreadyScanned,
+          Colors.orange.shade600,
+          Icons.info_outline,
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      _showScanSnackBar(
+        snackContext,
+        l10n.errorOccurred,
+        Colors.red.shade600,
+        Icons.error_outline,
+        duration: const Duration(seconds: 3),
+      );
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _scannedData = data;
+      _scannedType = _getDataType(data, snackContext);
+    });
+
+    if (_isUrl(data) && mounted) {
+      await _showUrlDialog(snackContext, data);
+    }
+  }
+
+  void _showScanSnackBar(
+    BuildContext context,
+    String message,
+    Color backgroundColor,
+    IconData icon, {
+    Duration duration = const Duration(seconds: 2),
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: backgroundColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+        duration: duration,
+      ),
+    );
   }
 
   Widget _buildDrawer(BuildContext context) {
