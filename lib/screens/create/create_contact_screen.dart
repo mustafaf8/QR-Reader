@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/barcode_image_service.dart';
 import '../../services/common_helpers.dart';
+import '../../services/error_service.dart';
 
 class CreateContactScreen extends StatefulWidget {
   const CreateContactScreen({super.key});
@@ -19,6 +21,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _websiteController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final GlobalKey _qrBoundaryKey = GlobalKey();
 
   bool _hasError = false;
   String _errorMessage = '';
@@ -233,6 +236,30 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                               context,
                                             ).colorScheme.primary,
                                           ),
+                                          labelStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
+                                              ),
+                                          floatingLabelStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
+                                              ),
                                         ),
                                   ),
                                 ),
@@ -275,6 +302,30 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                               context,
                                             ).colorScheme.primary,
                                           ),
+                                          labelStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
+                                              ),
+                                          floatingLabelStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
+                                              ),
                                         ),
                                   ),
                                 ),
@@ -546,113 +597,118 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                             ),
                             const SizedBox(height: 16),
                             Center(
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.2,
+                              child: RepaintBoundary(
+                                key: _qrBoundaryKey,
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
                                       ),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child:
-                                    (_firstNameController.text.isEmpty &&
-                                        _lastNameController.text.isEmpty)
-                                    ? Column(
-                                        children: [
-                                          Icon(
-                                            Icons.person_off,
-                                            size: 64,
-                                            color: Colors.grey.shade400,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            )!.enterFirstNameOrLastName,
-                                            style: TextStyle(
-                                              color: Colors.grey.shade600,
-                                              fontSize: 16,
+                                    ],
+                                  ),
+                                  child:
+                                      (_firstNameController.text.isEmpty &&
+                                          _lastNameController.text.isEmpty)
+                                      ? Column(
+                                          children: [
+                                            Icon(
+                                              Icons.person_off,
+                                              size: 64,
+                                              color: Colors.grey.shade400,
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    : _hasError
-                                    ? Column(
-                                        children: [
-                                          Icon(
-                                            Icons.error_outline,
-                                            size: 64,
-                                            color: Colors.red.shade400,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            _errorMessage,
-                                            style: TextStyle(
-                                              color: Colors.red.shade600,
-                                              fontSize: 14,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
-                                      )
-                                    : BarcodeWidget(
-                                        barcode: Barcode.qrCode(),
-                                        data: _getVCardString(),
-                                        width: 200,
-                                        height: 200,
-                                        errorBuilder: (context, error) {
-                                          WidgetsBinding.instance
-                                              .addPostFrameCallback((_) {
-                                                setState(() {
-                                                  _hasError = true;
-                                                  _errorMessage =
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.invalidContactInfo;
-                                                });
-                                              });
-                                          return Container(
-                                            width: 200,
-                                            height: 200,
-                                            decoration: BoxDecoration(
-                                              color: Colors.red.shade50,
-                                              border: Border.all(
-                                                color: Colors.red.shade200,
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.enterFirstNameOrLastName,
+                                              style: TextStyle(
+                                                color: Colors.grey.shade600,
+                                                fontSize: 16,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
                                             ),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.error_outline,
-                                                  color: Colors.red.shade400,
-                                                  size: 48,
+                                          ],
+                                        )
+                                      : _hasError
+                                      ? Column(
+                                          children: [
+                                            Icon(
+                                              Icons.error_outline,
+                                              size: 64,
+                                              color: Colors.red.shade400,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              _errorMessage,
+                                              style: TextStyle(
+                                                color: Colors.red.shade600,
+                                                fontSize: 14,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        )
+                                      : BarcodeWidget(
+                                          barcode: Barcode.qrCode(),
+                                          data: _getVCardString(),
+                                          width: 200,
+                                          height: 200,
+                                          errorBuilder: (context, error) {
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                                  setState(() {
+                                                    _hasError = true;
+                                                    _errorMessage =
+                                                        AppLocalizations.of(
+                                                          context,
+                                                        )!.invalidContactInfo;
+                                                  });
+                                                });
+                                            return Container(
+                                              width: 200,
+                                              height: 200,
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.shade50,
+                                                border: Border.all(
+                                                  color: Colors.red.shade200,
                                                 ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  AppLocalizations.of(
-                                                    context,
-                                                  )!.errorLabel,
-                                                  style: TextStyle(
-                                                    color: Colors.red.shade600,
-                                                    fontWeight: FontWeight.bold,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.error_outline,
+                                                    color: Colors.red.shade400,
+                                                    size: 48,
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    )!.errorLabel,
+                                                    style: TextStyle(
+                                                      color:
+                                                          Colors.red.shade600,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                ),
                               ),
                             ),
                             // Kaydetme ve Paylaşma Butonları
@@ -827,32 +883,50 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
   }
 
   Future<void> _saveContact() async {
-    await CommonHelpers.saveContactQr(
-      _firstNameController.text,
-      _lastNameController.text,
-      _phoneController.text,
-      _emailController.text,
-      _organizationController.text,
-      _titleController.text,
-      _addressController.text,
-      _websiteController.text,
-      _getVCardString(),
+    final bytes = await BarcodeImageService.capturePng(_qrBoundaryKey);
+    if (bytes == null) {
+      if (!mounted) return;
+      ErrorService.showErrorSnackBar(
+        context,
+        AppLocalizations.of(context)!.saveFailed,
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    await BarcodeImageService.saveToGallery(
+      bytes,
+      _getContactDisplayName(),
       context,
     );
   }
 
   Future<void> _shareContact() async {
-    await CommonHelpers.shareContactQr(
-      _firstNameController.text,
-      _lastNameController.text,
-      _phoneController.text,
-      _emailController.text,
-      _organizationController.text,
-      _titleController.text,
-      _addressController.text,
-      _websiteController.text,
-      _getVCardString(),
+    final bytes = await BarcodeImageService.capturePng(_qrBoundaryKey);
+    if (bytes == null) {
+      if (!mounted) return;
+      ErrorService.showErrorSnackBar(
+        context,
+        AppLocalizations.of(context)!.shareFailed,
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    await BarcodeImageService.shareImage(
+      bytes,
+      _getContactDisplayName(),
       context,
     );
+  }
+
+  String _getContactDisplayName() {
+    final first = _firstNameController.text.trim();
+    final last = _lastNameController.text.trim();
+    final combined = '$first $last'.trim();
+    if (combined.isNotEmpty) return combined;
+    return AppLocalizations.of(context)!.contactQrCodeTitle;
   }
 }

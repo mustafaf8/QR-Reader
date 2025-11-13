@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import '../l10n/app_localizations.dart';
 import '../services/hive_service.dart';
 import '../models/qr_scan_model.dart';
+import '../services/common_helpers.dart';
 import 'scan_history_screen.dart';
 import 'image_scan_screen.dart';
 import 'favorites_screen.dart';
@@ -499,6 +500,9 @@ class _HomePageState extends State<HomePage> {
   Widget _buildWiFiResult(String data, BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+    final rawPassword = QrScanModel.extractWiFiPassword(data);
+    final canCopyPassword = rawPassword.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -515,7 +519,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                '${AppLocalizations.of(context)!.networkName}: ${_extractWiFiSSID(data, context)}',
+                '${l10n.networkName}: ${_extractWiFiSSID(data, context)}',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: isDark ? Colors.white : colorScheme.onSurface,
@@ -537,13 +541,27 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                '${AppLocalizations.of(context)!.password}: ${_extractWiFiPassword(data, context)}',
+                '${l10n.password}: ${_extractWiFiPassword(data, context)}',
                 style: TextStyle(
                   fontFamily: 'monospace',
                   color: isDark ? Colors.white : colorScheme.onSurface,
                 ),
               ),
             ),
+            if (canCopyPassword)
+              IconButton(
+                tooltip: l10n.copyWifiPassword,
+                onPressed: () async {
+                  await CommonHelpers.copyToClipboard(rawPassword, context);
+                },
+                icon: Icon(
+                  Icons.copy,
+                  color: isDark
+                      ? colorScheme.onSurface
+                      : colorScheme.onSurfaceVariant,
+                  size: 18,
+                ),
+              ),
           ],
         ),
       ],

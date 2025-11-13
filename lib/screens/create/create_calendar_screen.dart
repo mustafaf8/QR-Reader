@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/barcode_image_service.dart';
 import '../../services/common_helpers.dart';
+import '../../services/error_service.dart';
 
 class CreateCalendarScreen extends StatefulWidget {
   const CreateCalendarScreen({super.key});
@@ -15,6 +17,7 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _organizerController = TextEditingController();
+  final GlobalKey _qrBoundaryKey = GlobalKey();
 
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(const Duration(hours: 1));
@@ -489,111 +492,114 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
                             ),
                             const SizedBox(height: 16),
                             Center(
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.2,
+                              child: RepaintBoundary(
+                                key: _qrBoundaryKey,
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
                                       ),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: _titleController.text.isEmpty
-                                    ? Column(
-                                        children: [
-                                          Icon(
-                                            Icons.event_busy,
-                                            size: 64,
-                                            color: Colors.grey.shade400,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            )!.enterEventTitle,
-                                            style: TextStyle(
-                                              color: Colors.grey.shade600,
-                                              fontSize: 16,
+                                    ],
+                                  ),
+                                  child: _titleController.text.isEmpty
+                                      ? Column(
+                                          children: [
+                                            Icon(
+                                              Icons.event_busy,
+                                              size: 64,
+                                              color: Colors.grey.shade400,
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    : _hasError
-                                    ? Column(
-                                        children: [
-                                          Icon(
-                                            Icons.error_outline,
-                                            size: 64,
-                                            color: Colors.red.shade400,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            _errorMessage,
-                                            style: TextStyle(
-                                              color: Colors.red.shade600,
-                                              fontSize: 14,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
-                                      )
-                                    : BarcodeWidget(
-                                        barcode: Barcode.qrCode(),
-                                        data: _getVEventString(),
-                                        width: 200,
-                                        height: 200,
-                                        errorBuilder: (context, error) {
-                                          WidgetsBinding.instance
-                                              .addPostFrameCallback((_) {
-                                                setState(() {
-                                                  _hasError = true;
-                                                  _errorMessage =
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.invalidEventInfo;
-                                                });
-                                              });
-                                          return Container(
-                                            width: 200,
-                                            height: 200,
-                                            decoration: BoxDecoration(
-                                              color: Colors.red.shade50,
-                                              border: Border.all(
-                                                color: Colors.red.shade200,
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.enterEventTitle,
+                                              style: TextStyle(
+                                                color: Colors.grey.shade600,
+                                                fontSize: 16,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
                                             ),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.error_outline,
-                                                  color: Colors.red.shade400,
-                                                  size: 48,
+                                          ],
+                                        )
+                                      : _hasError
+                                      ? Column(
+                                          children: [
+                                            Icon(
+                                              Icons.error_outline,
+                                              size: 64,
+                                              color: Colors.red.shade400,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              _errorMessage,
+                                              style: TextStyle(
+                                                color: Colors.red.shade600,
+                                                fontSize: 14,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        )
+                                      : BarcodeWidget(
+                                          barcode: Barcode.qrCode(),
+                                          data: _getVEventString(),
+                                          width: 200,
+                                          height: 200,
+                                          errorBuilder: (context, error) {
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                                  setState(() {
+                                                    _hasError = true;
+                                                    _errorMessage =
+                                                        AppLocalizations.of(
+                                                          context,
+                                                        )!.invalidEventInfo;
+                                                  });
+                                                });
+                                            return Container(
+                                              width: 200,
+                                              height: 200,
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.shade50,
+                                                border: Border.all(
+                                                  color: Colors.red.shade200,
                                                 ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  'Hata',
-                                                  style: TextStyle(
-                                                    color: Colors.red.shade600,
-                                                    fontWeight: FontWeight.bold,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.error_outline,
+                                                    color: Colors.red.shade400,
+                                                    size: 48,
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    'Hata',
+                                                    style: TextStyle(
+                                                      color:
+                                                          Colors.red.shade600,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                ),
                               ),
                             ),
                             // Kaydetme ve Paylaşma Butonları
@@ -764,37 +770,46 @@ class _CreateCalendarScreenState extends State<CreateCalendarScreen> {
   }
 
   Future<void> _saveEvent() async {
-    await CommonHelpers.saveCalendarQr(
-      _titleController.text,
-      _descriptionController.text,
-      _locationController.text,
-      _organizerController.text,
-      _startDate,
-      _startTime,
-      _endDate,
-      _endTime,
-      _getVEventString(),
+    final bytes = await BarcodeImageService.capturePng(_qrBoundaryKey);
+    if (bytes == null) {
+      if (!mounted) return;
+      ErrorService.showErrorSnackBar(
+        context,
+        AppLocalizations.of(context)!.saveFailed,
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    await BarcodeImageService.saveToGallery(
+      bytes,
+      _titleController.text.isEmpty
+          ? AppLocalizations.of(context)!.eventQrCode
+          : _titleController.text,
       context,
     );
   }
 
   Future<void> _shareEvent() async {
-    try {
-      // Etkinlik QR kod verisini paylaş
-      await CommonHelpers.shareCalendarQr(
-        _titleController.text,
-        _descriptionController.text,
-        _locationController.text,
-        _organizerController.text,
-        _startDate,
-        _startTime,
-        _endDate,
-        _endTime,
-        _getVEventString(),
+    final bytes = await BarcodeImageService.capturePng(_qrBoundaryKey);
+    if (bytes == null) {
+      if (!mounted) return;
+      ErrorService.showErrorSnackBar(
         context,
+        AppLocalizations.of(context)!.shareFailed,
       );
-    } catch (e) {
-      // Hata yönetimi CommonHelpers içinde yapılıyor
+      return;
     }
+
+    if (!mounted) return;
+
+    await BarcodeImageService.shareImage(
+      bytes,
+      _titleController.text.isEmpty
+          ? AppLocalizations.of(context)!.eventQrCode
+          : _titleController.text,
+      context,
+    );
   }
 }

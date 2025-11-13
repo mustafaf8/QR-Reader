@@ -9,6 +9,7 @@ class CreateGenericBarcodeScreen extends StatefulWidget {
   final String title;
   final Barcode barcode;
   final String? hintText;
+  final String? primaryLabel;
   final String? prefix;
   final String? suffix;
   final TextInputType? inputType;
@@ -27,6 +28,7 @@ class CreateGenericBarcodeScreen extends StatefulWidget {
     required this.title,
     required this.barcode,
     this.hintText,
+    this.primaryLabel,
     this.prefix,
     this.suffix,
     this.inputType,
@@ -203,15 +205,10 @@ class _CreateGenericBarcodeScreenState
                                     ).colorScheme.onSurface,
                                   ),
                               decoration: InputDecoration(
+                                labelText: widget.primaryLabel,
                                 hintText:
                                     widget.hintText ??
                                     AppLocalizations.of(context)!.enterDataHint,
-                                hintStyle: Theme.of(context).textTheme.bodyLarge
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant,
-                                    ),
                                 filled: true,
                                 fillColor: Theme.of(context)
                                     .colorScheme
@@ -240,26 +237,11 @@ class _CreateGenericBarcodeScreenState
                                     width: 2,
                                   ),
                                 ),
-                                prefixText: widget.prefix,
-                                prefixStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                suffixText: widget.suffix,
-                                suffixStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                labelStyle: _labelStyle(context),
+                                floatingLabelStyle: _floatingLabelStyle(
+                                  context,
+                                ),
+                                hintStyle: _labelStyle(context),
                               ),
                             ),
                             if (widget.enableSecondaryField) ...[
@@ -279,14 +261,6 @@ class _CreateGenericBarcodeScreenState
                                 decoration: InputDecoration(
                                   labelText: widget.secondaryLabel,
                                   hintText: widget.secondaryHint,
-                                  hintStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
                                   filled: true,
                                   fillColor: Theme.of(context)
                                       .colorScheme
@@ -319,33 +293,35 @@ class _CreateGenericBarcodeScreenState
                                       width: 2,
                                     ),
                                   ),
+                                  labelStyle: _labelStyle(context),
+                                  floatingLabelStyle: _floatingLabelStyle(
+                                    context,
+                                  ),
+                                  hintStyle: _labelStyle(context),
                                 ),
                               ),
                             ],
-                            if (widget.prefix != null ||
-                                widget.suffix != null) ...[
-                              const SizedBox(height: 12),
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                      .withValues(alpha: 0.3),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  '${AppLocalizations.of(context)!.preview}: ${_getFormattedData()}',
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                        fontFamily: 'monospace',
-                                      ),
-                                ),
+                            const SizedBox(height: 12),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer
+                                    .withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                            ],
+                              child: Text(
+                                '${AppLocalizations.of(context)!.preview}: ${_getFormattedData()}',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                      fontFamily: 'monospace',
+                                    ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -693,6 +669,18 @@ class _CreateGenericBarcodeScreenState
           ),
         );
       },
+    );
+  }
+
+  TextStyle? _labelStyle(BuildContext context) {
+    return Theme.of(context).textTheme.bodyMedium?.copyWith(
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
+    );
+  }
+
+  TextStyle? _floatingLabelStyle(BuildContext context) {
+    return Theme.of(context).textTheme.bodyMedium?.copyWith(
+      color: Theme.of(context).colorScheme.primary,
     );
   }
 }
