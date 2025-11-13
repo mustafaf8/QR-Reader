@@ -2392,6 +2392,12 @@ abstract class AppLocalizations {
   /// **'İndirilenler klasörüne kaydedildi'**
   String get savedToDownloads;
 
+  /// No description provided for @savedToGallery.
+  ///
+  /// In tr, this message translates to:
+  /// **'Galeriye kaydedildi'**
+  String get savedToGallery;
+
   /// No description provided for @saveFailed.
   ///
   /// In tr, this message translates to:
@@ -2403,6 +2409,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Paylaşma başarısız'**
   String get shareFailed;
+
+  /// No description provided for @qrCodeImageShared.
+  ///
+  /// In tr, this message translates to:
+  /// **'QR kod görüntüsü paylaşıldı'**
+  String get qrCodeImageShared;
+
+  /// No description provided for @galleryPermissionDenied.
+  ///
+  /// In tr, this message translates to:
+  /// **'Galeriye kaydetmek için izin gerekli'**
+  String get galleryPermissionDenied;
+
+  /// No description provided for @galleryPermissionPermanentlyDenied.
+  ///
+  /// In tr, this message translates to:
+  /// **'Galeri izni kalıcı olarak reddedildi. Lütfen ayarlardan izin verin.'**
+  String get galleryPermissionPermanentlyDenied;
 
   /// No description provided for @urlOpenFailed.
   ///

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import '../../l10n/app_localizations.dart';
-import '../../services/common_helpers.dart';
+import '../../services/barcode_image_service.dart';
+import '../../services/error_service.dart';
 
 class CreateGenericBarcodeScreen extends StatefulWidget {
   final String title;
@@ -13,6 +14,13 @@ class CreateGenericBarcodeScreen extends StatefulWidget {
   final TextInputType? inputType;
   final int? maxLength;
   final bool isClipboard;
+  final String? infoText;
+  final bool enableSecondaryField;
+  final String? secondaryLabel;
+  final String? secondaryHint;
+  final TextInputType? secondaryInputType;
+  final int? secondaryMaxLength;
+  final String Function(String primary, String secondary)? customFormatter;
 
   const CreateGenericBarcodeScreen({
     super.key,
@@ -24,6 +32,13 @@ class CreateGenericBarcodeScreen extends StatefulWidget {
     this.inputType,
     this.maxLength,
     this.isClipboard = false,
+    this.infoText,
+    this.enableSecondaryField = false,
+    this.secondaryLabel,
+    this.secondaryHint,
+    this.secondaryInputType,
+    this.secondaryMaxLength,
+    this.customFormatter,
   });
 
   @override
@@ -34,7 +49,10 @@ class CreateGenericBarcodeScreen extends StatefulWidget {
 class _CreateGenericBarcodeScreenState
     extends State<CreateGenericBarcodeScreen> {
   final TextEditingController _controller = TextEditingController();
+  final GlobalKey _barcodeBoundaryKey = GlobalKey();
   String _currentData = '';
+  TextEditingController? _secondaryController;
+  String _secondaryData = '';
   bool _hasError = false;
   String _errorMessage = '';
 
@@ -45,11 +63,16 @@ class _CreateGenericBarcodeScreenState
       _loadFromClipboard();
     }
     _controller.addListener(_onTextChanged);
+    if (widget.enableSecondaryField) {
+      _secondaryController = TextEditingController();
+      _secondaryController!.addListener(_onSecondaryChanged);
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _secondaryController?.dispose();
     super.dispose();
   }
 
@@ -73,8 +96,23 @@ class _CreateGenericBarcodeScreenState
     });
   }
 
+  void _onSecondaryChanged() {
+    setState(() {
+      _secondaryData = _secondaryController?.text ?? '';
+      _hasError = false;
+      _errorMessage = '';
+    });
+  }
+
   String _getFormattedData() {
     if (_currentData.isEmpty) return '';
+
+    if (widget.customFormatter != null) {
+      return widget.customFormatter!(
+        _currentData,
+        widget.enableSecondaryField ? _secondaryData : '',
+      );
+    }
 
     String data = _currentData;
 
@@ -224,6 +262,66 @@ class _CreateGenericBarcodeScreenState
                                     ),
                               ),
                             ),
+                            if (widget.enableSecondaryField) ...[
+                              const SizedBox(height: 16),
+                              TextField(
+                                controller: _secondaryController,
+                                keyboardType:
+                                    widget.secondaryInputType ??
+                                    TextInputType.text,
+                                maxLength: widget.secondaryMaxLength,
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
+                                decoration: InputDecoration(
+                                  labelText: widget.secondaryLabel,
+                                  hintText: widget.secondaryHint,
+                                  hintStyle: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
+                                      ),
+                                  filled: true,
+                                  fillColor: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest
+                                      .withValues(alpha: 0.3),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outline
+                                          .withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outline
+                                          .withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                             if (widget.prefix != null ||
                                 widget.suffix != null) ...[
                               const SizedBox(height: 12),
@@ -280,112 +378,21 @@ class _CreateGenericBarcodeScreenState
                             ),
                             const SizedBox(height: 20),
                             Center(
-                              child: Container(
-                                padding: EdgeInsets.all(
-                                  isSmallScreen ? 16 : 20,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.1,
-                                      ),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
+                              child: _currentData.isEmpty
+                                  ? _buildPreviewSurface(
+                                      child: _buildEmptyPreviewContent(context),
+                                      isSmallScreen: isSmallScreen,
+                                    )
+                                  : _hasError
+                                  ? _buildPreviewSurface(
+                                      child: _buildErrorPreviewContent(),
+                                      isSmallScreen: isSmallScreen,
+                                    )
+                                  : _buildPreviewSurface(
+                                      child: _buildBarcodeContent(),
+                                      isSmallScreen: isSmallScreen,
+                                      isCapturable: true,
                                     ),
-                                  ],
-                                ),
-                                child: _currentData.isEmpty
-                                    ? Column(
-                                        children: [
-                                          Icon(
-                                            Icons.qr_code,
-                                            size: 64,
-                                            color: Colors.grey.shade400,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            )!.enterData,
-                                            style: TextStyle(
-                                              color: Colors.grey.shade600,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : _hasError
-                                    ? Column(
-                                        children: [
-                                          Icon(
-                                            Icons.error_outline,
-                                            size: 64,
-                                            color: Colors.red.shade400,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            _errorMessage,
-                                            style: TextStyle(
-                                              color: Colors.red.shade600,
-                                              fontSize: 14,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
-                                      )
-                                    : BarcodeWidget(
-                                        barcode: widget.barcode,
-                                        data: _getFormattedData(),
-                                        width: 200,
-                                        height: 200,
-                                        errorBuilder: (context, error) {
-                                          WidgetsBinding.instance
-                                              .addPostFrameCallback((_) {
-                                                setState(() {
-                                                  _hasError = true;
-                                                  _errorMessage =
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.invalidDataFormat;
-                                                });
-                                              });
-                                          return Container(
-                                            width: 200,
-                                            height: 200,
-                                            decoration: BoxDecoration(
-                                              color: Colors.red.shade50,
-                                              border: Border.all(
-                                                color: Colors.red.shade200,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.error_outline,
-                                                  color: Colors.red.shade400,
-                                                  size: 48,
-                                                ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  'Hata',
-                                                  style: TextStyle(
-                                                    color: Colors.red.shade600,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                              ),
                             ),
                             // Kaydetme ve Paylaşma Butonları
                             if (_currentData.isNotEmpty && !_hasError) ...[
@@ -529,6 +536,10 @@ class _CreateGenericBarcodeScreenState
   }
 
   String _getInfoText() {
+    if (widget.infoText != null) {
+      return widget.infoText!;
+    }
+
     if (widget.barcode == Barcode.qrCode()) {
       return AppLocalizations.of(context)!.qrCodeInfo;
     } else if (widget.barcode == Barcode.ean13()) {
@@ -560,31 +571,128 @@ class _CreateGenericBarcodeScreenState
   }
 
   Future<void> _saveBarcode() async {
-    final content =
-        '${widget.title} QR Kodu\n'
-        '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}\n'
-        'Veri: ${_getFormattedData()}\n'
-        'Format: ${widget.barcode.toString()}';
+    final bytes = await BarcodeImageService.capturePng(_barcodeBoundaryKey);
+    if (bytes == null) {
+      if (!mounted) return;
+      ErrorService.showErrorSnackBar(
+        context,
+        AppLocalizations.of(context)!.saveFailed,
+      );
+      return;
+    }
 
-    await CommonHelpers.saveQrData(
-      content,
-      widget.title,
-      _getFormattedData(),
-      context,
-    );
+    if (!mounted) return;
+
+    await BarcodeImageService.saveToGallery(bytes, widget.title, context);
   }
 
   Future<void> _shareBarcode() async {
-    final content =
-        '${widget.title} QR Kodu\n\n'
-        'Veri: ${_getFormattedData()}\n'
-        'Format: ${widget.barcode.toString()}\n'
-        '${AppLocalizations.of(context)!.creationDateLabel}: ${DateTime.now().toString()}';
+    final bytes = await BarcodeImageService.capturePng(_barcodeBoundaryKey);
+    if (bytes == null) {
+      if (!mounted) return;
+      ErrorService.showErrorSnackBar(
+        context,
+        AppLocalizations.of(context)!.shareFailed,
+      );
+      return;
+    }
 
-    await CommonHelpers.shareContent(
-      content,
-      '${widget.title} QR Kodu',
-      context,
+    if (!mounted) return;
+
+    await BarcodeImageService.shareImage(bytes, widget.title, context);
+  }
+
+  Widget _buildPreviewSurface({
+    required Widget child,
+    required bool isSmallScreen,
+    bool isCapturable = false,
+  }) {
+    final content = Container(
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: child,
+    );
+
+    if (!isCapturable) return content;
+
+    return RepaintBoundary(key: _barcodeBoundaryKey, child: content);
+  }
+
+  Widget _buildEmptyPreviewContent(BuildContext context) {
+    return Column(
+      children: [
+        Icon(Icons.qr_code, size: 64, color: Colors.grey.shade400),
+        const SizedBox(height: 8),
+        Text(
+          AppLocalizations.of(context)!.enterData,
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildErrorPreviewContent() {
+    return Column(
+      children: [
+        Icon(Icons.error_outline, size: 64, color: Colors.red.shade400),
+        const SizedBox(height: 8),
+        Text(
+          _errorMessage,
+          style: TextStyle(color: Colors.red.shade600, fontSize: 14),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBarcodeContent() {
+    return BarcodeWidget(
+      barcode: widget.barcode,
+      data: _getFormattedData(),
+      width: 200,
+      height: 200,
+      errorBuilder: (context, error) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          setState(() {
+            _hasError = true;
+            _errorMessage = AppLocalizations.of(context)!.invalidDataFormat;
+          });
+        });
+        return Container(
+          width: 200,
+          height: 200,
+          decoration: BoxDecoration(
+            color: Colors.red.shade50,
+            border: Border.all(color: Colors.red.shade200),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, color: Colors.red.shade400, size: 48),
+              const SizedBox(height: 8),
+              Text(
+                'Hata',
+                style: TextStyle(
+                  color: Colors.red.shade600,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
