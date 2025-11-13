@@ -1183,10 +1183,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get savedToDownloads => 'Guardado en Descargas';
 
   @override
+  String get savedToGallery => 'Guardado en la galería';
+
+  @override
   String get saveFailed => 'Error al guardar';
 
   @override
   String get shareFailed => 'Error al compartir';
+
+  @override
+  String get qrCodeImageShared => 'Imagen del código QR compartida';
+
+  @override
+  String get galleryPermissionDenied =>
+      'Se requiere permiso de almacenamiento para guardar en la galería';
+
+  @override
+  String get galleryPermissionPermanentlyDenied =>
+      'El permiso de almacenamiento se denegó permanentemente. Habilítalo desde la configuración.';
 
   @override
   String get urlOpenFailed => 'Error al abrir URL';

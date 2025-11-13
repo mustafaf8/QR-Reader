@@ -1177,10 +1177,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savedToDownloads => 'Saved to Downloads';
 
   @override
+  String get savedToGallery => 'Saved to gallery';
+
+  @override
   String get saveFailed => 'Save failed';
 
   @override
   String get shareFailed => 'Share failed';
+
+  @override
+  String get qrCodeImageShared => 'QR code image shared';
+
+  @override
+  String get galleryPermissionDenied =>
+      'Storage permission is required to save to gallery';
+
+  @override
+  String get galleryPermissionPermanentlyDenied =>
+      'Storage permission was permanently denied. Please enable it from settings.';
 
   @override
   String get urlOpenFailed => 'Failed to open URL';

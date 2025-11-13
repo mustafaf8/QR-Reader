@@ -1175,10 +1175,23 @@ class AppLocalizationsTr extends AppLocalizations {
   String get savedToDownloads => 'İndirilenler klasörüne kaydedildi';
 
   @override
+  String get savedToGallery => 'Galeriye kaydedildi';
+
+  @override
   String get saveFailed => 'Kaydetme başarısız';
 
   @override
   String get shareFailed => 'Paylaşma başarısız';
+
+  @override
+  String get qrCodeImageShared => 'QR kod görüntüsü paylaşıldı';
+
+  @override
+  String get galleryPermissionDenied => 'Galeriye kaydetmek için izin gerekli';
+
+  @override
+  String get galleryPermissionPermanentlyDenied =>
+      'Galeri izni kalıcı olarak reddedildi. Lütfen ayarlardan izin verin.';
 
   @override
   String get urlOpenFailed => 'URL açılamadı';

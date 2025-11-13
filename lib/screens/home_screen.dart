@@ -900,6 +900,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     child: SafeArea(
+                      bottom: false,
                       child: Padding(
                         padding: const EdgeInsets.all(20),
                         child: Column(

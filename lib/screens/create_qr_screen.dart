@@ -41,6 +41,7 @@ class CreateQrScreen extends StatelessWidget {
               l10n.clipboardContent,
               Barcode.qrCode(),
               isClipboard: true,
+              infoText: l10n.qrCodeInfo,
             ),
           ),
 
@@ -55,6 +56,7 @@ class CreateQrScreen extends StatelessWidget {
               Barcode.qrCode(),
               hintText: AppLocalizations.of(context)!.urlHint,
               prefix: 'https://',
+              infoText: l10n.qrCodeInfo,
             ),
           ),
 
@@ -68,6 +70,7 @@ class CreateQrScreen extends StatelessWidget {
               l10n.createText,
               Barcode.qrCode(),
               hintText: l10n.enterYourText,
+              infoText: l10n.qrCodeInfo,
             ),
           ),
 
@@ -106,6 +109,7 @@ class CreateQrScreen extends StatelessWidget {
               Barcode.qrCode(),
               hintText: AppLocalizations.of(context)!.emailAddressHint,
               prefix: 'mailto:',
+              infoText: l10n.qrCodeInfo,
             ),
           ),
 
@@ -120,7 +124,20 @@ class CreateQrScreen extends StatelessWidget {
               Barcode.qrCode(),
               hintText: AppLocalizations.of(context)!.phoneNumberHint,
               prefix: 'sms:',
-              suffix: '?body=${l10n.messageBody}',
+              enableSecondaryField: true,
+              secondaryLabel: l10n.messageBody,
+              secondaryHint: l10n.enterYourText,
+              secondaryInputType: TextInputType.text,
+              customFormatter: (number, message) {
+                final trimmedNumber = number.trim();
+                if (trimmedNumber.isEmpty) return '';
+                final trimmedMessage = message.trim();
+                final encodedMessage = trimmedMessage.isEmpty
+                    ? ''
+                    : '?body=${Uri.encodeComponent(trimmedMessage)}';
+                return 'sms:$trimmedNumber$encodedMessage';
+              },
+              infoText: l10n.qrCodeInfo,
             ),
           ),
 
@@ -135,6 +152,7 @@ class CreateQrScreen extends StatelessWidget {
               Barcode.qrCode(),
               hintText: AppLocalizations.of(context)!.locationHint,
               prefix: 'geo:',
+              infoText: l10n.qrCodeInfo,
             ),
           ),
 
@@ -150,6 +168,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: AppLocalizations.of(context)!.phoneNumberHint,
               prefix: 'tel:',
               inputType: TextInputType.phone,
+              infoText: l10n.qrCodeInfo,
             ),
           ),
 
@@ -188,6 +207,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: AppLocalizations.of(context)!.ean8Hint,
               inputType: TextInputType.number,
               maxLength: 7,
+              infoText: l10n.ean8Info,
             ),
           ),
 
@@ -202,6 +222,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: AppLocalizations.of(context)!.ean13Hint,
               inputType: TextInputType.number,
               maxLength: 12,
+              infoText: l10n.ean13Info,
             ),
           ),
 
@@ -216,6 +237,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: AppLocalizations.of(context)!.upcEHint,
               inputType: TextInputType.number,
               maxLength: 6,
+              infoText: l10n.upcEInfo,
             ),
           ),
 
@@ -230,6 +252,7 @@ class CreateQrScreen extends StatelessWidget {
               hintText: AppLocalizations.of(context)!.ean13Hint,
               inputType: TextInputType.number,
               maxLength: 11,
+              infoText: l10n.upcAInfo,
             ),
           ),
 
@@ -242,6 +265,7 @@ class CreateQrScreen extends StatelessWidget {
               l10n.createCode39,
               Barcode.code39(),
               hintText: AppLocalizations.of(context)!.code39Hint,
+              infoText: l10n.code39Info,
             ),
           ),
 
@@ -254,6 +278,7 @@ class CreateQrScreen extends StatelessWidget {
               l10n.createCode93,
               Barcode.code93(),
               hintText: AppLocalizations.of(context)!.code39Hint,
+              infoText: l10n.code93Info,
             ),
           ),
 
@@ -266,6 +291,7 @@ class CreateQrScreen extends StatelessWidget {
               l10n.createCode128,
               Barcode.code128(),
               hintText: AppLocalizations.of(context)!.code39Hint,
+              infoText: l10n.code128Info,
             ),
           ),
 
@@ -279,6 +305,7 @@ class CreateQrScreen extends StatelessWidget {
               Barcode.itf(),
               hintText: AppLocalizations.of(context)!.itfHint,
               inputType: TextInputType.number,
+              infoText: l10n.itfInfo,
             ),
           ),
 
@@ -291,6 +318,7 @@ class CreateQrScreen extends StatelessWidget {
               l10n.createPdf417,
               Barcode.pdf417(),
               hintText: l10n.pdf417Example,
+              infoText: l10n.pdf417Info,
             ),
           ),
 
@@ -304,6 +332,7 @@ class CreateQrScreen extends StatelessWidget {
               Barcode.codabar(),
               hintText: AppLocalizations.of(context)!.itfHint,
               inputType: TextInputType.number,
+              infoText: l10n.codabarInfo,
             ),
           ),
 
@@ -316,6 +345,7 @@ class CreateQrScreen extends StatelessWidget {
               l10n.createDataMatrix,
               Barcode.dataMatrix(),
               hintText: l10n.dataMatrixExample,
+              infoText: l10n.dataMatrixInfo,
             ),
           ),
 
@@ -328,6 +358,7 @@ class CreateQrScreen extends StatelessWidget {
               l10n.createAztec,
               Barcode.aztec(),
               hintText: l10n.aztecExample,
+              infoText: l10n.aztecInfo,
             ),
           ),
 
@@ -459,6 +490,13 @@ class CreateQrScreen extends StatelessWidget {
     TextInputType? inputType,
     int? maxLength,
     bool isClipboard = false,
+    String? infoText,
+    bool enableSecondaryField = false,
+    String? secondaryLabel,
+    String? secondaryHint,
+    TextInputType? secondaryInputType,
+    int? secondaryMaxLength,
+    String Function(String primary, String secondary)? customFormatter,
   }) {
     Navigator.push(
       context,
@@ -472,6 +510,13 @@ class CreateQrScreen extends StatelessWidget {
           inputType: inputType,
           maxLength: maxLength,
           isClipboard: isClipboard,
+          infoText: infoText,
+          enableSecondaryField: enableSecondaryField,
+          secondaryLabel: secondaryLabel,
+          secondaryHint: secondaryHint,
+          secondaryInputType: secondaryInputType,
+          secondaryMaxLength: secondaryMaxLength,
+          customFormatter: customFormatter,
         ),
       ),
     );
