@@ -393,7 +393,11 @@ class _QrScannerScreenState extends State<QrScannerScreen>
         });
 
         cameraController.stop();
-        Navigator.pop(context, barcode.rawValue);
+        final formatName = barcode.format.name;
+        Navigator.pop(context, {
+          'data': barcode.rawValue!,
+          'format': formatName,
+        });
         break;
       }
     }
