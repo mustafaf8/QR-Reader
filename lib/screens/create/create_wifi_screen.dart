@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/barcode_image_service.dart';
 import '../../services/common_helpers.dart';
+import '../../services/error_service.dart';
 
 class CreateWifiScreen extends StatefulWidget {
   const CreateWifiScreen({super.key});
@@ -15,6 +17,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _securityController = TextEditingController();
   final TextEditingController _hiddenController = TextEditingController();
+  final GlobalKey _qrBoundaryKey = GlobalKey();
 
   String _securityType = 'WPA';
   bool _isHidden = false;
@@ -353,22 +356,24 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                             ),
                             const SizedBox(height: 16),
                             Center(
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.2,
+                              child: RepaintBoundary(
+                                key: _qrBoundaryKey,
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
                                       ),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: _ssidController.text.isEmpty
+                                    ],
+                                  ),
+                                  child: _ssidController.text.isEmpty
                                     ? Column(
                                         children: [
                                           Icon(
@@ -456,6 +461,7 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
                                           );
                                         },
                                       ),
+                                ),
                               ),
                             ),
                             // Kaydetme ve Paylaşma Butonları
@@ -626,24 +632,48 @@ class _CreateWifiScreenState extends State<CreateWifiScreen> {
   }
 
   Future<void> _saveWifi() async {
-    await CommonHelpers.saveWiFiQr(
-      _ssidController.text,
-      _securityType,
-      _passwordController.text,
-      _isHidden,
-      _getWifiString(),
+    final bytes = await BarcodeImageService.capturePng(_qrBoundaryKey);
+    if (bytes == null) {
+      if (!mounted) return;
+      ErrorService.showErrorSnackBar(
+        context,
+        AppLocalizations.of(context)!.saveFailed,
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    await BarcodeImageService.saveToGallery(
+      bytes,
+      _getWifiDisplayName(),
       context,
     );
   }
 
   Future<void> _shareWifi() async {
-    await CommonHelpers.shareWiFiQr(
-      _ssidController.text,
-      _securityType,
-      _passwordController.text,
-      _isHidden,
-      _getWifiString(),
+    final bytes = await BarcodeImageService.capturePng(_qrBoundaryKey);
+    if (bytes == null) {
+      if (!mounted) return;
+      ErrorService.showErrorSnackBar(
+        context,
+        AppLocalizations.of(context)!.shareFailed,
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    await BarcodeImageService.shareImage(
+      bytes,
+      _getWifiDisplayName(),
       context,
     );
+  }
+
+  String _getWifiDisplayName() {
+    final ssid = _ssidController.text.trim();
+    if (ssid.isNotEmpty) return ssid;
+    return AppLocalizations.of(context)!.wifiQrCodeTitle;
   }
 }
